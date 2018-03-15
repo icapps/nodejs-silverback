@@ -8,7 +8,6 @@
 
     "moduleResolution": "node",
     "baseUrl": "./",
-    "typeRoots": ["node_modules/@types"],
     "declaration": true,
 
     "noImplicitAny": false,
@@ -17,6 +16,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
 
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "paths": {
       "*": [
         "node_modules/*",
