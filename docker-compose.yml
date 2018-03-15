@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  postgres:
+    image: brentvangeertruy93/dta-postgres
+    container_name: dta_pg
+    ports:
+    - "5432:5432"
+    environment:
+      - DEBUG=false
+      - POSTGRES_USER=developer
+      - POSTGRES_PASSWORD=developer
+      - POSTGRES_DB=silverback_test
+      - PGDATA=./data/postgres

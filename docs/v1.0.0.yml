@@ -1,0 +1,385 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Silverback"
+host: "localhost:3000"
+basePath: "/api/v1"
+schemes:
+  - "http"
+  - "https"
+securityDefinitions:
+  Bearer:
+    name: Authorization
+    type: apiKey
+    in: header
+    description: 'Please use the following format: Bearer <ApiKey>'
+paths:
+  /login:
+    post:
+      tags:
+      - "authentication"
+      summary: "Login a user with email and password"
+      parameters:
+        - name: "authentication request"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostLogin"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        400:
+          description: "400 Bad request"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "500 Interal error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /logout:
+    post:
+      tags:
+      - "authentication"
+      summary: "Logout the current user"
+      responses:
+        204:
+          description: "Success"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /refresh:
+    post:
+      tags:
+      - "authentication"
+      summary: "Returns a new jwt token via refresh token"
+      parameters:
+        - name: "refresh request"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostRefresh"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/RefreshResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /me:
+    get:
+      tags:
+      - "current user"
+      summary: "Returns the current user information"
+      responses:
+        200:
+          description: "logged in user"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /version/{os}:
+    parameters:
+      - in: path
+        type: "string"
+        name: os
+        description: The name of the operating system.
+        required: true
+    get:
+      tags:
+      - "version control"
+      summary: "Returns the current minimum and latest version for application(s)"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/VersionCheckResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /users:
+    get:
+      tags:
+      - "users"
+      summary: "Returns all users"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      tags:
+      - "users"
+      summary: "Create a new user"
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostUser"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /users/{userId}:
+    parameters:
+      - in: path
+        type: "string"
+        name: userId
+        description: The id of the user
+        required: true
+    get:
+      tags:
+      - "users"
+      summary: "Returns user by id"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "users"
+      summary: "Update an existing user"
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PutUser"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    patch:
+      tags:
+      - "users"
+      summary: "Update an existing user's property"
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PatchUser"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      tags:
+      - "users"
+      summary: "Delete an existing user"
+      responses:
+        204:
+          description: "Success"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+definitions:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: ["USER", "ADMIN"]
+    PostLogin:
+      type: object
+      required:
+        - "username"
+        - "password"
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        deviceId:
+          type: string
+    PostRefresh:
+      type: object
+      required:
+        - "refreshToken"
+      properties:
+        refreshToken:
+          type: string
+    PostUser:
+      type: object
+      required:
+        - "username"
+        - "password"
+        - "firstName"
+        - "lastName"
+      properties:
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: ["USER", "ADMIN"]
+    PutUser:
+      type: object
+      required:
+        - "username"
+        - "firstName"
+        - "lastName"
+        - "role"
+      properties:
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: ["USER", "ADMIN"]
+    PatchUser:
+      type: object
+      properties:
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: ["USER", "ADMIN"]
+    LoginResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+    RefreshResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+    UserResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          $ref: "#/definitions/User"
+    UserListResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: number
+              example: 50
+            totalCount:
+              type: number
+              example: 120
+        data:
+          type: array
+          items:
+            $ref: "#/definitions/User"
+    VersionCheckResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          type: object
+          properties:
+            minVersion:
+              type: string
+              example: '1.4.0'
+            latestVersion:
+              type: string
+              example: '1.8.0'
+    ErrorResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: 'Unique id per error'
+          status:
+            type: number
+            description: 'Http statuscode'
+            example: 400
+          code:
+            type: string
+            description: 'Unique code per error'
+            example: 'NO_VALID_USERNAME'
+          title:
+            type: string
+            description: 'General error message'
+            example: 'No valid username provided'
+          detail:
+            type: string
+            description: 'Extra details (optional)'
+          meta:
+            type: object
+            properties:
+              stack:
+                type: string
+                description: 'Stacktrace (only for development purposes)'
