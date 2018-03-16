@@ -8,7 +8,6 @@
     "start": "node ./build/server.js",
     "serve": "yarn build && yarn start",
     "clean": "rimraf ./build",
-    "postinstall": "node_modules/typescript/bin/tsc",
     "lint": "tslint 'src/**/*.ts'",
     "pretest": "NODE_ENV=test yarn db:migrate",
     "test": "jest --forceExit",
