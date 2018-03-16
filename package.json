@@ -5,9 +5,12 @@
   "main": "./build/server.js",
   "scripts": {
     "build": "yarn clean && tsc",
-    "start": "yarn build && node build/server.js",
+    "start": "node ./build/server.js",
+    "serve": "yarn build && yarn start",
     "clean": "rimraf ./build",
+    "postinstall": "node_modules/typescript/bin/tsc",
     "lint": "tslint 'src/**/*.ts'",
+    "pretest": "NODE_ENV=test yarn db:migrate",
     "test": "jest --forceExit",
     "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts --forceExit",
     "test:watch": "jest --watchAll",
