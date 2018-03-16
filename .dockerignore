@@ -1,0 +1,11 @@
+.git
+.gitignore
+npm-debug.log
+node_modules
+
+#Typescript
+src
+tsconfig.json
+tslint.json
+
+.env
