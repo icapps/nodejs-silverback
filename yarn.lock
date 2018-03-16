@@ -4086,7 +4086,7 @@ tr46@^1.0.0:
   dependencies:
     punycode "^2.1.0"
 
-tree-house@~3.0.1:
+tree-house@~3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/tree-house/-/tree-house-3.0.0.tgz#e93c8bb33c57b01f8e59b7a1790a131310ed866c"
   dependencies:
