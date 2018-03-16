@@ -13,7 +13,6 @@
     "test": "jest --forceExit",
     "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts --forceExit",
     "test:watch": "jest --watchAll",
-    "deploy": "scripts/deploy.sh",
     "db:seed": "node_modules/knex/bin/cli.js seed:run",
     "db:migrate": "node_modules/knex/bin/cli.js migrate:latest"
   },
