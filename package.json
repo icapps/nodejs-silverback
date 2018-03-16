@@ -26,6 +26,7 @@
     "jsonade": "~1.1.0",
     "knex": "~0.14.4",
     "pg": "~7.4.1",
+    "tree-house": "~3.0.0",
     "winston": "~2.4.1"
   },
   "devDependencies": {

@@ -1,5 +1,9 @@
 import './config/load-env'; // Load our environment variables
+
+import * as treehouse from 'tree-house';
 import app from './app';
 
-// TODO: Implement tree-house startServer
-app.listen(3000, () => console.log('Server started on port 3000'));
+treehouse.startServer(app, {
+  title: 'Silverback',
+  port: parseInt(process.env.PORT, 10),
+});
