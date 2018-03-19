@@ -26,6 +26,7 @@
     "http-status": "~1.0.1",
     "jsonade": "~1.1.0",
     "knex": "~0.14.4",
+    "nodemailer": "~4.6.3",
     "pg": "~7.4.1",
     "tree-house": "~3.0.3",
     "winston": "~2.4.1"
@@ -37,6 +38,7 @@
     "@types/helmet": "~0.0.37",
     "@types/jest": "~22.2.0",
     "@types/knex": "~0.14.8",
+    "@types/nodemailer": "~4.6.0",
     "@types/winston": "~2.3.8",
     "jest": "^22.4.2",
     "pre-commit": "^1.2.2",
