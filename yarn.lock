@@ -134,7 +134,7 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
 
-accepts@~1.3.5:
+accepts@^1.3.3, accepts@~1.3.5:
   version "1.3.5"
   resolved "https://registry.npmjs.org/accepts/-/accepts-1.3.5.tgz#eb777df6011723a3b14e8a72c0805c8e86746bd2"
   dependencies:
@@ -1008,7 +1008,7 @@ depd@1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/depd/-/depd-1.1.1.tgz#5783b4e1c459f06fa5ca27f991f3d06e7a310359"
 
-depd@~1.1.1, depd@~1.1.2:
+depd@^1.1.0, depd@~1.1.1, depd@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/depd/-/depd-1.1.2.tgz#9bcd52e14c097763e749b274c4346ed2e560b5a9"
 
@@ -1490,7 +1490,7 @@ frameguard@3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/frameguard/-/frameguard-3.0.0.tgz#7bcad469ee7b96e91d12ceb3959c78235a9272e9"
 
-fresh@0.5.2:
+fresh@0.5.2, fresh@^0.5.2:
   version "0.5.2"
   resolved "https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
 
@@ -2765,7 +2765,7 @@ memcached@~0.2.4:
     hashring "0.0.x"
     jackpot ">=0.0.6"
 
-merge-descriptors@1.0.1:
+merge-descriptors@1.0.1, merge-descriptors@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/merge-descriptors/-/merge-descriptors-1.0.1.tgz#b00aaa556dd8b44568150ec9d1b953f3f90cbb61"
 
@@ -2779,7 +2779,7 @@ merge@^1.1.3:
   version "1.2.0"
   resolved "https://registry.npmjs.org/merge/-/merge-1.2.0.tgz#7531e39d4949c281a66b8c5a6e0265e8b05894da"
 
-methods@^1.1.1, methods@~1.1.2:
+methods@^1.1.1, methods@^1.1.2, methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
 
@@ -2833,7 +2833,7 @@ mime@1.4.1:
   version "1.4.1"
   resolved "https://registry.npmjs.org/mime/-/mime-1.4.1.tgz#121f9ebc49e3766f311a76e1fa1c8003c4b03aa6"
 
-mime@^1.4.1:
+mime@^1.3.4, mime@^1.4.1:
   version "1.6.0"
   resolved "https://registry.npmjs.org/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
 
@@ -2905,6 +2905,10 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.npmjs.org/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
+net@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/net/-/net-1.0.2.tgz#d1757ec9a7fb2371d83cf4755ce3e27e10829388"
+
 nocache@2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/nocache/-/nocache-2.0.0.tgz#202b48021a0c4cbde2df80de15a17443c8b43980"
@@ -2912,6 +2916,21 @@ nocache@2.0.0:
 node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.npmjs.org/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
+
+node-mocks-http@^1.5.8:
+  version "1.5.8"
+  resolved "https://registry.npmjs.org/node-mocks-http/-/node-mocks-http-1.5.8.tgz#cbcc6dc8278861f96522c51ae858cf62806e2f80"
+  dependencies:
+    accepts "^1.3.3"
+    depd "^1.1.0"
+    fresh "^0.5.2"
+    merge-descriptors "^1.0.1"
+    methods "^1.1.2"
+    mime "^1.3.4"
+    net "^1.0.2"
+    parseurl "^1.3.1"
+    range-parser "^1.2.0"
+    type-is "^1.6.14"
 
 node-notifier@^5.2.1:
   version "5.2.1"
@@ -3161,7 +3180,7 @@ parse5@4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/parse5/-/parse5-4.0.0.tgz#6d78656e3da8d78b4ec0b906f7c08ef1dfe3f608"
 
-parseurl@~1.3.2:
+parseurl@^1.3.1, parseurl@~1.3.2:
   version "1.3.2"
   resolved "https://registry.npmjs.org/parseurl/-/parseurl-1.3.2.tgz#fc289d4ed8993119460c156253262cdc8de65bf3"
 
@@ -3380,7 +3399,7 @@ randomatic@^1.1.3:
     is-number "^3.0.0"
     kind-of "^4.0.0"
 
-range-parser@~1.2.0:
+range-parser@^1.2.0, range-parser@~1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
 
@@ -4146,9 +4165,9 @@ tr46@^1.0.0:
   dependencies:
     punycode "^2.1.0"
 
-tree-house-errors@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/tree-house-errors/-/tree-house-errors-1.0.0.tgz#c0e52f85cb00c9160facb18a015dcdf6281cee02"
+tree-house-errors@~1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/tree-house-errors/-/tree-house-errors-1.0.1.tgz#f193c110cd1506fb8c09a1242af3f21061444004"
   dependencies:
     express-validation "~1.0.2"
     http-status "~1.0.1"
@@ -4264,7 +4283,7 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-type-is@~1.6.15, type-is@~1.6.16:
+type-is@^1.6.14, type-is@~1.6.15, type-is@~1.6.16:
   version "1.6.16"
   resolved "https://registry.npmjs.org/type-is/-/type-is-1.6.16.tgz#f89ce341541c672b25ee7ae3c73dee3b2be50194"
   dependencies:
