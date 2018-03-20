@@ -24,6 +24,7 @@ module.exports = {
   testPathIgnorePatterns: [
     "/node_modules/",
     "tests/test.config",
+    "tests/_helpers",
   ],
   coveragePathIgnorePatterns: [
     '/node_modules/',

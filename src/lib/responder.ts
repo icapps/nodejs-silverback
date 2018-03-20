@@ -8,14 +8,14 @@ import { logger } from '../lib/logger';
  * ExpressJS responder to send success/error responses
 */
 export const responder = {
-  succes: (res: Response, { status = httpStatus.OK, payload, serializer }: ResponderOptions) => {
+  succes: (res: Response, { status = httpStatus.OK, payload, serializer, totalCount }: ResponderOptions) => {
     if (!payload) return res.sendStatus(status);
     if (!serializer || !serializer.serialize) {
       return res.status(status).send(payload);
     }
 
-    logger.debug('Response: ', serializer.serialize(payload));
-    return res.status(status).json(serializer.serialize(payload));
+    logger.debug('Response: ', serializer.serialize(payload, { totalCount }));
+    return res.status(status).json(serializer.serialize(payload, { totalCount }));
   },
   error: (res: Response, errors: any) => {
     const parsedError = parseErrors(errors);
@@ -31,4 +31,5 @@ export interface ResponderOptions {
   status?: number;
   payload?: any;
   serializer?: any;
+  totalCount?: number;
 }

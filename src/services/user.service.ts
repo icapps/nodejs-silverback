@@ -1,10 +1,10 @@
-
+import { User } from '../models/user.model';
+import { Filters } from '../models/filters.model';
+import * as userRepository from '../repositories/user.repository';
 
 /**
- * Get all users
+ * Return all users
  */
-export function getAll() {
-  return [{
-    name: 'Brent',
-  }];
+export function getAll(filters: Filters): Promise<{ data: User[], totalCount: number }> {
+  return userRepository.getAll(filters);
 }

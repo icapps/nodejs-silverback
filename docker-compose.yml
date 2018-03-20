@@ -1,13 +1,14 @@
 version: '3.3'
 services:
   postgres:
-    image: brentvangeertruy93/dta-postgres
-    container_name: dta_pg
+    image: sameersbn/postgresql:latest
+    container_name: pgsql_silverback
     ports:
     - "5432:5432"
     environment:
-      - DEBUG=false
-      - POSTGRES_USER=developer
-      - POSTGRES_PASSWORD=developer
-      - POSTGRES_DB=silverback_test
-      - PGDATA=./data/postgres
+      - DB_USER=developer
+      - DB_PASS=developer
+      - DB_NAME=silverback_test,silverback_dev
+      - DB_EXTENSION="uuid-ossp"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data

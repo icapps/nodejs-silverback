@@ -300,6 +300,8 @@ definitions:
           type: string
         email:
           type: string
+        hasAccess:
+          type: boolean
         role:
           type: string
           enum: ["USER", "ADMIN"]

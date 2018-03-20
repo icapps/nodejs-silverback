@@ -1,6 +1,7 @@
+import { UnauthorizedError } from 'tree-house-errors';
+import * as httpMocks from 'node-mocks-http';
 import { roles } from '../../src/config/roles.config';
 import * as utils from '../../src/lib/utils';
-
 
 describe('lib/utils', () => {
   describe('hasRole', () => {
@@ -26,6 +27,20 @@ describe('lib/utils', () => {
       };
       const hasRole = utils.hasRole(user, roles.ADMIN);
       expect(hasRole).toEqual(false);
+    });
+  });
+
+  describe('extractJwt', () => {
+    it('Should throw an error when incorrect prefix is provided', () => {
+      expect.assertions(1);
+      try {
+        const mockRequest = httpMocks.createRequest({
+          headers: { Authorization: 'JWT ...' },
+        });
+        utils.extractJwt(mockRequest);
+      } catch (err) {
+        expect(err).toEqual(new UnauthorizedError());
+      }
     });
   });
 });

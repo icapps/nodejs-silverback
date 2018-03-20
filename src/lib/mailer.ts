@@ -4,7 +4,7 @@ import { logger } from './logger';
 const defaultTransport: Transporter = createTransport({
   service: 'Mandrill',
   auth: {
-    user: process.env.MANDRILL_USERNAME || 'iCapps',
+    user: process.env.MANDRILL_USERNAME,
     pass: process.env.MANDRILL_API_KEY,
   },
   logger: process.env.LOG_LEVEL === 'debug', // log to console

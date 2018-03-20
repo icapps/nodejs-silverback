@@ -30,5 +30,5 @@ for (const x in appConfig.VERSIONS) {
 app.use((error, _req, res, _next) => responder.error(res, error));
 app.all('*', (_req, res) => res.sendStatus(404));
 
-export default app;
+export { app };
 
