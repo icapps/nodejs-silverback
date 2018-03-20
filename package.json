@@ -9,6 +9,7 @@
     "serve": "yarn build && yarn start",
     "clean": "rimraf ./build",
     "lint": "tslint 'src/**/*.ts'",
+    "postinstall": "node_modules/typescript/bin/tsc",
     "pretest": "NODE_ENV=test yarn db:migrate",
     "test": "jest --forceExit",
     "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts --forceExit",
