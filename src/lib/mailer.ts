@@ -1,7 +1,7 @@
 import { createTransport, Transporter, SendMailOptions } from 'nodemailer';
 import { logger } from './logger';
 
-const mailer: Transporter = createTransport({
+const defaultTransport: Transporter = createTransport({
   service: 'Mandrill',
   auth: {
     user: process.env.MANDRILL_USERNAME || 'iCapps',
@@ -15,9 +15,9 @@ const mailer: Transporter = createTransport({
 /**
  * Send an email with all available nodemailer options
  */
-export async function send(options: SendMailOptions): Promise<void> {
+export async function send(options: SendMailOptions, transport: Transporter = defaultTransport): Promise<void> {
   try {
-    const info = await mailer.sendMail(options);
+    const info = await transport.sendMail(options);
     logger.info(`Message sent: ${info ? info.response : ''}`);
   } catch (error) {
     logger.error(`Error trying to send an email: ${error.message}`);

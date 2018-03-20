@@ -2957,6 +2957,10 @@ node-pre-gyp@^0.6.39:
     tar "^2.2.1"
     tar-pack "^3.4.0"
 
+nodemailer-stub-transport@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/nodemailer-stub-transport/-/nodemailer-stub-transport-1.1.0.tgz#11421d2d66b4ee6f405354f914c1f4641eb24b0d"
+
 nodemailer@~4.6.3:
   version "4.6.3"
   resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-4.6.3.tgz#c3b7e97fb72f46d4a475c406a15ed23a45dbcddc"

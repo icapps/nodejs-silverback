@@ -6,6 +6,14 @@ import { responder } from '../../src/lib/responder';
 
 describe('lib/responder', () => {
   describe('succes', () => {
+    it('Should send response with empty options', () => {
+      const res = httpMocks.createResponse();
+      responder.succes(res, {});
+
+      expect(res.statusCode).toEqual(httpStatus.OK);
+      expect(res._isJSON()).toEqual(false);
+    });
+
     it('Should send response without payload', () => {
       const res = httpMocks.createResponse();
       responder.succes(res, {
