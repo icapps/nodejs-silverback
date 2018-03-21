@@ -1,0 +1,25 @@
+image: node:8
+
+definitions:
+  services:
+    postgres:
+      image: postgres
+      environment:
+        POSTGRES_DB: silverback_test
+        POSTGRES_USER: developer
+        POSTGRES_PASSWORD: developer
+pipelines:
+  default:
+    - step:
+        caches:
+          - node
+        script: # Modify the commands below to build your repository.
+          - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 0.24.5
+          - export PATH=$HOME/.yarn/bin:$PATH
+          - yarn cache dir
+          - yarn
+          - yarn global add ts-node typescript typings
+          - yarn lint
+          - yarn test
+        services:
+          - postgres

@@ -1,6 +1,6 @@
 // jest.config.js
 module.exports = {
-  verbose: false,
+  verbose: true,
   notify: false,
   coverageThreshold: {
     global: {
@@ -20,8 +20,17 @@ module.exports = {
     "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
   },
   testRegex: "/tests/.*\\.(ts|tsx|js)$",
+  setupFiles: ["<rootDir>/tests/test.config.ts"],
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "tests/test.config",
+  ],
   coveragePathIgnorePatterns: [
     '/node_modules/',
-    'src/index.ts',
+    'src/app.ts',
+    'src/server.ts',
+    'src/lib/db.ts',
+    'src/lib/logger.ts',
+    'src/config'
   ],
 };
