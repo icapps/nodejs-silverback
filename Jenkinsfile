@@ -1,28 +1,14 @@
 pipeline {
   agent {
-    docker { image 'node:8' }
+    node {
+      label '10.0.190.250:5000/icapps/web'
     }
   }
-   environment {
+  environment {
     HEROKU_PROJECT  = 'icapps-nodejs-silverback-dev'
     DEPLOY_BRANCH   = 'origin/develop'
   }
   stages {
-    stage('Install yarn') {
-      steps {
-        sh 'curl -o- -L https://yarnpkg.com/install.sh | bash'
-      }
-    }
-    stage('Install dependencies') {
-      steps {
-        sh 'yarn'
-      }
-    }
-    stage('Build the application') {
-      steps {
-        sh 'yarn build'
-      }
-    }
     stage('Deploy to Heroku') {
       steps {
         sh 'set -e'
