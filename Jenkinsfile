@@ -1,7 +1,6 @@
 pipeline {
   agent {
-    node {
-      label '10.0.190.250:5000/icapps/web'
+    docker { image 'node:8' }
     }
   }
    environment {
