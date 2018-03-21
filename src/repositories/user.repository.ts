@@ -1,4 +1,4 @@
-import { db } from '../lib/db';
+import { db, selectAndCount, parseTotalCount } from '../lib/db';
 import { logger } from '../lib/logger';
 import { Filters } from '../models/filters.model';
 import { applyPagination, applySorting, applySearch } from '../lib/filter';
@@ -22,13 +22,12 @@ export async function create(values: User): Promise<User> {
 /**
  * Return all users
  */
-// TODO: Rewrite count and apply of filters into cleaner code...
 export async function getAll(options: Filters = {}): Promise<{ data: User[], totalCount: number }> {
   const allOptions = Object.assign({}, defaultFilters, options);
   const searchFields = ['id', 'email', 'firstName', 'lastName'];
   const sortFields = ['email', 'firstName', 'lastName'];
 
-  const query = db.select(defaultReturnValues)
+  const query = selectAndCount(db, defaultReturnValues)
     .from(tableNames.USERS);
 
   applyPagination(query, allOptions);
@@ -36,17 +35,8 @@ export async function getAll(options: Filters = {}): Promise<{ data: User[], tot
   applySorting(query, allOptions, sortFields);
   logger.debug(`Get all users: ${query.toString()}`);
 
-  // TODO: Investigate performance (combine into one raw query?)
-  const totalCountQuery = db.count('id')
-    .from(tableNames.USERS);
-
-  applySearch(totalCountQuery, allOptions, searchFields);
-  logger.debug(`Get total count users: ${totalCountQuery.toString()}`);
-
   const data = await query;
-  const totalCount = await totalCountQuery;
-
-  return { data, totalCount: parseInt(totalCount[0].count, 10) }; // TODO: Should we move this parsing into a seperate function (with db.count)
+  return { data, totalCount: parseTotalCount(data) };
 }
 
 

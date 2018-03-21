@@ -30,7 +30,6 @@ module.exports = {
     '/node_modules/',
     'src/app.ts',
     'src/server.ts',
-    'src/lib/db.ts',
     'src/lib/logger.ts',
     'src/config'
   ],
