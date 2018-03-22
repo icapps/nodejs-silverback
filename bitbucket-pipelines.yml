@@ -3,11 +3,12 @@ image: node:8
 definitions:
   services:
     postgres:
-      image: postgres
+      image: sameersbn/postgresql:latest
       environment:
-        POSTGRES_DB: silverback_test
-        POSTGRES_USER: developer
-        POSTGRES_PASSWORD: developer
+        DB_USER: developer
+        DB_PASS: developer
+        DB_NAME: silverback_test
+        DB_EXTENSION: "uuid-ossp"
 pipelines:
   branches:
     develop:
