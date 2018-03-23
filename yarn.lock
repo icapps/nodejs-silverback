@@ -80,7 +80,7 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
-"@types/faker@^4.1.2":
+"@types/faker@~4.1.2":
   version "4.1.2"
   resolved "https://registry.npmjs.org/@types/faker/-/faker-4.1.2.tgz#f8ab50c9f9af68c160dd71b63f83e24b712d0df5"
 
