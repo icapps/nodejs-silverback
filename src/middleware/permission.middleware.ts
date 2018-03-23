@@ -24,7 +24,7 @@ export async function hasPermission(req: Request, _res: Response, next: NextFunc
     Object.assign(req, { session: { user } });
     next();
   } catch (err) {
-    logger.error(`No permission for route: ${err.message}`);
+    logger.error(`No permission for route: ${err}`);
     next(err);
   }
 }
