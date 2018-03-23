@@ -1289,7 +1289,7 @@ express-brute@~1.0.1:
     long-timeout "~0.1.1"
     underscore "~1.8.3"
 
-express-validation@~1.0.2:
+express-validation@^1.0.2, express-validation@~1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/express-validation/-/express-validation-1.0.2.tgz#7d589dd3b257c55b3e004665b6c69cb12cc2b142"
   dependencies:
