@@ -13,12 +13,12 @@ describe('/auth', () => {
     let user;
     let token;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       user = await createUser(validUser);
       token = await getValidJwt(user.id);
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       await resetUserData();
     });
 
