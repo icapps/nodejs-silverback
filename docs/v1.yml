@@ -45,6 +45,8 @@ paths:
       tags:
       - "authentication"
       summary: "Logout the current user"
+      security:
+        - Bearer: []
       responses:
         204:
           description: "Success"
@@ -156,6 +158,10 @@ paths:
       tags:
       - "current user"
       summary: "Returns the current user information"
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: '#/parameters/authorizationParams'
       responses:
         200:
           description: "logged in user"
@@ -190,6 +196,12 @@ paths:
       tags:
       - "users"
       summary: "Returns all users"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
       responses:
         200:
           description: "Success"
@@ -203,6 +215,12 @@ paths:
       tags:
       - "users"
       summary: "Create a new user"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
       parameters:
         - name: "user values"
           in: "body"
@@ -229,6 +247,12 @@ paths:
       tags:
       - "users"
       summary: "Returns user by id"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
       responses:
         200:
           description: "Success"
@@ -242,6 +266,12 @@ paths:
       tags:
       - "users"
       summary: "Update an existing user"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
       parameters:
         - name: "user values"
           in: "body"
@@ -261,6 +291,12 @@ paths:
       tags:
       - "users"
       summary: "Update an existing user's property"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
       parameters:
         - name: "user values"
           in: "body"
@@ -280,6 +316,12 @@ paths:
       tags:
       - "users"
       summary: "Delete an existing user"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
       responses:
         204:
           description: "Success"
