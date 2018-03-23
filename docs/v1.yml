@@ -202,6 +202,12 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+      parameters:
+        - $ref: "#/parameters/SortOrder"
+        - $ref: "#/parameters/SortField"
+        - $ref: "#/parameters/Offset"
+        - $ref: "#/parameters/Limit"
+        - $ref: "#/parameters/Search"
       responses:
         200:
           description: "Success"
@@ -504,3 +510,37 @@ definitions:
               stack:
                 type: string
                 description: 'Stacktrace (only for development purposes)'
+parameters:
+  SortOrder:
+    in: query
+    type: "string"
+    name: sortOrder
+    enum: [asc, desc]
+    default: asc
+    description: Order of the field to sort by (ascending or descending)
+    required: false
+  SortField:
+    in: query
+    type: "string"
+    name: sortField
+    description: Field to sort the results by
+    required: false
+  Limit:
+    in: query
+    type: "number"
+    name: limit
+    description: Number of items to retrieve
+    required: false
+  Offset:
+    in: query
+    type: "number"
+    name: offset
+    description: Offset for the number of items to retrieve
+    required: false
+  Search:
+    in: query
+    type: "string"
+    name: search
+    description: Search for items matching this string (fuzzy search)
+    required: false
+
