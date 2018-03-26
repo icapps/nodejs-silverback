@@ -160,8 +160,6 @@ paths:
       summary: "Returns the current user information"
       security:
         - Bearer: []
-      parameters:
-        - $ref: '#/parameters/authorizationParams'
       responses:
         200:
           description: "logged in user"
