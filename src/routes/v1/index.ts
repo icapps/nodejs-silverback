@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { routes as authRoutes } from './auth.routes';
 import { routes as userRoutes } from './user.routes';
+import { routes as metaRoutes } from '../controllers/meta-options.controller';
 
 export const routes: Router = Router({ mergeParams: true })
   .use('/auth', authRoutes)
-  .use('/users', userRoutes);
+  .use('/users', userRoutes)
+  .use('/meta', metaRoutes);
