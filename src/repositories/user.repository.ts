@@ -1,17 +1,22 @@
 import { db, selectAndCount, parseTotalCount } from '../lib/db';
+import { settings } from '../config/app.config';
 import { logger } from '../lib/logger';
 import { Filters } from '../models/filters.model';
 import { applyPagination, applySorting, applySearch } from '../lib/filter';
 import { tableNames, defaultFilters } from '../constants';
 import { User } from '../models/user.model';
-
-const defaultReturnValues = ['id', 'email', 'firstName', 'lastName', 'hasAccess', 'role', 'createdAt', 'updatedAt'];
+import { getHashedPassword } from 'tree-house-authentication';
+const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName', 'hasAccess', 'role', 'createdAt', 'updatedAt'];
 
 /**
  * Create new user
  */
 export async function create(values: User): Promise<User> {
-  const query = db.insert(values, defaultReturnValues)
+  // Hash the password before inserting
+  const hashedPw = await getHashedPassword(values.password, settings.saltCount);
+  const valuesToInsert = Object.assign({}, values, { password: hashedPw });
+
+  const query = db.insert(valuesToInsert, defaultReturnValues)
     .into(tableNames.USERS);
 
   logger.debug(`Create new user: ${query.toString()}`);
@@ -50,5 +55,19 @@ export async function getById(id: string): Promise<User> {
     .first();
 
   logger.debug(`Get user by id: ${query.toString()}`);
+  return await query;
+}
+
+
+/**
+ * Find a user by email
+ */
+export async function findByEmail(email: string): Promise<User | undefined> {
+  const query = db.select(defaultReturnValues)
+    .where('email', email)
+    .from(tableNames.USERS)
+    .first();
+
+  logger.debug(`Get user by email: ${query.toString()}`);
   return await query;
 }

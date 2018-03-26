@@ -11,8 +11,8 @@
     "lint": "tslint 'src/**/*.ts'",
     "postinstall": "node_modules/typescript/bin/tsc",
     "pretest": "NODE_ENV=test yarn db:migrate",
-    "test": "jest --forceExit",
-    "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts --forceExit",
+    "test": "jest --maxWorkers=1 --forceExit",
+    "test:coverage": "jest --coverage --maxWorkers=1 --collectCoverageFrom=src/**/*.ts --forceExit",
     "test:watch": "jest --watchAll",
     "db:seed": "node_modules/knex/bin/cli.js seed:run",
     "db:migrate": "node_modules/knex/bin/cli.js migrate:latest"
@@ -23,6 +23,7 @@
   "dependencies": {
     "dotenv-safe": "~5.0.1",
     "express": "~4.16.2",
+    "express-validation": "^1.0.2",
     "http-status": "~1.0.1",
     "jsonade": "~1.1.0",
     "knex": "~0.14.4",
