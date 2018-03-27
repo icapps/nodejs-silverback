@@ -10,19 +10,16 @@ import { userSchema } from '../schemes/user.schema';
 import * as userService from '../services/user.service';
 
 export const routes: Router = Router({ mergeParams: true })
-  .get('/', (req, res, next) => hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(getAll))
+  .get('/', (req, res, next) => // TODO: Joi validator for query parameters
+    hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(getAll))
   .post('/', (req, res, next) =>
-    hasPermission(req, res, next, roles.ADMIN),
-    validateSchema(userSchema.create),
-    handleAsyncFn(create))
+    hasPermission(req, res, next, roles.ADMIN), validateSchema(userSchema.create), handleAsyncFn(create))
   .put('/:userId', (req, res, next) =>
-    hasPermission(req, res, next, roles.ADMIN),
-    validateSchema(userSchema.update),
-    handleAsyncFn(update))
+    hasPermission(req, res, next, roles.ADMIN), validateSchema(userSchema.update), handleAsyncFn(update))
+  .patch('/:userId', (req, res, next) =>
+    hasPermission(req, res, next, roles.ADMIN), validateSchema(userSchema.partialUpdate), handleAsyncFn(partialUpdate))
   .delete('/:userId', (req, res, next) =>
-    hasPermission(req, res, next, roles.ADMIN),
-    validateSchema(userSchema.remove),
-    handleAsyncFn(remove));
+    hasPermission(req, res, next, roles.ADMIN), validateSchema(userSchema.remove), handleAsyncFn(remove));
 
 /**
  * Return all users
@@ -56,6 +53,19 @@ async function create(req: Request, res: Response): Promise<void> {
  */
 async function update(req: Request, res: Response): Promise<void> {
   const result = await userService.update(req.params.userId, req.body);
+  responder.succes(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: userSerializer,
+  });
+}
+
+
+/**
+ * Update a property of an existing user
+ */
+async function partialUpdate(req: Request, res: Response): Promise<void> {
+  const result = await userService.partialUpdate(req.params.userId, req.body);
   responder.succes(res, {
     status: httpStatus.OK,
     payload: result,

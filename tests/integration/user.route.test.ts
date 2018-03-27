@@ -375,6 +375,103 @@ describe('/users', () => {
     });
   });
 
+  describe('PATCH /:userId', () => {
+    let user;
+
+    beforeAll(async () => {
+      user = await createUser(validUser);
+    });
+
+    afterAll(async () => {
+      await clearUserData(); // Clear user db (except users for tokens)
+    });
+
+    it('Should succesfully update the property of an existing user', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+        });
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.data.email).toEqual('test@unknown2.com');
+      Joi.validate(body, createUserSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+
+      const updated = await findById(user.id);
+      expect(updated).toMatchObject({
+        id: expect.any(String),
+        email: 'test@unknown2.com',
+        firstName: user.firstName,
+        lastName: user.lastName,
+        password: expect.any(String),
+        hasAccess: user.hasAccess,
+        role: user.role,
+      });
+    });
+
+    it('Should throw an error when an invalid property is provided', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          unknownStuff: 'test@unknown2.com',
+        });
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
+    it('Should throw an error when user id is not a valid guid', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/users/unknownId`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+        });
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when user does not exist', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/users/${faker.random.uuid()}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+        });
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error when user has no admin rights', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          email: 'test@unknown2.com',
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+
+    it('Should throw an error when no JWT token is provided', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/users/${user.id}`)
+        .send({
+          email: 'test@unknown2.com',
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+  });
+
   describe('DELETE /:userId', () => {
     let user;
 

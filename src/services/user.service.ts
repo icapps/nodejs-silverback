@@ -1,4 +1,4 @@
-import { User, UserCreate, UserUpdate } from '../models/user.model';
+import { User, UserCreate, UserUpdate, PartialUserUpdate } from '../models/user.model';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
 import * as userRepository from '../repositories/user.repository';
@@ -34,6 +34,21 @@ export async function create(values: UserCreate): Promise<User> {
  * Update existing user
  */
 export async function update(userId: string, values: UserUpdate): Promise<User> {
+  try {
+    const result = await userRepository.update(userId, values);
+    if (!result) throw new NotFoundError();
+    return result;
+  } catch (error) {
+    logger.error(`An error occured updating a user: ${error}`);
+    throw error;
+  }
+}
+
+
+/**
+ * Update existing properties of a user
+ */
+export async function partialUpdate(userId: string, values: PartialUserUpdate): Promise<User> {
   try {
     const result = await userRepository.update(userId, values);
     if (!result) throw new NotFoundError();

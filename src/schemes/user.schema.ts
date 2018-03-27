@@ -23,6 +23,18 @@ export const userSchema = {
       role: Joi.string().required(),
     },
   },
+  partialUpdate: {
+    params: {
+      userId: Joi.string().guid(),
+    },
+    body: {
+      email: Joi.string(),
+      firstName: Joi.string(),
+      lastName: Joi.string(),
+      hasAccess: Joi.boolean(),
+      role: Joi.string(),
+    },
+  },
   remove: {
     params: {
       userId: Joi.string().guid(),

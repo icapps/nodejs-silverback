@@ -24,3 +24,11 @@ export interface UserUpdate {
   hasAccess: boolean;
   role: string; // Code of role
 }
+
+export interface PartialUserUpdate {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  hasAccess?: boolean;
+  role?: string; // Code of role
+}

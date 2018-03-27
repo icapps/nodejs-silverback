@@ -4,7 +4,7 @@ import { logger } from '../lib/logger';
 import { Filters } from '../models/filters.model';
 import { applyPagination, applySorting, applySearch } from '../lib/filter';
 import { tableNames, defaultFilters } from '../constants';
-import { User, UserUpdate, UserCreate } from '../models/user.model';
+import { User, UserUpdate, UserCreate, PartialUserUpdate } from '../models/user.model';
 import { getHashedPassword } from 'tree-house-authentication';
 const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName', 'hasAccess', 'role', 'createdAt', 'updatedAt'];
 
@@ -27,7 +27,8 @@ export async function create(values: UserCreate): Promise<User> {
 /**
  * Update an existing user
  */
-export async function update(userId: string, values: UserUpdate): Promise<User> {
+export async function update(userId: string, values: UserUpdate | PartialUserUpdate): Promise<User> {
+  // TODO: UpdateAt!!
   const query = db(tableNames.USERS)
     .update(values, defaultReturnValues)
     .where('id', userId);
