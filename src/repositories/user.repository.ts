@@ -54,7 +54,7 @@ export async function remove(userId: string): Promise<{ affectedRows: number }> 
 /**
  * Return all users
  */
-export async function getAll(options: Filters = {}): Promise<{ data: User[], totalCount: number }> {
+export async function findAll(options: Filters = {}): Promise<{ data: User[], totalCount: number }> {
   const allOptions = Object.assign({}, defaultFilters, options);
   const searchFields = ['id', 'email', 'firstName', 'lastName'];
   const sortFields = ['email', 'firstName', 'lastName'];

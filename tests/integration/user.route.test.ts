@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { app } from '../../src/app';
 import { clearAll } from '../_helpers/mockdata/data';
 import { validUsers, validUser, adminUser, regularUser, createUsers, clearUserData, createUser, findById } from '../_helpers/mockdata/user.data';
-import { usersSchema, userSchema, createUserSchema } from '../_helpers/payload-schemes/user.schema';
+import { usersSchema, userSchema, createUserSchema, userByIdSchema } from '../_helpers/payload-schemes/user.schema';
 import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
 import { roles } from '../../src/config/roles.config';
 import { errors } from '../../src/config/errors.config';
@@ -175,6 +175,61 @@ describe('/users', () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`);
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
+    });
+  });
+
+  describe('GET /:userId', () => {
+    let user;
+
+    beforeAll(async () => {
+      user = await createUser(validUser);
+    });
+
+    afterAll(async () => {
+      await clearUserData(); // Clear user db (except users for tokens)
+    });
+
+    it('Should succesfully return user via id', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.data).toMatchObject({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        hasAccess: user.hasAccess,
+        role: user.role,
+      });
+      Joi.validate(body, userByIdSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+    });
+
+    it('Should throw an error when user id is not a valid guid', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/users/unknownId`)
+        .set('Authorization', `Bearer ${adminToken}`);
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when user does not exist', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/users/${faker.random.uuid()}`)
+        .set('Authorization', `Bearer ${adminToken}`);
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error when user has no admin rights', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${userToken}`);
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
     });
   });
 

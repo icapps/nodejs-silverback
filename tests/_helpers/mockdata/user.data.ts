@@ -62,7 +62,7 @@ export async function createUsers(users: User[]) {
   for (const userValues of users) {
     await userRepository.create(userValues);
   }
-  return await userRepository.getAll();
+  return await userRepository.findAll();
 }
 
 export function createUser(values: User) {

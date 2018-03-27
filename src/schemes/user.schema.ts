@@ -1,6 +1,11 @@
 import * as Joi from 'joi';
 
 export const userSchema = {
+  findById: {
+    params: {
+      userId: Joi.string().guid(),
+    },
+  },
   create: {
     body: {
       email: Joi.string().required(),

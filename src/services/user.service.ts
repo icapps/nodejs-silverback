@@ -1,15 +1,26 @@
+import { NotFoundError } from 'tree-house-errors';
 import { User, UserCreate, UserUpdate, PartialUserUpdate } from '../models/user.model';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
 import * as userRepository from '../repositories/user.repository';
-import { NotFoundError } from 'tree-house-errors';
+
+
+/**
+ * Return a user by id
+ */
+export async function findById(userId: string): Promise<User> {
+  const result = await userRepository.findById(userId);
+  if (!result) throw new NotFoundError();
+  return result;
+}
+
 
 /**
  * Return all users
  */
-export async function getAll(filters: Filters): Promise<{ data: User[], totalCount: number }> {
+export async function findAll(filters: Filters): Promise<{ data: User[], totalCount: number }> {
   try {
-    return await userRepository.getAll(filters);
+    return await userRepository.findAll(filters);
   } catch (error) {
     logger.error(`An error occured in the user service: ${error}`);
     throw error;

@@ -11,7 +11,9 @@ import * as userService from '../services/user.service';
 
 export const routes: Router = Router({ mergeParams: true })
   .get('/', (req, res, next) => // TODO: Joi validator for query parameters
-    hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(getAll))
+    hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(findAll))
+  .get('/:userId', (req, res, next) =>
+    hasPermission(req, res, next, roles.ADMIN), validateSchema(userSchema.findById), handleAsyncFn(findById))
   .post('/', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN), validateSchema(userSchema.create), handleAsyncFn(create))
   .put('/:userId', (req, res, next) =>
@@ -21,11 +23,25 @@ export const routes: Router = Router({ mergeParams: true })
   .delete('/:userId', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN), validateSchema(userSchema.remove), handleAsyncFn(remove));
 
+
+/**
+ * Get a user by id
+ */
+async function findById(req: Request, res: Response): Promise<void> {
+  const result = await userService.findById(req.params.userId);
+  responder.succes(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: userSerializer,
+  });
+}
+
+
 /**
  * Return all users
  */
-async function getAll(req: Request, res: Response): Promise<void> {
-  const { data, totalCount } = await userService.getAll(req.query);
+async function findAll(req: Request, res: Response): Promise<void> {
+  const { data, totalCount } = await userService.findAll(req.query);
   responder.succes(res, {
     totalCount,
     status: httpStatus.OK,
