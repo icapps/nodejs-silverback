@@ -10,7 +10,7 @@ const app: express.Application = express();
 treehouse.setLocalHeaders(app, '*');
 treehouse.setBasicSecurity(app, '*');
 treehouse.setBodyParser(app, '*');
-treehouse.setRateLimiter(app, '*');
+// treehouse.setRateLimiter(app, '*'); // TODO: Fix proper settings
 
 // Display all versions
 app.get('/', (_req, res) => res.json(appConfig.VERSIONS));

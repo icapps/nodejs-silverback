@@ -14,8 +14,11 @@ export const routes: Router = Router({ mergeParams: true })
   .post('/', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(userSchema.create),
-    handleAsyncFn(create));
-
+    handleAsyncFn(create))
+  .put('/:userId', (req, res, next) =>
+    hasPermission(req, res, next, roles.ADMIN),
+    validateSchema(userSchema.update),
+    handleAsyncFn(update));
 
 /**
  * Return all users
@@ -38,6 +41,20 @@ async function create(req: Request, res: Response) {
   const result = await userService.create(req.body);
   return responder.succes(res, {
     status: httpStatus.CREATED,
+    payload: result,
+    serializer: userSerializer,
+  });
+}
+
+
+/**
+ * Update an existing user
+ */
+async function update(req: Request, res: Response) {
+  const userId: string = req.params.userId;
+  const result = await userService.update(userId, req.body);
+  return responder.succes(res, {
+    status: httpStatus.OK,
     payload: result,
     serializer: userSerializer,
   });

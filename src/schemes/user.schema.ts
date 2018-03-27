@@ -11,4 +11,13 @@ export const userSchema = {
       role: Joi.string().required(),
     },
   },
+  update: {
+    body: {
+      email: Joi.string().required(),
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+      hasAccess: Joi.boolean().required(),
+      role: Joi.string().required(),
+    },
+  },
 };

@@ -69,6 +69,10 @@ export function createUser(values: User) {
   return userRepository.create(values);
 }
 
+export function findById(id: string) {
+  return userRepository.findById(id);
+}
+
 /**
  * Clear all user data except admin and regular
  */

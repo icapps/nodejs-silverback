@@ -5,7 +5,7 @@ import * as faker from 'faker';
 import * as _ from 'lodash';
 import { app } from '../../src/app';
 import { clearAll } from '../_helpers/mockdata/data';
-import { validUsers, adminUser, regularUser, createUsers, clearUserData, createUser } from '../_helpers/mockdata/user.data';
+import { validUsers, validUser, adminUser, regularUser, createUsers, clearUserData, createUser, findById } from '../_helpers/mockdata/user.data';
 import { usersSchema, userSchema, createUserSchema } from '../_helpers/payload-schemes/user.schema';
 import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
 import { roles } from '../../src/config/roles.config';
@@ -20,6 +20,10 @@ describe('/users', () => {
     await clearAll(); // Full db clear
     userToken = await getUserToken(); // Also creates user
     adminToken = await getAdminToken(); // Also creates user
+  });
+
+  afterAll(async () => {
+    await clearAll(); // Full db clear - empty db after tests
   });
 
   describe('GET /', () => {
@@ -251,4 +255,97 @@ describe('/users', () => {
       expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
     });
   });
+
+  describe('PUT /{userId}', () => {
+    let user;
+
+    beforeAll(async () => {
+      user = await createUser(validUser);
+    });
+
+    afterAll(async () => {
+      await clearUserData(); // Clear user db (except users for tokens)
+    });
+
+    it('Should succesfully update an existing user', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.data.email).toEqual('test@unknown2.com');
+      Joi.validate(body, createUserSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+
+      const updated = await findById(user.id);
+      expect(updated).toMatchObject({
+        id: expect.any(String),
+        email: 'test@unknown2.com',
+        firstName: 'Test',
+        lastName: 'Unknown',
+        password: expect.any(String),
+        hasAccess: false,
+        role: roles.ADMIN.code,
+      });
+    });
+
+    it('Should throw an error when not all fields are provided', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+        });
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
+    it('Should throw an error when user has no admin rights', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+
+    it('Should throw an error when no JWT token is provided', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+
+  });
+
 });

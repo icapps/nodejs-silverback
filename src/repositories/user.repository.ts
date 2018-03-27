@@ -4,22 +4,35 @@ import { logger } from '../lib/logger';
 import { Filters } from '../models/filters.model';
 import { applyPagination, applySorting, applySearch } from '../lib/filter';
 import { tableNames, defaultFilters } from '../constants';
-import { User } from '../models/user.model';
+import { User, UserUpdate, UserCreate } from '../models/user.model';
 import { getHashedPassword } from 'tree-house-authentication';
 const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName', 'hasAccess', 'role', 'createdAt', 'updatedAt'];
 
 /**
  * Create new user
  */
-export async function create(values: User): Promise<User> {
+export async function create(values: UserCreate): Promise<User> {
   // Hash the password before inserting
   const hashedPw = await getHashedPassword(values.password, settings.saltCount);
   const valuesToInsert = Object.assign({}, values, { password: hashedPw });
 
-  const query = db.insert(valuesToInsert, defaultReturnValues)
-    .into(tableNames.USERS);
+  const query = db(tableNames.USERS)
+    .insert(valuesToInsert, defaultReturnValues);
 
   logger.debug(`Create new user: ${query.toString()}`);
+  return (await query)[0];
+}
+
+
+/**
+ * Update an existing user
+ */
+export async function update(userId: string, values: UserUpdate): Promise<User> {
+  const query = db(tableNames.USERS)
+    .update(values, defaultReturnValues)
+    .where('id', userId);
+
+  logger.debug(`Update existing user: ${query.toString()}`);
   return (await query)[0];
 }
 
@@ -49,9 +62,9 @@ export async function getAll(options: Filters = {}): Promise<{ data: User[], tot
  * Get a user by id
  */
 export async function findById(id: string): Promise<User> {
-  const query = db.select(defaultReturnValues)
+  const query = db(tableNames.USERS)
+    .select(defaultReturnValues)
     .where('id', id)
-    .from(tableNames.USERS)
     .first();
 
   logger.debug(`Get user by id: ${query.toString()}`);
@@ -63,9 +76,9 @@ export async function findById(id: string): Promise<User> {
  * Find a user by email
  */
 export async function findByEmail(email: string): Promise<User | undefined> {
-  const query = db.select(defaultReturnValues)
+  const query = db(tableNames.USERS)
+    .select(defaultReturnValues)
     .where('email', email)
-    .from(tableNames.USERS)
     .first();
 
   logger.debug(`Get user by email: ${query.toString()}`);

@@ -18,6 +18,10 @@ describe('/auth', () => {
       user = await createUser(validUser);
     });
 
+    afterAll(async () => {
+      await clearAll();
+    });
+
     it('Should succesfully login a user with correct credentials', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)

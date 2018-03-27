@@ -16,3 +16,11 @@ export interface UserCreate {
   hasAccess: boolean;
   role: string; // Code of role
 }
+
+export interface UserUpdate {
+  email: string;
+  firstName: string;
+  lastName: string;
+  hasAccess: boolean;
+  role: string; // Code of role
+}
