@@ -24,17 +24,17 @@ pipeline {
     stage('Deploy to Heroku') {
       steps {
         sh 'set -e'
-        sh '''
+        sh """
             echo 'Checking if remote exists...'
             if ! git ls-remote heroku; then
-              echo 'Adding heroku remote...'
-              git remote add heroku git@heroku.com:\${params.HEROKU_PROJECT}.git
+              echo 'Adding heroku remote from ${params.HEROKU_PROJECT}'
+              git remote add heroku git@heroku.com:${params.HEROKU_PROJECT}.git
             fi
-        '''
-        sh '''
-            echo 'Updating heroku master branch from \${params.DEPLOY_BRANCH}'
-            git push heroku \${params.DEPLOY_BRANCH}:master --force
-        '''
+        """
+        sh """
+            echo 'Updating heroku master branch from ${params.DEPLOY_BRANCH}'
+            git push heroku ${params.DEPLOY_BRANCH}:master --force
+        """
       }
     }
   }
