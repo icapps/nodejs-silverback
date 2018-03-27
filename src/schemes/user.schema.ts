@@ -8,7 +8,7 @@ export const userSchema = {
   },
   create: {
     body: {
-      email: Joi.string().required(),
+      email: Joi.string().email().required(),
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
       password: Joi.string().required(),
@@ -21,7 +21,7 @@ export const userSchema = {
       userId: Joi.string().guid(),
     },
     body: {
-      email: Joi.string().required(),
+      email: Joi.string().email().required(),
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
@@ -33,7 +33,7 @@ export const userSchema = {
       userId: Joi.string().guid(),
     },
     body: {
-      email: Joi.string(),
+      email: Joi.string().email(),
       firstName: Joi.string(),
       lastName: Joi.string(),
       hasAccess: Joi.boolean(),
