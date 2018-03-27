@@ -32,7 +32,7 @@ pipeline {
             fi
         '''
         sh '''
-            echo 'Updating heroku master branch...'
+            echo 'Updating heroku master branch from ${params.DEPLOY_BRANCH}'
             git push heroku ${params.DEPLOY_BRANCH}:master --force
         '''
       }
