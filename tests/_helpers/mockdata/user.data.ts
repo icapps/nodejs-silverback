@@ -77,6 +77,6 @@ export function findById(id: string) {
  * Clear all user data except admin and regular
  */
 export async function clearUserData() {
-  const query = db(tableNames.USERS).del().whereNot('email', adminUser.email).andWhereNot('email', regularUser.email);
+  const query = db(tableNames.USERS).del().whereNotIn('email', [adminUser.email, regularUser.email]);
   return await query;
 }
