@@ -22,12 +22,12 @@ pipeline {
             echo "Checking if remote exists..."
             if ! git ls-remote heroku; then
               echo "Adding heroku remote..."
-              git remote add heroku git@heroku.com:${HEROKU_PROJECT}.git
+              git remote add heroku git@heroku.com:${params.HEROKU_PROJECT}.git
             fi
         '''
         sh '''
             echo "Updating heroku master branch..."
-            git push heroku ${DEPLOY_BRANCH}:master --force
+            git push heroku ${params.DEPLOY_BRANCH}:master --force
         '''
       }
     }
