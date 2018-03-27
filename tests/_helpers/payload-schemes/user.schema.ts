@@ -9,6 +9,20 @@ export const userSchema = Joi.object({
   role: Joi.string().required(), // TODO: Type of roles (code)
 });
 
+export const createUserSchema = Joi.object().keys({
+  meta: Joi.object().keys({
+    type: Joi.string().required().only('users'),
+  }),
+  data: userSchema,
+});
+
+export const userByIdSchema = Joi.object().keys({
+  meta: Joi.object().keys({
+    type: Joi.string().required().only('users'),
+  }),
+  data: userSchema,
+});
+
 export const usersSchema = Joi.object().keys({
   meta: Joi.object().keys({
     type: Joi.string().required().only('users'),

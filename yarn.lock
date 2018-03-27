@@ -98,6 +98,10 @@
   version "22.2.0"
   resolved "https://registry.npmjs.org/@types/jest/-/jest-22.2.0.tgz#55ce83139f7ad1b48b414c3927746614c6963c0f"
 
+"@types/joi@~13.0.7":
+  version "13.0.7"
+  resolved "https://registry.npmjs.org/@types/joi/-/joi-13.0.7.tgz#89cd7092fc24160b9d59597270cd0d3620e709d8"
+
 "@types/knex@~0.14.8":
   version "0.14.8"
   resolved "https://registry.npmjs.org/@types/knex/-/knex-0.14.8.tgz#cb8eaf769c2494f9e95bf4de268b8cf2f2d52a93"
@@ -2536,7 +2540,7 @@ jest@^22.4.2:
     import-local "^1.0.0"
     jest-cli "^22.4.2"
 
-joi@~13.1.2:
+joi@^13.1.2, joi@~13.1.2:
   version "13.1.2"
   resolved "https://registry.npmjs.org/joi/-/joi-13.1.2.tgz#b2db260323cc7f919fafa51e09e2275bd089a97e"
   dependencies:

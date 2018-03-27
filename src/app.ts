@@ -10,14 +10,14 @@ const app: express.Application = express();
 treehouse.setLocalHeaders(app, '*');
 treehouse.setBasicSecurity(app, '*');
 treehouse.setBodyParser(app, '*');
-treehouse.setRateLimiter(app, '*');
+// treehouse.setRateLimiter(app, '*'); // TODO: Fix proper settings
 
 // Display all versions
 app.get('/', (_req, res) => res.json(appConfig.VERSIONS));
 
 // Load routes (versioned routes go in the routes/ directory)
 for (const x in appConfig.VERSIONS) {
-  app.use(`/api${appConfig.VERSIONS[x]}`, require('./routes' + appConfig.VERSIONS[x]).routes);
+  app.use(`/api${appConfig.VERSIONS[x]}`, require(`./routes/${appConfig.VERSIONS[x]}`).routes);
 
   // Set swagger per version
   treehouse.setSwagger(app, `/api${appConfig.VERSIONS[x]}/documentation`, `docs/${appConfig.VERSIONS[x]}.yml`, {

@@ -3,7 +3,8 @@ import * as httpStatus from 'http-status';
 import * as Joi from 'joi';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
-import { resetUserData, createUser, validUser } from '../_helpers/mockdata/user.data';
+import { clearAll } from '../_helpers/mockdata/data';
+import { createUser, validUser } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 import { getValidJwt } from '../_helpers/mockdata/auth.data';
 
@@ -11,15 +12,14 @@ describe('/auth', () => {
   describe('POST /login', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let user;
-    let token;
 
     beforeAll(async () => {
+      await clearAll();
       user = await createUser(validUser);
-      token = await getValidJwt(user.id);
     });
 
     afterAll(async () => {
-      await resetUserData();
+      await clearAll();
     });
 
     it('Should succesfully login a user with correct credentials', async () => {

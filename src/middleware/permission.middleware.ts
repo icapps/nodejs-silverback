@@ -13,7 +13,7 @@ export async function hasPermission(req: Request, _res: Response, next: NextFunc
     const decodedToken = <JwtPayload>await authenticateJwt(accessToken, jwtConfig);
 
     // Find user
-    const user = await userRepository.getById(decodedToken.userId);
+    const user = await userRepository.findById(decodedToken.userId);
     if (!user) throw new NotFoundError(); // TODO: Custom error message?
 
     // Check if user has proper permission

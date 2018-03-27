@@ -1,25 +1,82 @@
 import * as httpStatus from 'http-status';
-import { Router, Request, Response } from 'express';
-import { handleAsyncFn } from 'tree-house';
+import { Request, Response } from 'express';
 import { responder } from '../lib/responder';
 import { userSerializer } from '../serializers/user.serializer';
-import { hasPermission } from '../middleware/permission.middleware';
-import { roles } from '../config/roles.config';
 import * as userService from '../services/user.service';
 
-export const routes: Router = Router({ mergeParams: true })
-  .get('/', (req, res, next) => hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(getAll));
+
+/**
+ * Get a user by id
+ */
+export async function findById(req: Request, res: Response): Promise<void> {
+  const result = await userService.findById(req.params.userId);
+  responder.succes(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: userSerializer,
+  });
+}
 
 
 /**
  * Return all users
  */
-async function getAll(req: Request, res: Response) {
-  const { data, totalCount } = await userService.getAll(req.query);
-  return responder.succes(res, {
+export async function findAll(req: Request, res: Response): Promise<void> {
+  const { data, totalCount } = await userService.findAll(req.query);
+  responder.succes(res, {
     totalCount,
     status: httpStatus.OK,
     payload: data,
     serializer: userSerializer,
+  });
+}
+
+
+/**
+ * Create a new user
+ */
+export async function create(req: Request, res: Response): Promise<void> {
+  const result = await userService.create(req.body);
+  responder.succes(res, {
+    status: httpStatus.CREATED,
+    payload: result,
+    serializer: userSerializer,
+  });
+}
+
+
+/**
+ * Update an existing user
+ */
+export async function update(req: Request, res: Response): Promise<void> {
+  const result = await userService.update(req.params.userId, req.body);
+  responder.succes(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: userSerializer,
+  });
+}
+
+
+/**
+ * Update a property of an existing user
+ */
+export async function partialUpdate(req: Request, res: Response): Promise<void> {
+  const result = await userService.partialUpdate(req.params.userId, req.body);
+  responder.succes(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: userSerializer,
+  });
+}
+
+
+/**
+ * Remove an existing user
+ */
+export async function remove(req: Request, res: Response): Promise<void> {
+  await userService.remove(req.params.userId);
+  responder.succes(res, {
+    status: httpStatus.NO_CONTENT,
   });
 }
