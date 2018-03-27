@@ -17,6 +17,10 @@ pipeline {
   stages {
     stage('Deploy to Heroku') {
       steps {
+        sh '''
+            echo "Heroku Project => ${params.HEROKU_PROJECT}"
+            echo "Heroku Deploy Branch => ${params.DEPLOY_BRANCH}"
+        '''
         sh 'set -e'
         sh '''
             echo "Checking if remote exists..."
