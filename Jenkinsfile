@@ -4,9 +4,15 @@ pipeline {
       label '10.0.190.250:5000/icapps/web'
     }
   }
-  environment {
-    HEROKU_PROJECT  = 'icapps-nodejs-silverback-dev'
-    DEPLOY_BRANCH   = 'origin/develop'
+  parameters {
+    choice(
+      name: 'HEROKU_PROJECT', 
+      choices: 'icapps-nodejs-silverback-dev\nicapps-nodejs-silverback-sta\nicapps-nodejs-silverback', 
+      description: 'Heroku Project Name')
+    choice(
+      name: 'DEPLOY_BRANCH',
+      choices: 'origin/develop\norigin/master', 
+      description: 'Origin branch for Heroku')
   }
   stages {
     stage('Deploy to Heroku') {
