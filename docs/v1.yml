@@ -333,6 +333,29 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /meta-options:
+    get:
+      tags:
+      - "metaOptions"
+      summary: "Returns all metaOptions"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/Offset"
+        - $ref: "#/parameters/Limit"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/MetaOptionsListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 definitions:
     User:
       type: object
@@ -474,6 +497,42 @@ definitions:
           type: array
           items:
             $ref: "#/definitions/User"
+    Code:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: string
+    CodeType:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        codes:
+          type: array
+          items:
+            $ref: "#/definitions/Code"
+    MetaOptionsListResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: number
+              example: 50
+            totalCount:
+              type: number
+              example: 120
+        data:
+          type: array
+          items:
+            $ref: "#/definitions/CodeType"
     VersionCheckResponse:
       type: object
       properties:

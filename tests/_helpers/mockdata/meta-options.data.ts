@@ -4,31 +4,22 @@ import { tableNames } from '../../../src/constants';
 import { db } from '../../../src/lib/db';
 import * as metaOptionsRepository from '../../../src/repositories/meta-options.repository';
 
-export const mockMetaOptions: Code = {
-  code: 'LANGUAGE',
-};
-
-export const mockCodeTypes: CodeType[] = [
-  {
-    value: 'EN',
-  },
-  {
-    value: 'NL',
-  },
-  {
-    value: 'FR',
-  },
-];
-
-export async function createMetaOptions(code: Code, codeTypes: CodeType[]) {
-  const codeValue = await metaOptionsRepository.createCode(code);
-  for (const codeType of codeTypes) {
-    await metaOptionsRepository.createCodeType(codeValue[0], codeType);
-  }
-  return await metaOptionsRepository.getAll();
+export async function createCodeType({ code, description }) {
+  return metaOptionsRepository.createCodeType({
+    code,
+    description,
+  });
 }
 
-export function resetMetaOptionsData() {
-  return db(tableNames.CODETYPES).del()
-    .then(() => db(tableNames.CODES).del());
+export async function createCodes({ codeType, value }) {
+  const code: Code = { value };
+  return metaOptionsRepository.createCode(code, codeType);
+}
+
+export function clearCodeTypesData() {
+  return db(tableNames.CODETYPES).del();
+}
+
+export function clearCodesData() {
+  return db(tableNames.CODES).del();
 }

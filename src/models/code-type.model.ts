@@ -1,4 +1,5 @@
 export interface CodeType {
   id?: string;
-  value: string;
+  code: string;
+  description?: string;
 }

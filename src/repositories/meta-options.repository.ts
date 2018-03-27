@@ -1,31 +1,19 @@
-import { db, parseTotalCount } from '../lib/db';
+import { db, parseTotalCount, selectAndCount } from '../lib/db';
 import { logger } from '../lib/logger';
 import { tableNames, defaultFilters } from '../constants';
-import { Code } from '../models/code.model';
+import { Code, CodeFilters } from '../models/code.model';
 import { CodeType } from '../models/code-type.model';
 import { Filters } from '../models/filters.model';
 import { applyPagination } from '../lib/filter';
 
-const defaultReturnValues = ['id', 'value', 'codeId'];
-const defaultCodeReturnValues = ['id', 'code'];
+const defaultCodeReturnValues = ['id', 'value', 'codeId'];
+const defaultCodeTypeReturnValues = ['id', 'code', 'description'];
 
 /**
- * Create new code
+ * Create a new codeType
  */
-export async function createCode(values: Code): Promise<Code> {
-  const query = db.insert(values, defaultCodeReturnValues)
-    .into(tableNames.CODES);
-
-  logger.debug(`Create new code: ${query.toString()}`);
-  return await query;
-}
-
-/**
-* Create new codeType
-*/
-export async function createCodeType(code: Code, values: CodeType): Promise<CodeType> {
-  const allValues = Object.assign({}, values, { codeId: code.id });
-  const query = db.insert(allValues, defaultReturnValues)
+export async function createCodeType(values: CodeType): Promise<CodeType> {
+  const query = db.insert(values, defaultCodeTypeReturnValues)
     .into(tableNames.CODETYPES);
 
   logger.debug(`Create new codeType: ${query.toString()}`);
@@ -33,18 +21,61 @@ export async function createCodeType(code: Code, values: CodeType): Promise<Code
 }
 
 /**
- * Return all codeTypes
+ * Create a new code
  */
-export async function getAll(options: Filters = {}): Promise<{ data: Code[], totalCount: number }> {
-  const allOptions = Object.assign({}, defaultFilters, options);
+export async function createCode(values: Code, codeType: CodeType): Promise<Code> {
+  const allValues = Object.assign({}, values, { codeId: codeType.id });
+  const query = db.insert(allValues, defaultCodeReturnValues)
+    .into(tableNames.CODES);
 
-  const query = db.select(db.raw(`"codeTypes"."id" as id, "code", "value", count(*) OVER() AS total`))
-    .from(tableNames.CODES).innerJoin('codeTypes', 'codes.id', 'codeTypes.codeId');
-
-  applyPagination(query, allOptions);
-  logger.debug(`Get all metaOptions: ${query.toString()}`);
-
-  const data = await query;
-  return { data, totalCount: parseTotalCount(data) };
+  logger.debug(`Create new code: ${query.toString()}`);
+  return await query;
 }
 
+/**
+ * Return all codeTypes
+ */
+export async function findAllCodeTypes(options: Filters = {}): Promise<{ data: CodeType[], totalCount: number }> {
+  try {
+    const allOptions = Object.assign({}, defaultFilters, options);
+
+    const query = selectAndCount(db, defaultCodeTypeReturnValues)
+      .from(tableNames.CODETYPES);
+
+    applyPagination(query, allOptions);
+    logger.warn(`Get all codeTypes: ${query.toString()}`);
+
+    const data = await query;
+    return { data, totalCount: parseTotalCount(data) };
+  } catch (err) {
+    console.warn('err', err);
+
+  }
+}
+
+/**
+ * Return all codes
+ */
+export async function findAllCodes(options: CodeFilters): Promise<{ data: Code[], totalCount: number }> {
+  try {
+    const allOptions = Object.assign({}, defaultFilters, options);
+
+    let query;
+    if (allOptions.codeId) {
+      query = selectAndCount(db, defaultCodeReturnValues)
+        .from(tableNames.CODES).where('codeId', allOptions.codeId);
+    } else {
+      query = selectAndCount(db, defaultCodeReturnValues)
+        .from(tableNames.CODES);
+    }
+
+    applyPagination(query, allOptions);
+    logger.debug(`Get all codes: ${query.toString()}`);
+
+    const data = await query;
+    return { data, totalCount: parseTotalCount(data) };
+  } catch (err) {
+    console.warn('err', err);
+
+  }
+}

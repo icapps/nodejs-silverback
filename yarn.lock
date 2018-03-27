@@ -2540,7 +2540,7 @@ jest@^22.4.2:
     import-local "^1.0.0"
     jest-cli "^22.4.2"
 
-joi@^13.1.2, joi@~13.1.2:
+joi@~13.1.2:
   version "13.1.2"
   resolved "https://registry.npmjs.org/joi/-/joi-13.1.2.tgz#b2db260323cc7f919fafa51e09e2275bd089a97e"
   dependencies:
