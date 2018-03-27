@@ -373,12 +373,14 @@ definitions:
     PostUser:
       type: object
       required:
-        - "username"
-        - "password"
+        - "email"
         - "firstName"
         - "lastName"
+        - "password"
+        - "hasAccess"
+        - "role"
       properties:
-        username:
+        email:
           type: string
         firstName:
           type: string
@@ -386,35 +388,42 @@ definitions:
           type: string
         password:
           type: string
+        hasAccess:
+          type: boolean
         role:
           type: string
           enum: ["USER", "ADMIN"]
     PutUser:
       type: object
       required:
-        - "username"
+        - "email"
         - "firstName"
         - "lastName"
         - "role"
+        - "hasAccess"
       properties:
-        username:
+        email:
           type: string
         firstName:
           type: string
         lastName:
           type: string
+        hasAccess:
+          type: boolean
         role:
           type: string
           enum: ["USER", "ADMIN"]
     PatchUser:
       type: object
       properties:
-        username:
+        email:
           type: string
         firstName:
           type: string
         lastName:
           type: string
+        hasAccess:
+          type: boolean
         role:
           type: string
           enum: ["USER", "ADMIN"]
