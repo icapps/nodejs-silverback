@@ -18,14 +18,18 @@ export const routes: Router = Router({ mergeParams: true })
   .put('/:userId', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(userSchema.update),
-    handleAsyncFn(update));
+    handleAsyncFn(update))
+  .delete('/:userId', (req, res, next) =>
+    hasPermission(req, res, next, roles.ADMIN),
+    validateSchema(userSchema.remove),
+    handleAsyncFn(remove));
 
 /**
  * Return all users
  */
-async function getAll(req: Request, res: Response) {
+async function getAll(req: Request, res: Response): Promise<void> {
   const { data, totalCount } = await userService.getAll(req.query);
-  return responder.succes(res, {
+  responder.succes(res, {
     totalCount,
     status: httpStatus.OK,
     payload: data,
@@ -37,9 +41,9 @@ async function getAll(req: Request, res: Response) {
 /**
  * Create a new user
  */
-async function create(req: Request, res: Response) {
+async function create(req: Request, res: Response): Promise<void> {
   const result = await userService.create(req.body);
-  return responder.succes(res, {
+  responder.succes(res, {
     status: httpStatus.CREATED,
     payload: result,
     serializer: userSerializer,
@@ -50,12 +54,22 @@ async function create(req: Request, res: Response) {
 /**
  * Update an existing user
  */
-async function update(req: Request, res: Response) {
-  const userId: string = req.params.userId;
-  const result = await userService.update(userId, req.body);
-  return responder.succes(res, {
+async function update(req: Request, res: Response): Promise<void> {
+  const result = await userService.update(req.params.userId, req.body);
+  responder.succes(res, {
     status: httpStatus.OK,
     payload: result,
     serializer: userSerializer,
+  });
+}
+
+
+/**
+ * Remove an existing user
+ */
+async function remove(req: Request, res: Response): Promise<void> {
+  await userService.remove(req.params.userId);
+  responder.succes(res, {
+    status: httpStatus.NO_CONTENT,
   });
 }

@@ -256,7 +256,7 @@ describe('/users', () => {
     });
   });
 
-  describe('PUT /{userId}', () => {
+  describe('PUT /:userId', () => {
     let user;
 
     beforeAll(async () => {
@@ -296,6 +296,34 @@ describe('/users', () => {
         hasAccess: false,
         role: roles.ADMIN.code,
       });
+    });
+
+    it('Should throw an error when user id is not a valid guid', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/unknownId`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when user does not exist', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${faker.random.uuid()}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+      expect(status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it('Should throw an error when not all fields are provided', async () => {
@@ -345,7 +373,79 @@ describe('/users', () => {
       expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
       expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
     });
-
   });
 
+  describe('DELETE /:userId', () => {
+    let user;
+
+    beforeAll(async () => {
+      user = await createUser(validUser);
+    });
+
+    afterAll(async () => {
+      await clearUserData(); // Clear user db (except users for tokens)
+    });
+
+    it('Should succesfully delete an existing user', async () => {
+      const { body, status } = await request(app)
+        .delete(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.NO_CONTENT);
+      expect(body).toEqual({});
+
+      const removed = await findById(user.id);
+      expect(removed).toBeUndefined();
+    });
+
+    it('Should throw an error when user does not exist', async () => {
+      const { body, status } = await request(app)
+        .delete(`${prefix}/users/${faker.random.uuid()}`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error when user id is not a valid guid', async () => {
+      const { body, status } = await request(app)
+        .delete(`${prefix}/users/unknownId`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when user has no admin rights', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+
+    it('Should throw an error when no JWT token is provided', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+  });
 });
+

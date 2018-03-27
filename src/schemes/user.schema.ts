@@ -12,12 +12,20 @@ export const userSchema = {
     },
   },
   update: {
+    params: {
+      userId: Joi.string().guid(),
+    },
     body: {
       email: Joi.string().required(),
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
       role: Joi.string().required(),
+    },
+  },
+  remove: {
+    params: {
+      userId: Joi.string().guid(),
     },
   },
 };

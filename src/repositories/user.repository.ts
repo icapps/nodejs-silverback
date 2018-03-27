@@ -38,6 +38,19 @@ export async function update(userId: string, values: UserUpdate): Promise<User> 
 
 
 /**
+ * Remove an existing user
+ */
+export async function remove(userId: string): Promise<{ affectedRows: number }> {
+  const query = db(tableNames.USERS)
+    .del()
+    .where('id', userId);
+
+  logger.debug(`Delete existing user: ${query.toString()}`);
+  return { affectedRows: (await query) };
+}
+
+
+/**
  * Return all users
  */
 export async function getAll(options: Filters = {}): Promise<{ data: User[], totalCount: number }> {
