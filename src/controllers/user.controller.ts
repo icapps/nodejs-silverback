@@ -5,10 +5,16 @@ import { responder } from '../lib/responder';
 import { userSerializer } from '../serializers/user.serializer';
 import { hasPermission } from '../middleware/permission.middleware';
 import { roles } from '../config/roles.config';
+import { validateSchema } from '../lib/validator';
+import { userSchema } from '../schemes/user.schema';
 import * as userService from '../services/user.service';
 
 export const routes: Router = Router({ mergeParams: true })
-  .get('/', (req, res, next) => hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(getAll));
+  .get('/', (req, res, next) => hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(getAll))
+  .post('/', (req, res, next) =>
+    hasPermission(req, res, next, roles.ADMIN),
+    validateSchema(userSchema.create),
+    handleAsyncFn(create));
 
 
 /**
@@ -20,6 +26,19 @@ async function getAll(req: Request, res: Response) {
     totalCount,
     status: httpStatus.OK,
     payload: data,
+    serializer: userSerializer,
+  });
+}
+
+
+/**
+ * Create a new user
+ */
+async function create(req: Request, res: Response) {
+  const result = await userService.create(req.body);
+  return responder.succes(res, {
+    status: httpStatus.CREATED,
+    payload: result,
     serializer: userSerializer,
   });
 }

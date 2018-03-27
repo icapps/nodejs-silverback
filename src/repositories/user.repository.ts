@@ -20,7 +20,7 @@ export async function create(values: User): Promise<User> {
     .into(tableNames.USERS);
 
   logger.debug(`Create new user: ${query.toString()}`);
-  return await query;
+  return (await query)[0];
 }
 
 
@@ -48,7 +48,7 @@ export async function getAll(options: Filters = {}): Promise<{ data: User[], tot
 /**
  * Get a user by id
  */
-export async function getById(id: string): Promise<User> {
+export async function findById(id: string): Promise<User> {
   const query = db.select(defaultReturnValues)
     .where('id', id)
     .from(tableNames.USERS)
