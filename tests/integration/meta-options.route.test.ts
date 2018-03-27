@@ -1,6 +1,7 @@
 import * as request from 'supertest';
 import * as Joi from 'joi';
 import * as httpStatus from 'http-status';
+import * as faker from 'faker';
 
 import { app } from '../../src/app';
 import { validUsers, createUsers, resetUserData } from '../_helpers/mockdata/user.data';
@@ -29,7 +30,7 @@ describe('/meta', () => {
 
     it('Should return all metaOptions with default pagination', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta`)
+        .get(`${prefix}/meta-options`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(status).toEqual(httpStatus.OK);
@@ -47,7 +48,7 @@ describe('/meta', () => {
 
     it('Should return all metaOptions with provided pagination', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta`)
+        .get(`${prefix}/meta-options`)
         .set('Authorization', `Bearer ${token}`)
         .query('limit=1')
         .query('offset=2');
@@ -63,6 +64,30 @@ describe('/meta', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
+    });
+
+    it('Should throw an error when userId in jwt is not found', async () => {
+      const invalidToken = await getValidJwt(faker.random.uuid());
+      const { body, status } = await request(app)
+        .get(`${prefix}/users`)
+        .set('Authorization', `Bearer ${invalidToken}`);
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error without admin permission', async () => {
+      const invalidUserToken = await getValidJwt(users.data[1].id);
+      const { body, status } = await request(app)
+        .get(`${prefix}/users`)
+        .set('Authorization', `Bearer ${invalidUserToken}`);
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+    });
+
+    it('Should throw an error without jwt token provided', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/users`);
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
     });
   });
 });

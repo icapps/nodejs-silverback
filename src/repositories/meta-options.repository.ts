@@ -6,17 +6,17 @@ import { CodeType } from '../models/code-type.model';
 import { Filters } from '../models/filters.model';
 import { applyPagination } from '../lib/filter';
 
-
-const defaultReturnValues = ['id', 'code'];
+const defaultReturnValues = ['id', 'value', 'codeId'];
+const defaultCodeReturnValues = ['id', 'code'];
 
 /**
  * Create new code
  */
 export async function createCode(values: Code): Promise<Code> {
-  const query = db.insert(values, defaultReturnValues)
+  const query = db.insert(values, defaultCodeReturnValues)
     .into(tableNames.CODES);
 
-  logger.debug(`Create new metaOption: ${query.toString()}`);
+  logger.debug(`Create new code: ${query.toString()}`);
   return await query;
 }
 
@@ -25,10 +25,10 @@ export async function createCode(values: Code): Promise<Code> {
 */
 export async function createCodeType(code: Code, values: CodeType): Promise<CodeType> {
   const allValues = Object.assign({}, values, { codeId: code.id });
-  const query = db.insert(allValues, ['id', 'value', 'codeId'])
+  const query = db.insert(allValues, defaultReturnValues)
     .into(tableNames.CODETYPES);
 
-  logger.debug(`Create new metaOption: ${query.toString()}`);
+  logger.debug(`Create new codeType: ${query.toString()}`);
   return await query;
 }
 

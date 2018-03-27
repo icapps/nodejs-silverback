@@ -6,4 +6,4 @@ import { routes as metaRoutes } from '../controllers/meta-options.controller';
 export const routes: Router = Router({ mergeParams: true })
   .use('/auth', authRoutes)
   .use('/users', userRoutes)
-  .use('/meta', metaRoutes);
+  .use('/meta-options', metaRoutes);
