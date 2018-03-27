@@ -15,15 +15,19 @@ pipeline {
       description: 'Origin branch for Heroku')
   }
   stages {
-    stage('Deploy to Heroku') {
+    stage('Detekting Params'){
       steps {
         echo "Heroku Project => ${params.HEROKU_PROJECT}"
         echo "Heroku Deploy Branch => ${params.DEPLOY_BRANCH}"
+      }
+    }
+    stage('Deploy to Heroku') {
+      steps {
         sh 'set -e'
         sh '''
             echo 'Checking if remote exists...'
             if ! git ls-remote heroku; then
-              echo 'Adding heroku remote...''
+              echo 'Adding heroku remote...'
               git remote add heroku git@heroku.com:${params.HEROKU_PROJECT}.git
             fi
         '''
