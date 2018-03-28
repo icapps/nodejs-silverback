@@ -22,8 +22,6 @@ export async function findAllCodeTypes(req: Request, res: Response): Promise<voi
  * Return all codes
  */
 export async function findAllCodes(req: Request, res: Response): Promise<void> {
-  console.log('req.query', req.query);
-
   const { data, totalCount } = await metaOptionsService.findAllCodes(req.query);
   responder.succes(res, {
     totalCount,

@@ -26,7 +26,7 @@ describe('/meta-options', () => {
     await clearAll(); // Full db clear - empty db after tests
   });
 
-  describe('GET /codeTypes', () => {
+  describe('GET /code-types', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let codeType;
 
@@ -42,7 +42,7 @@ describe('/meta-options', () => {
 
     it('Should return all codeTypes with default pagination', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta-options/codeTypes`)
+        .get(`${prefix}/meta-options/code-types`)
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(status).toEqual(httpStatus.OK);
@@ -60,7 +60,7 @@ describe('/meta-options', () => {
 
     it('Should return all codeTypes with provided pagination', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta-options/codeTypes`)
+        .get(`${prefix}/meta-options/code-types`)
         .set('Authorization', `Bearer ${adminToken}`)
         .query('limit=1')
         .query('offset=1');
@@ -81,7 +81,7 @@ describe('/meta-options', () => {
     it('Should throw an error when userId in jwt is not found', async () => {
       const invalidToken = await getValidJwt(faker.random.uuid());
       const { body, status } = await request(app)
-        .get(`${prefix}/meta-options/codeTypes`)
+        .get(`${prefix}/meta-options/code-types`)
         .set('Authorization', `Bearer ${invalidToken}`);
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
@@ -89,7 +89,7 @@ describe('/meta-options', () => {
 
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta-options/codeTypes`)
+        .get(`${prefix}/meta-options/code-types`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
@@ -99,7 +99,7 @@ describe('/meta-options', () => {
 
     it('Should throw an error without jwt token provided', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta-options/codeTypes`);
+        .get(`${prefix}/meta-options/code-types`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
@@ -113,14 +113,15 @@ describe('/meta-options', () => {
 
     beforeAll(async () => {
       codeType = await createCodeType({ code: 'LAN', description: 'Languages' });
-      await createCodes({ codeType: codeType[0], value: 'EN' });
-      await createCodes({ codeType: codeType[0], value: 'NL' });
-      await createCodes({ codeType: codeType[0], value: 'FR' });
+      await createCodes({ codeType, value: 'EN' });
+      await createCodes({ codeType, value: 'NL' });
+      await createCodes({ codeType, value: 'FR' });
+      await createCodes({ codeType, value: 'WEUTELS' });
 
       const countryCodeType = await createCodeType({ code: 'CNTRY', description: 'Countries' });
-      await createCodes({ codeType: countryCodeType[0], value: 'BE' });
-      await createCodes({ codeType: countryCodeType[0], value: 'DE' });
-      await createCodes({ codeType: countryCodeType[0], value: 'PL' });
+      await createCodes({ codeType: countryCodeType, value: 'BE' });
+      await createCodes({ codeType: countryCodeType, value: 'DE' });
+      await createCodes({ codeType: countryCodeType, value: 'PL' });
     });
 
     afterAll(async () => {
@@ -135,8 +136,8 @@ describe('/meta-options', () => {
       expect(status).toEqual(httpStatus.OK);
       expect(body.meta).toMatchObject({
         type: 'codes',
-        count: 6,
-        totalCount: 6,
+        count: 7,
+        totalCount: 7,
       });
 
 
@@ -150,13 +151,13 @@ describe('/meta-options', () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta-options/codes`)
         .set('Authorization', `Bearer ${adminToken}`)
-        .query(`codeId=${codeType[0].id}`);
+        .query(`codeId=${codeType.id}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.meta).toMatchObject({
         type: 'codes',
-        count: 3,
-        totalCount: 3,
+        count: 4,
+        totalCount: 4,
       });
 
       Joi.validate(body, codesSchema, (err, value) => {
@@ -176,7 +177,7 @@ describe('/meta-options', () => {
       expect(body.meta).toMatchObject({
         type: 'codes',
         count: 1,
-        totalCount: 6,
+        totalCount: 7,
       });
 
       Joi.validate(body, codesSchema, (err, value) => {

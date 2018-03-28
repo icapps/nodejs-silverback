@@ -17,7 +17,7 @@ export async function createCodeType(values: CodeType): Promise<CodeType> {
     .into(tableNames.CODETYPES);
 
   logger.debug(`Create new codeType: ${query.toString()}`);
-  return await query;
+  return (await query)[0];
 }
 
 /**
@@ -29,53 +29,43 @@ export async function createCode(values: Code, codeType: CodeType): Promise<Code
     .into(tableNames.CODES);
 
   logger.debug(`Create new code: ${query.toString()}`);
-  return await query;
+  return (await query)[0];
 }
 
 /**
  * Return all codeTypes
  */
 export async function findAllCodeTypes(options: Filters = {}): Promise<{ data: CodeType[], totalCount: number }> {
-  try {
-    const allOptions = Object.assign({}, defaultFilters, options);
+  const allOptions = Object.assign({}, defaultFilters, options);
 
-    const query = selectAndCount(db, defaultCodeTypeReturnValues)
-      .from(tableNames.CODETYPES);
+  const query = selectAndCount(db, defaultCodeTypeReturnValues)
+    .from(tableNames.CODETYPES);
 
-    applyPagination(query, allOptions);
-    logger.warn(`Get all codeTypes: ${query.toString()}`);
+  applyPagination(query, allOptions);
+  logger.warn(`Get all codeTypes: ${query.toString()}`);
 
-    const data = await query;
-    return { data, totalCount: parseTotalCount(data) };
-  } catch (err) {
-    console.warn('err', err);
-
-  }
+  const data = await query;
+  return { data, totalCount: parseTotalCount(data) };
 }
 
 /**
  * Return all codes
  */
 export async function findAllCodes(options: CodeFilters): Promise<{ data: Code[], totalCount: number }> {
-  try {
-    const allOptions = Object.assign({}, defaultFilters, options);
+  const allOptions = Object.assign({}, defaultFilters, options);
 
-    let query;
-    if (allOptions.codeId) {
-      query = selectAndCount(db, defaultCodeReturnValues)
-        .from(tableNames.CODES).where('codeId', allOptions.codeId);
-    } else {
-      query = selectAndCount(db, defaultCodeReturnValues)
-        .from(tableNames.CODES);
-    }
-
-    applyPagination(query, allOptions);
-    logger.debug(`Get all codes: ${query.toString()}`);
-
-    const data = await query;
-    return { data, totalCount: parseTotalCount(data) };
-  } catch (err) {
-    console.warn('err', err);
-
+  let query;
+  if (allOptions.codeId) {
+    query = selectAndCount(db, defaultCodeReturnValues)
+      .from(tableNames.CODES).where('codeId', allOptions.codeId);
+  } else {
+    query = selectAndCount(db, defaultCodeReturnValues)
+      .from(tableNames.CODES);
   }
+
+  applyPagination(query, allOptions);
+  logger.debug(`Get all codes: ${query.toString()}`);
+
+  const data = await query;
+  return { data, totalCount: parseTotalCount(data) };
 }

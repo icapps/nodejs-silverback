@@ -11,8 +11,6 @@ export function findAllCodeTypes(filters: Filters): Promise<{ data: CodeType[], 
   try {
     return metaOptionsRepository.findAllCodeTypes(filters);
   } catch (error) {
-    console.log('error', error);
-
     logger.error(`An error occured in the metaOptions service: ${error}`);
     throw error;
   }

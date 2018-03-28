@@ -333,11 +333,11 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /meta-options:
+  /meta-options/code-types:
     get:
       tags:
       - "metaOptions"
-      summary: "Returns all metaOptions"
+      summary: "Returns all codeTypes"
       description: |-
         permission | scope | effect
         - | - | -
@@ -351,7 +351,35 @@ paths:
         200:
           description: "Success"
           schema:
-            $ref: "#/definitions/MetaOptionsListResponse"
+            $ref: "#/definitions/CodeTypesListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meta-options/codes:
+    get:
+      tags:
+      - "metaOptions"
+      summary: "Returns all codes"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/Offset"
+        - $ref: "#/parameters/Limit"
+        - in: path
+          type: "string"
+          name: codeId
+          description: The id of a codeType
+          required: false
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodesListResponse"
         400:
           description: "401 Unauthorized"
           schema:
@@ -513,11 +541,9 @@ definitions:
           format: uuid
         code:
           type: string
-        codes:
-          type: array
-          items:
-            $ref: "#/definitions/Code"
-    MetaOptionsListResponse:
+        description:
+          type: string
+    CodeTypesListResponse:
       type: object
       properties:
         meta:
@@ -533,6 +559,22 @@ definitions:
           type: array
           items:
             $ref: "#/definitions/CodeType"
+    CodesListResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: number
+              example: 50
+            totalCount:
+              type: number
+              example: 120
+        data:
+          type: array
+          items:
+            $ref: "#/definitions/Code"
     VersionCheckResponse:
       type: object
       properties:
