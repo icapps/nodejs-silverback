@@ -6,4 +6,9 @@ export const settings = {
   saltCount: parseInt(process.env.SALT_COUNT || '10', 10),
 };
 
+export const mailSettings = {
+  systemEmail: process.env.SYSTEM_EMAIL || 'info@icapps.com',
+};
+
+
 

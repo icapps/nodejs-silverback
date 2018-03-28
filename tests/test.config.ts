@@ -8,6 +8,8 @@ const environment = {
   LOG_LEVEL: 'error',
   DATABASE_URL: 'postgres://developer:developer@localhost:5432/silverback_test',
   API_VERSION: 'v1',
+  FORGOT_PW_LINK: 'https://test.com/forgot-pw',
+  SYSTEM_EMAIL: 'info@icapps.com',
 };
 
 Object.keys(environment).forEach((key) => {

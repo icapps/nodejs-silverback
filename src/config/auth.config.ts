@@ -3,5 +3,5 @@ export const jwtConfig = {
   expiresIn: '7d',
   issuer: 'silverback',
   audience: 'SILVERBACK',
-  secretOrKey: process.env.JWT_SECRET,
+  secretOrKey: process.env.JWT_SECRET || 'mySecret',
 };
