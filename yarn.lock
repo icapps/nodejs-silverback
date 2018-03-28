@@ -110,9 +110,15 @@
     "@types/events" "*"
     "@types/node" "*"
 
-"@types/lodash@^4.14.105":
-  version "4.14.105"
-  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.105.tgz#9fcc4627a1f98f8f8fce79ddb2bff4afd97e959b"
+"@types/lodash@~4.14.105":
+  version "4.14.106"
+  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.106.tgz#6093e9a02aa567ddecfe9afadca89e53e5dce4dd"
+
+"@types/mandrill-api@~1.0.30":
+  version "1.0.30"
+  resolved "https://registry.npmjs.org/@types/mandrill-api/-/mandrill-api-1.0.30.tgz#9c7d9df0abaae11e082ae931b5337787e3934fe9"
+  dependencies:
+    "@types/node" "*"
 
 "@types/mime@*":
   version "2.0.0"
@@ -121,13 +127,6 @@
 "@types/node@*":
   version "9.4.7"
   resolved "http://registry.npmjs.org/@types/node/-/node-9.4.7.tgz#57d81cd98719df2c9de118f2d5f3b1120dcd7275"
-
-"@types/nodemailer@~4.6.0":
-  version "4.6.0"
-  resolved "https://registry.npmjs.org/@types/nodemailer/-/nodemailer-4.6.0.tgz#542ecb5fff91cd3d841fc67cace0527649030462"
-  dependencies:
-    "@types/events" "*"
-    "@types/node" "*"
 
 "@types/serve-static@*":
   version "1.13.1"
@@ -2815,7 +2814,7 @@ lodash.sortby@^4.7.0:
   version "4.7.0"
   resolved "https://registry.npmjs.org/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
 
-lodash@^4.13.1, lodash@^4.14.0, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.9.0:
+lodash@^4.13.1, lodash@^4.14.0, lodash@^4.17.4, lodash@^4.9.0, lodash@~4.17.5:
   version "4.17.5"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
@@ -2851,6 +2850,10 @@ makeerror@1.0.x:
   resolved "https://registry.npmjs.org/makeerror/-/makeerror-1.0.11.tgz#e01a5c9109f2af79660e4e8b9587790184f5a96c"
   dependencies:
     tmpl "1.0.x"
+
+mandrill-api@~1.0.45:
+  version "1.0.45"
+  resolved "https://registry.npmjs.org/mandrill-api/-/mandrill-api-1.0.45.tgz#163939cf486bd18277b0f3baf412c3e65d84a72d"
 
 map-cache@^0.2.0, map-cache@^0.2.2:
   version "0.2.2"
@@ -3092,14 +3095,6 @@ node-pre-gyp@^0.6.39:
     semver "^5.3.0"
     tar "^2.2.1"
     tar-pack "^3.4.0"
-
-nodemailer-stub-transport@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/nodemailer-stub-transport/-/nodemailer-stub-transport-1.1.0.tgz#11421d2d66b4ee6f405354f914c1f4641eb24b0d"
-
-nodemailer@~4.6.3:
-  version "4.6.3"
-  resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-4.6.3.tgz#c3b7e97fb72f46d4a475c406a15ed23a45dbcddc"
 
 nopt@^4.0.1:
   version "4.0.1"
