@@ -4,7 +4,7 @@ import { tableNames, defaultFilters } from '../constants';
 import { Code, CodeFilters } from '../models/code.model';
 import { CodeType } from '../models/code-type.model';
 import { Filters } from '../models/filters.model';
-import { applyPagination } from '../lib/filter';
+import { applyPagination, applySearch, applySorting } from '../lib/filter';
 
 const defaultCodeReturnValues = ['id', 'value', 'codeId'];
 const defaultCodeTypeReturnValues = ['id', 'code', 'description'];
@@ -42,7 +42,9 @@ export async function findAllCodeTypes(options: Filters = {}): Promise<{ data: C
     .from(tableNames.CODETYPES);
 
   applyPagination(query, allOptions);
-  logger.warn(`Get all codeTypes: ${query.toString()}`);
+  applySearch(query, allOptions, ['id', 'code', 'description']);
+  applySorting(query, allOptions, ['code', 'description']);
+  logger.debug(`Get all codeTypes: ${query.toString()}`);
 
   const data = await query;
   return { data, totalCount: parseTotalCount(data) };
@@ -54,16 +56,17 @@ export async function findAllCodeTypes(options: Filters = {}): Promise<{ data: C
 export async function findAllCodes(options: CodeFilters): Promise<{ data: Code[], totalCount: number }> {
   const allOptions = Object.assign({}, defaultFilters, options);
 
-  let query;
+  let query = selectAndCount(db, defaultCodeReturnValues)
+    .from(tableNames.CODES);
+
   if (allOptions.codeId) {
     query = selectAndCount(db, defaultCodeReturnValues)
       .from(tableNames.CODES).where('codeId', allOptions.codeId);
-  } else {
-    query = selectAndCount(db, defaultCodeReturnValues)
-      .from(tableNames.CODES);
   }
 
   applyPagination(query, allOptions);
+  applySearch(query, allOptions, ['id', 'value']);
+  applySorting(query, allOptions, ['value']);
   logger.debug(`Get all codes: ${query.toString()}`);
 
   const data = await query;

@@ -7,6 +7,7 @@ export function validateSchema(schema) {
     expressValidation.options({
       allowUnknownBody: false,
       allowUnknownParams: false,
+      allowUnknownQuery: false,
     });
 
     expressValidation(schema)(req, res, next);

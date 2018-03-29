@@ -333,7 +333,7 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /meta-options/code-types:
+  /meta/code-types:
     get:
       tags:
       - "metaOptions"
@@ -345,8 +345,11 @@ paths:
       security:
         - Bearer: []
       parameters:
+        - $ref: "#/parameters/SortOrder"
+        - $ref: "#/parameters/SortField"
         - $ref: "#/parameters/Offset"
         - $ref: "#/parameters/Limit"
+        - $ref: "#/parameters/Search"
       responses:
         200:
           description: "Success"
@@ -356,7 +359,7 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /meta-options/codes:
+  /meta/codes:
     get:
       tags:
       - "metaOptions"
@@ -368,8 +371,11 @@ paths:
       security:
         - Bearer: []
       parameters:
+        - $ref: "#/parameters/SortOrder"
+        - $ref: "#/parameters/SortField"
         - $ref: "#/parameters/Offset"
         - $ref: "#/parameters/Limit"
+        - $ref: "#/parameters/Search"
         - in: path
           type: "string"
           name: codeId

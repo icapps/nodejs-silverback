@@ -3,7 +3,7 @@ import * as Joi from 'joi';
 export const codeTypeSchema = Joi.object({
   id: Joi.string().guid().required(),
   code: Joi.string().required(),
-  description: Joi.any(),
+  description: Joi.string(),
 });
 
 export const codeTypesSchema = Joi.object().keys({

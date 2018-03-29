@@ -1,7 +1,7 @@
 import { CodeType } from '../models/code-type.model';
 import { Code, CodeFilters } from '../models/code.model';
 import { Filters } from '../models/filters.model';
-import * as metaOptionsRepository from '../repositories/meta-options.repository';
+import * as metaRepository from '../repositories/meta.repository';
 import { logger } from '../lib/logger';
 
 /**
@@ -9,9 +9,9 @@ import { logger } from '../lib/logger';
  */
 export function findAllCodeTypes(filters: Filters): Promise<{ data: CodeType[], totalCount: number }> {
   try {
-    return metaOptionsRepository.findAllCodeTypes(filters);
+    return metaRepository.findAllCodeTypes(filters);
   } catch (error) {
-    logger.error(`An error occured in the metaOptions service: ${error}`);
+    logger.error(`An error occured in the meta service: ${error}`);
     throw error;
   }
 }
@@ -21,9 +21,9 @@ export function findAllCodeTypes(filters: Filters): Promise<{ data: CodeType[], 
  */
 export function findAllCodes(filters: CodeFilters): Promise<{ data: Code[], totalCount: number }> {
   try {
-    return metaOptionsRepository.findAllCodes(filters);
+    return metaRepository.findAllCodes(filters);
   } catch (error) {
-    logger.error(`An error occured in the metaOptions service: ${error}`);
+    logger.error(`An error occured in the meta service: ${error}`);
     throw error;
   }
 }

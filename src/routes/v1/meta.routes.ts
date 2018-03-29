@@ -3,11 +3,11 @@ import { handleAsyncFn } from 'tree-house';
 import { hasPermission } from '../../middleware/permission.middleware';
 import { roles } from '../../config/roles.config';
 import { validateSchema } from '../../lib/validator';
-import { metaOptionsSchema } from '../../schemes/meta-options.schema';
-import * as controller from '../../controllers/meta-options.controller';
+import { metaSchema } from '../../schemes/meta.schema';
+import * as controller from '../../controllers/meta.controller';
 
 export const routes: Router = Router({ mergeParams: true })
   .get('/code-types', (req, res, next) =>
-    hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(controller.findAllCodeTypes))
+    hasPermission(req, res, next, roles.ADMIN), validateSchema(metaSchema.findCodeTypes), handleAsyncFn(controller.findAllCodeTypes))
   .get('/codes', (req, res, next) =>
-    hasPermission(req, res, next, roles.ADMIN), validateSchema(metaOptionsSchema.findByCodeId), handleAsyncFn(controller.findAllCodes));
+    hasPermission(req, res, next, roles.ADMIN), validateSchema(metaSchema.findByCodeId), handleAsyncFn(controller.findAllCodes));

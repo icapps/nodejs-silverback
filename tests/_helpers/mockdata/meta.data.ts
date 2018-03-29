@@ -2,18 +2,18 @@ import { Code } from '../../../src/models/code.model';
 import { CodeType } from '../../../src/models/code-type.model';
 import { tableNames } from '../../../src/constants';
 import { db } from '../../../src/lib/db';
-import * as metaOptionsRepository from '../../../src/repositories/meta-options.repository';
+import * as metaRepository from '../../../src/repositories/meta.repository';
 
 export async function createCodeType({ code, description }) {
-  return metaOptionsRepository.createCodeType({
+  return metaRepository.createCodeType({
     code,
     description,
   });
 }
 
-export async function createCodes({ codeType, value }) {
+export async function createCode({ codeType, value }) {
   const code: Code = { value };
-  return metaOptionsRepository.createCode(code, codeType);
+  return metaRepository.createCode(code, codeType);
 }
 
 export function clearCodeTypesData() {
