@@ -4,24 +4,27 @@ import * as Joi from 'joi';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
 import { clearAll } from '../_helpers/mockdata/data';
-import { createUser, validUser } from '../_helpers/mockdata/user.data';
+import { createUser, validUser, findById } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
-import { getValidJwt } from '../_helpers/mockdata/auth.data';
+import { getValidJwt, getUserToken } from '../_helpers/mockdata/auth.data';
+
+import * as mailer from '../../src/lib/mailer';
 
 describe('/auth', () => {
+  const prefix = `/api/${process.env.API_VERSION}`;
+  let user;
+
+  beforeAll(async () => {
+    await clearAll();
+    user = await createUser(validUser);
+  });
+
+  afterAll(async () => {
+    await clearAll();
+    jest.clearAllMocks();
+  });
+
   describe('POST /login', () => {
-    const prefix = `/api/${process.env.API_VERSION}`;
-    let user;
-
-    beforeAll(async () => {
-      await clearAll();
-      user = await createUser(validUser);
-    });
-
-    afterAll(async () => {
-      await clearAll();
-    });
-
     it('Should succesfully login a user with correct credentials', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
@@ -83,5 +86,26 @@ describe('/auth', () => {
       expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
     });
 
+  });
+
+  describe('POST /forgot-password/init', () => {
+    const mailSpy = jest.spyOn(mailer, 'sendTemplate').mockImplementation(() => Promise.resolve());
+    it('Should succesfully send a forgot password email with unique link', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/forgot-password/init`)
+        .send({ email: user.email });
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body).toEqual({});
+    });
+
+    it('Should log an internal error when user does not exist', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/forgot-password/init`)
+        .send({ email: 'dunno@test.com' });
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body).toEqual({});
+    });
   });
 });

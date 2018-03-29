@@ -22,7 +22,8 @@ export async function login(req: Request, res: Response): Promise<void> {
  * Always send status OK for security reasons (run the function async)
  */
 export async function initForgotPw(req: Request, res: Response): Promise<void> {
-  authService.initForgotPw(req.body);
+  const { email } = req.body;
+  authService.initForgotPw(email); // Run async without waiting
   responder.succes(res, {
     status: httpStatus.OK,
   });

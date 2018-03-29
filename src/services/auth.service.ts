@@ -48,12 +48,11 @@ export async function initForgotPw(email: string) {
     if (!user) throw new NotFoundError();
 
     const token = generateRandomHash('sha256', jwtConfig.secretOrKey);
-    // Update user with reset id
+    await userRepository.update(user.id, { resetPwToken: token });
 
     // Send email with reset link
     const content = getForgotPwContent(email, token);
-    await mailer.sendTemplate(content, mailer.getDefaultClient());
-
+    return await mailer.sendTemplate(content, mailer.getDefaultClient());
   } catch (error) {
     logger.error(`An error occured trying to reset password: %${error}`);
     // Do not rethrow error, this will be an async function

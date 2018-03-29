@@ -4,6 +4,6 @@ import { routes as userRoutes } from './user.routes';
 import { routes as metaRoutes } from './meta.routes';
 
 export const routes: Router = Router({ mergeParams: true })
-  .use('/auth', authRoutes)
+  .use('', authRoutes)
   .use('/users', userRoutes)
   .use('/meta', metaRoutes);
