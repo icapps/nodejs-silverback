@@ -4321,15 +4321,16 @@ tree-house-errors@~1.0.1:
     joi "~13.1.2"
     uuid "~3.2.1"
 
-tree-house@~3.0.3:
-  version "3.0.3"
-  resolved "https://registry.npmjs.org/tree-house/-/tree-house-3.0.3.tgz#067c0ca2d7dadf77f91cfa5d2241be4a724540b6"
+tree-house@~3.0.4:
+  version "3.0.4"
+  resolved "https://registry.npmjs.org/tree-house/-/tree-house-3.0.4.tgz#fb118e381681bf89adc83ac7a86a9ba715cb46d9"
   dependencies:
     body-parser "~1.18.2"
     cors "~2.8.4"
     express "~4.16.2"
     express-brute "~1.0.1"
     express-brute-redis "~0.0.1"
+    express-validation "~1.0.2"
     helmet "~3.12.0"
     https "~1.0.0"
     js-yaml "~3.11.0"
