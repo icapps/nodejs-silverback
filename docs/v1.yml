@@ -376,7 +376,7 @@ paths:
         - $ref: "#/parameters/Offset"
         - $ref: "#/parameters/Limit"
         - $ref: "#/parameters/Search"
-        - in: path
+        - in: query
           type: "string"
           name: codeId
           description: The id of a codeType

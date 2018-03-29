@@ -3,7 +3,7 @@ import { Filters } from './models/filters.model';
 export const tableNames = {
   USERS: 'users',
   CODES: 'codes',
-  CODETYPES: 'codeTypes',
+  CODETYPES: 'code_types',
 };
 
 export const defaultFilters: Filters = {

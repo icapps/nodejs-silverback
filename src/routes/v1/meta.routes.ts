@@ -8,6 +8,6 @@ import * as controller from '../../controllers/meta.controller';
 
 export const routes: Router = Router({ mergeParams: true })
   .get('/code-types', (req, res, next) =>
-    hasPermission(req, res, next, roles.ADMIN), validateSchema(metaSchema.findCodeTypes), handleAsyncFn(controller.findAllCodeTypes))
+    hasPermission(req, res, next, roles.ADMIN), validateSchema(metaSchema.findAllCodeTypes), handleAsyncFn(controller.findAllCodeTypes))
   .get('/codes', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN), validateSchema(metaSchema.findByCodeId), handleAsyncFn(controller.findAllCodes));

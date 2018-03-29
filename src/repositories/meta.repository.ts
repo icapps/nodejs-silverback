@@ -60,8 +60,7 @@ export async function findAllCodes(options: CodeFilters): Promise<{ data: Code[]
     .from(tableNames.CODES);
 
   if (allOptions.codeId) {
-    query = selectAndCount(db, defaultCodeReturnValues)
-      .from(tableNames.CODES).where('codeId', allOptions.codeId);
+    query = query.where('codeId', allOptions.codeId);
   }
 
   applyPagination(query, allOptions);

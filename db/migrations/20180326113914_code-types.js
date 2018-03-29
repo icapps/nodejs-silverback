@@ -1,6 +1,6 @@
 
-exports.up = (knex, Promise) => Promise.all([
-  knex.schema.createTable('codeTypes', (table) => {
+exports.up = (knex, Promise) =>{
+  return knex.schema.createTable('code_types', (table) => {
     table.uuid("id").primary().defaultTo(knex.raw('uuid_generate_v1mc()')) // Primary key
     table.specificType('recordId', 'serial'); // Record incrementing key
 
@@ -13,8 +13,8 @@ exports.up = (knex, Promise) => Promise.all([
 
     // Unique constraints
     table.unique('code'); // Generates index automatically due to this constraint
-  }),
-]);
+  });
+}
 
 exports.down = (knex) => {
   return knex.schema.dropTable('codeTypes');

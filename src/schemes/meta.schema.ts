@@ -1,7 +1,7 @@
 import * as Joi from 'joi';
 
 export const metaSchema = {
-  findCodeTypes: {
+  findAllCodeTypes: {
     query: {
       offset: Joi.number(),
       limit: Joi.number(),

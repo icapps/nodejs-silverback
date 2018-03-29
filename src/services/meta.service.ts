@@ -1,8 +1,8 @@
 import { CodeType } from '../models/code-type.model';
 import { Code, CodeFilters } from '../models/code.model';
 import { Filters } from '../models/filters.model';
-import * as metaRepository from '../repositories/meta.repository';
 import { logger } from '../lib/logger';
+import * as metaRepository from '../repositories/meta.repository';
 
 /**
  * Return all codeTypes

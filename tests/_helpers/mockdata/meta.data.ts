@@ -5,10 +5,7 @@ import { db } from '../../../src/lib/db';
 import * as metaRepository from '../../../src/repositories/meta.repository';
 
 export async function createCodeType({ code, description }) {
-  return metaRepository.createCodeType({
-    code,
-    description,
-  });
+  return metaRepository.createCodeType({ code, description });
 }
 
 export async function createCode({ codeType, value }) {
