@@ -1,7 +1,6 @@
 
 import { Router } from 'express';
-import { handleAsyncFn } from 'tree-house';
-import { validateSchema } from '../../lib/validator';
+import { handleAsyncFn, validateSchema } from 'tree-house';
 import { authSchema } from '../../schemes/auth.schema';
 import * as controller from '../../controllers/auth.controller';
 
