@@ -1,5 +1,3 @@
-/* import * as nodemailer from 'nodemailer';
-import * as stubTransport from 'nodemailer-stub-transport'; */
 import * as mailer from '../../src/lib/mailer';
 
 describe('lib/mailer', () => {
