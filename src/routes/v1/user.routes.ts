@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { handleAsyncFn } from 'tree-house';
+import { handleAsyncFn, validateSchema } from 'tree-house';
 import { hasPermission } from '../../middleware/permission.middleware';
 import { roles } from '../../config/roles.config';
-import { validateSchema } from '../../lib/validator';
 import { userSchema } from '../../schemes/user.schema';
 import * as controller from '../../controllers/user.controller';
 

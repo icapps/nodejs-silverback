@@ -15,3 +15,16 @@ export async function login(req: Request, res: Response): Promise<void> {
     serializer: authSerializer,
   });
 }
+
+
+/**
+ * Start the forgot password flow by generating an email with a reset link
+ * Always send status OK for security reasons (run the function async)
+ */
+export async function initForgotPw(req: Request, res: Response): Promise<void> {
+  const { email } = req.body;
+  authService.initForgotPw(email); // Run async without waiting
+  responder.succes(res, {
+    status: httpStatus.OK,
+  });
+}

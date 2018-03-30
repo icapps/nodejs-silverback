@@ -6,7 +6,7 @@ import { applyPagination, applySorting, applySearch } from '../lib/filter';
 import { tableNames, defaultFilters } from '../constants';
 import { User, UserUpdate, UserCreate, PartialUserUpdate } from '../models/user.model';
 import { getHashedPassword } from 'tree-house-authentication';
-const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName', 'hasAccess', 'role', 'createdAt', 'updatedAt'];
+const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName', 'hasAccess', 'role', 'resetPwToken', 'createdAt', 'updatedAt'];
 
 /**
  * Create new user

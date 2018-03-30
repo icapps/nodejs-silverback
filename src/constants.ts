@@ -10,3 +10,7 @@ export const defaultFilters: Filters = {
   limit: 50,
   offset: 0,
 };
+
+export const mailTemplates = {
+  FORGOT_PW_INIT: '00-forgot-password',
+};

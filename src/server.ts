@@ -6,9 +6,10 @@ import { app } from './app';
 
 treehouse.startServer(app, {
   title: 'Silverback',
-  port: parseInt(process.env.PORT, 10),
+  port: parseInt(process.env.PORT || '3000', 10),
 });
 
 process.on('unhandledRejection', (e) => {
   logger.error(`unhandledRejection: ${e.message}`);
 });
+

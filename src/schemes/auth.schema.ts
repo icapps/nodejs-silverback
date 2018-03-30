@@ -8,4 +8,9 @@ export const authSchema = {
       deviceId: Joi.string(),
     },
   },
+  forgotPwInit: {
+    body: {
+      email: Joi.string().email().required(),
+    },
+  },
 };
