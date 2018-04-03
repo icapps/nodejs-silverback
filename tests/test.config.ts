@@ -10,6 +10,7 @@ const environment = {
   API_VERSION: 'v1',
   FORGOT_PW_LINK: 'https://test.com/forgot-pw',
   SYSTEM_EMAIL: 'info@icapps.com',
+  BUILD_NUMBER: 'v1',
 };
 
 Object.keys(environment).forEach((key) => {
