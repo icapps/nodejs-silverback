@@ -32,17 +32,28 @@ pipeline {
             fi
         """
         sh """
-          # Keep track of the previous Heroku build number.
-            previous_heroku_build_version=`heroku releases | sed -n 2p | awk '{print $1}'`
-        """
-        sh """
             echo 'Updating heroku master branch from ${params.DEPLOY_BRANCH}'
             git push heroku ${params.DEPLOY_BRANCH}:master --force
         """
+      }
+    }
+    stage('Run pending migrations') {
+      steps {
+        sh 'set -e'
         sh """
-            # Fetch the new build version number.
-            heroku_build_version=`heroku releases | sed -n 2p | awk '{print $1}'`
-            echo heroku_build_version
+          heroku run yarn db:migrate --app ${params.HEROKU_PROJECT}
+        """
+      }
+    }
+    stage('Update heroku build number') {
+      steps {
+        sh 'set -e'
+        sh """
+          # Fetch the new build version number.
+            heroku_build_version=`heroku releases | sed -n 2p | awk '{print \$1}'`
+
+            echo "\$heroku_build_version"
+            heroku config:set BUILD_NUMBER=\$heroku_build_version
         """
       }
     }
