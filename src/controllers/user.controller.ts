@@ -10,7 +10,7 @@ import * as userService from '../services/user.service';
  */
 export async function findById(req: Request, res: Response): Promise<void> {
   const result = await userService.findById(req.params.userId);
-  responder.succes(res, {
+  responder.success(res, {
     status: httpStatus.OK,
     payload: result,
     serializer: userSerializer,
@@ -23,7 +23,7 @@ export async function findById(req: Request, res: Response): Promise<void> {
  */
 export async function findAll(req: Request, res: Response): Promise<void> {
   const { data, totalCount } = await userService.findAll(req.query);
-  responder.succes(res, {
+  responder.success(res, {
     totalCount,
     status: httpStatus.OK,
     payload: data,
@@ -37,7 +37,7 @@ export async function findAll(req: Request, res: Response): Promise<void> {
  */
 export async function create(req: Request, res: Response): Promise<void> {
   const result = await userService.create(req.body);
-  responder.succes(res, {
+  responder.success(res, {
     status: httpStatus.CREATED,
     payload: result,
     serializer: userSerializer,
@@ -50,7 +50,7 @@ export async function create(req: Request, res: Response): Promise<void> {
  */
 export async function update(req: Request, res: Response): Promise<void> {
   const result = await userService.update(req.params.userId, req.body);
-  responder.succes(res, {
+  responder.success(res, {
     status: httpStatus.OK,
     payload: result,
     serializer: userSerializer,
@@ -63,7 +63,7 @@ export async function update(req: Request, res: Response): Promise<void> {
  */
 export async function partialUpdate(req: Request, res: Response): Promise<void> {
   const result = await userService.partialUpdate(req.params.userId, req.body);
-  responder.succes(res, {
+  responder.success(res, {
     status: httpStatus.OK,
     payload: result,
     serializer: userSerializer,
@@ -76,7 +76,7 @@ export async function partialUpdate(req: Request, res: Response): Promise<void> 
  */
 export async function remove(req: Request, res: Response): Promise<void> {
   await userService.remove(req.params.userId);
-  responder.succes(res, {
+  responder.success(res, {
     status: httpStatus.NO_CONTENT,
   });
 }

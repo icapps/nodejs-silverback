@@ -3,7 +3,7 @@ dotenv.config();
 
 import { logger } from '../src/lib/logger';
 
-const environment = {
+export const environment = {
   NODE_ENV: 'test',
   LOG_LEVEL: 'error',
   DATABASE_URL: 'postgres://developer:developer@localhost:5432/silverback_test',
@@ -11,6 +11,10 @@ const environment = {
   FORGOT_PW_LINK: 'https://test.com/forgot-pw',
   SYSTEM_EMAIL: 'info@icapps.com',
   BUILD_NUMBER: 'v1',
+  MIN_VERSION_ANDROID: '1.0.0',
+  LATEST_VERSION_ANDROID: '2.0.1',
+  MIN_VERSION_IOS: '1.0.0',
+  LATEST_VERSION_IOS: '2.0.2',
 };
 
 Object.keys(environment).forEach((key) => {

@@ -8,7 +8,7 @@ describe('lib/responder', () => {
   describe('succes', () => {
     it('Should send response with empty options', () => {
       const res = httpMocks.createResponse();
-      responder.succes(res, {});
+      responder.success(res, {});
 
       expect(res.statusCode).toEqual(httpStatus.OK);
       expect(res._isJSON()).toEqual(false);
@@ -16,7 +16,7 @@ describe('lib/responder', () => {
 
     it('Should send response without payload', () => {
       const res = httpMocks.createResponse();
-      responder.succes(res, {
+      responder.success(res, {
         status: httpStatus.CREATED,
       });
 
@@ -26,7 +26,7 @@ describe('lib/responder', () => {
 
     it('Should send response with payload and without serializer', () => {
       const res = httpMocks.createResponse();
-      responder.succes(res, {
+      responder.success(res, {
         status: httpStatus.CREATED,
         payload: 'Brent',
       });
@@ -43,7 +43,7 @@ describe('lib/responder', () => {
         attributes: ['name', 'request'],
       });
 
-      responder.succes(res, {
+      responder.success(res, {
         status: httpStatus.CREATED,
         payload: { name: 'Brent' },
         serializer: jsonadeSerializer,
