@@ -7,7 +7,6 @@ import { settings } from '../config/app.config';
 /**
  * Return the minimum and latest version for a specific os (android/ios)
  */
-// TODO: Update Swagger (will return meta data)
 export function getAppVersion(req: Request, res: Response) {
   const os: string = req.params.os;
   const data = {
@@ -26,7 +25,6 @@ export function getAppVersion(req: Request, res: Response) {
 /**
  * Returns the current build and version number of the api
  */
-// TODO: Add to Swagger
 export function getApiVersion(_req: Request, res: Response) {
   const data = {
     build: process.env.BUILD_NUMBER,

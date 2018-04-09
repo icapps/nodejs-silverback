@@ -169,6 +169,20 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /version:
+    get:
+      tags:
+      - "version control"
+      summary: "Returns the current build and version number of the deployed api"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/ApiVersionCheckResponse"
+        500:
+          description: "500 Internal Server Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /version/{os}:
     parameters:
       - in: path
@@ -185,8 +199,8 @@ paths:
           description: "Success"
           schema:
             $ref: "#/definitions/VersionCheckResponse"
-        400:
-          description: "401 Unauthorized"
+        500:
+          description: "500 Internal Server Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
   /users:
@@ -595,6 +609,20 @@ definitions:
             latestVersion:
               type: string
               example: '1.8.0'
+    ApiVersionCheckResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          type: object
+          properties:
+            build:
+              type: string
+              example: 'v51'
+            version:
+              type: string
+              example: '1.0.1'
     ErrorResponse:
       type: array
       items:
