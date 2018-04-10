@@ -22,6 +22,7 @@ pipelines:
             - yarn cache dir
             - yarn
             - yarn lint
+            - yarn build
             - yarn test
           services:
             - postgres
@@ -41,6 +42,7 @@ pipelines:
           - yarn cache dir
           - yarn
           - yarn lint
+          - yarn build
           - yarn test
         services:
           - postgres
