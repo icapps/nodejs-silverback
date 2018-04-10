@@ -6,8 +6,8 @@ exports.up = (knex, Promise) => {
 
     table.text('value').notNullable();
 
-    table.uuid('codeId').notNullable();
-    table.foreign('codeId').references('code_types.id')
+    table.uuid('codeTypeId').notNullable();
+    table.foreign('codeTypeId').references('code_types.id')
       .onDelete('CASCADE').onUpdate('CASCADE');
 
     // Timestamps
