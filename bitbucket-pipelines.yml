@@ -1,5 +1,6 @@
 image: node:8
-
+clone:
+  depth: full
 definitions:
   services:
     postgres:
@@ -10,16 +11,33 @@ definitions:
         DB_NAME: silverback_test
         DB_EXTENSION: '"uuid-ossp"'
 pipelines:
+  branches:
+    develop:
+      - step:
+          caches:
+            - node
+          script:
+            - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.3.2
+            - export PATH=$HOME/.yarn/bin:$PATH
+            - yarn cache dir
+            - yarn
+            - yarn tslint
+            - yarn test
+          services:
+            - postgres
+      - step:
+          trigger: manual
+          script:
+            - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_DEVELOP.git HEAD:master
   default:
     - step:
         caches:
           - node
-        script: # Modify the commands below to build your repository.
+        script:
           - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.5.1
           - export PATH=$HOME/.yarn/bin:$PATH
           - yarn cache dir
           - yarn
-          - yarn global add ts-node typescript typings
           - yarn lint
           - yarn test
         services:
