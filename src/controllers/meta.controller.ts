@@ -10,7 +10,7 @@ import * as metaService from '../services/meta.service';
  */
 export async function findAllCodeTypes(req: Request, res: Response): Promise<void> {
   const { data, totalCount } = await metaService.findAllCodeTypes(req.query);
-  responder.succes(res, {
+  responder.success(res, {
     totalCount,
     status: httpStatus.OK,
     payload: data,
@@ -23,7 +23,7 @@ export async function findAllCodeTypes(req: Request, res: Response): Promise<voi
  */
 export async function findAllCodes(req: Request, res: Response): Promise<void> {
   const { data, totalCount } = await metaService.findAllCodes(req.query);
-  responder.succes(res, {
+  responder.success(res, {
     totalCount,
     status: httpStatus.OK,
     payload: data,

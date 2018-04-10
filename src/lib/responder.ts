@@ -1,5 +1,5 @@
 import * as httpStatus from 'http-status';
-import { Response } from 'express-serve-static-core';
+import { Response } from 'express';
 import { parseErrors } from 'tree-house-errors';
 import { ErrorSerializer } from 'jsonade';
 import { logger } from '../lib/logger';
@@ -7,8 +7,8 @@ import { logger } from '../lib/logger';
 /**
  * ExpressJS responder to send success/error responses
 */
-export const responder = {
-  succes: (res: Response, { status = httpStatus.OK, payload, serializer, totalCount }: ResponderOptions) => {
+export const responder: { success: Function, error: Function } = {
+  success: (res: Response, { status = httpStatus.OK, payload, serializer, totalCount }: ResponderOptions) => {
     if (!payload) return res.sendStatus(status);
     if (!serializer || !serializer.serialize) {
       return res.status(status).send(payload);

@@ -9,7 +9,7 @@ import * as authService from '../services/auth.service';
  */
 export async function login(req: Request, res: Response): Promise<void> {
   const data = await authService.login(req.body);
-  responder.succes(res, {
+  responder.success(res, {
     status: httpStatus.OK,
     payload: data,
     serializer: authSerializer,
@@ -24,7 +24,7 @@ export async function login(req: Request, res: Response): Promise<void> {
 export async function initForgotPw(req: Request, res: Response): Promise<void> {
   const { email } = req.body;
   authService.initForgotPw(email); // Run async without waiting
-  responder.succes(res, {
+  responder.success(res, {
     status: httpStatus.OK,
   });
 }
