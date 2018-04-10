@@ -21,7 +21,7 @@ pipelines:
             - export PATH=$HOME/.yarn/bin:$PATH
             - yarn cache dir
             - yarn
-            - yarn tslint
+            - yarn lint
             - yarn test
           services:
             - postgres
