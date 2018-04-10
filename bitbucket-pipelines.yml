@@ -26,6 +26,8 @@ pipelines:
           services:
             - postgres
       - step:
+          name: Deploy to development
+          deployment: development
           trigger: manual
           script:
             - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_DEVELOP.git HEAD:master
