@@ -347,37 +347,11 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /meta/code-types:
+  /meta/codes{codeTypeId}:
     get:
       tags:
       - "metaOptions"
-      summary: "Returns all codeTypes"
-      description: |-
-        permission | scope | effect
-        - | - | -
-        `ADMIN` | `gobal` | **Required** for this endpoint
-      security:
-        - Bearer: []
-      parameters:
-        - $ref: "#/parameters/SortOrder"
-        - $ref: "#/parameters/SortField"
-        - $ref: "#/parameters/Offset"
-        - $ref: "#/parameters/Limit"
-        - $ref: "#/parameters/Search"
-      responses:
-        200:
-          description: "Success"
-          schema:
-            $ref: "#/definitions/CodeTypesListResponse"
-        400:
-          description: "401 Unauthorized"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-  /meta/codes:
-    get:
-      tags:
-      - "metaOptions"
-      summary: "Returns all codes"
+      summary: "Returns all codes for a specific code type"
       description: |-
         permission | scope | effect
         - | - | -
@@ -395,6 +369,11 @@ paths:
           name: codeId
           description: The id of a codeType
           required: false
+        - in: path
+          type: "string"
+          name: codeTypeId
+          description: The name of the code type
+          required: true
       responses:
         200:
           description: "Success"
@@ -553,32 +532,6 @@ definitions:
           format: uuid
         value:
           type: string
-    CodeType:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        code:
-          type: string
-        description:
-          type: string
-    CodeTypesListResponse:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            count:
-              type: number
-              example: 50
-            totalCount:
-              type: number
-              example: 120
-        data:
-          type: array
-          items:
-            $ref: "#/definitions/CodeType"
     CodesListResponse:
       type: object
       properties:
