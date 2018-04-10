@@ -30,7 +30,9 @@ pipelines:
           deployment: test
           trigger: manual
           script:
+            - yarn global add heroku-cli
             - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_DEVELOP.git HEAD:master
+            - heroku --version
   default:
     - step:
         caches:
