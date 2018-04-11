@@ -98,3 +98,17 @@ export async function findByEmail(email: string): Promise<User | undefined> {
   logger.debug(`Get user by email: ${query.toString()}`);
   return await query;
 }
+
+
+/**
+ * Find a user via their reset password token
+ */
+export async function findByResetToken(token: string): Promise<User | undefined> {
+  const query = db(tableNames.USERS)
+    .select(defaultReturnValues)
+    .where('resetPwToken', token)
+    .first();
+
+  logger.debug(`Get user by reset password token: ${query.toString()}`);
+  return await query;
+}

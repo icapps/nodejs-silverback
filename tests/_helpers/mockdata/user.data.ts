@@ -1,7 +1,9 @@
+import { generateRandomHash } from 'tree-house-authentication';
 import { User } from '../../../src/models/user.model';
 import { roles } from '../../../src/config/roles.config';
 import { tableNames } from '../../../src/constants';
 import { db } from '../../../src/lib/db';
+import { tokenConfig } from '../../../src/config/auth.config';
 import * as userRepository from '../../../src/repositories/user.repository';
 
 export const validUser: User = {
@@ -71,6 +73,12 @@ export function createUser(values: User) {
 
 export function findById(id: string) {
   return userRepository.findById(id);
+}
+
+export async function setResetPwToken(userId: string) {
+  const token = generateRandomHash('sha256', tokenConfig.secretOrKey);
+  await userRepository.update(userId, { resetPwToken: token });
+  return token;
 }
 
 /**

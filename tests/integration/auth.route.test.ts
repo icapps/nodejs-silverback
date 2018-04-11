@@ -4,7 +4,7 @@ import * as Joi from 'joi';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
 import { clearAll } from '../_helpers/mockdata/data';
-import { createUser, validUser, findById } from '../_helpers/mockdata/user.data';
+import { createUser, validUser, findById, regularUser, setResetPwToken, unsetResetPwToken } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 import { getValidJwt, getUserToken } from '../_helpers/mockdata/auth.data';
 
@@ -106,6 +106,38 @@ describe('/auth', () => {
 
       expect(status).toEqual(httpStatus.OK);
       expect(body).toEqual({});
+    });
+  });
+
+
+  describe('GET /forgot-password/verify', () => {
+    let user;
+
+    beforeAll(async () => {
+      user = await createUser(regularUser); // Make sure we create another one than the one created beforeAll tests
+    });
+
+    it('Should succesfully verify existing valid token', async () => {
+      const token = await setResetPwToken(user.id);
+      const { body, status } = await request(app)
+        .get(`${prefix}/forgot-password/verify`)
+        .query(`token=${token}`);
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body).toEqual({});
+    });
+
+    it('Should throw an error when invalid token is provided', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/forgot-password/verify`)
+        .query('token=unknownToken');
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error when no token is provided', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/forgot-password/verify`);
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
   });
 });

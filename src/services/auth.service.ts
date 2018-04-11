@@ -1,7 +1,7 @@
 import { AuthCredentials } from '../models/auth.model';
 import { AuthenticationError, UnauthorizedError, NotFoundError } from 'tree-house-errors';
 import { comparePassword, createJwt, generateRandomHash } from 'tree-house-authentication';
-import { jwtConfig } from '../config/auth.config';
+import { jwtConfig, tokenConfig } from '../config/auth.config';
 import { logger } from '../lib/logger';
 import { errors } from '../config/errors.config';
 import { getForgotPwContent } from '../templates/forgot-pw.mail.template';
@@ -47,7 +47,7 @@ export async function initForgotPw(email: string) {
     const user = await userRepository.findByEmail(email);
     if (!user) throw new NotFoundError();
 
-    const token = generateRandomHash('sha256', jwtConfig.secretOrKey);
+    const token = generateRandomHash('sha256', tokenConfig.secretOrKey);
     await userRepository.update(user.id, { resetPwToken: token });
 
     // Send email with reset link
@@ -56,5 +56,19 @@ export async function initForgotPw(email: string) {
   } catch (error) {
     logger.error(`An error occured trying to reset password: %${error}`);
     // Do not rethrow error, this will be an async function
+  }
+}
+
+
+/**
+ * Verify if a forgot password reset token is still valid
+ */
+export async function verifyForgotPw(token: string): Promise<void> {
+  try {
+    const user = await userRepository.findByResetToken(token);
+    if (!user || !user.resetPwToken) throw new NotFoundError();
+  } catch (error) {
+    logger.error(`An error occured trying to verify reset password token: %${error}`);
+    throw error;
   }
 }

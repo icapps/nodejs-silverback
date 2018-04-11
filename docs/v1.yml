@@ -111,16 +111,6 @@ paths:
       responses:
         200:
           description: "Success"
-          schema:
-            type: "object"
-            properties:
-              meta:
-                type: "object"
-              data:
-                type: "object"
-                properties:
-                  valid:
-                    type: "boolean"
         400:
           description: "400 Bad Request"
           schema:
