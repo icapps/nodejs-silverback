@@ -347,7 +347,7 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /meta/codes{codeTypeId}:
+  /meta/codes/{codeTypeId}:
     get:
       tags:
       - "metaOptions"

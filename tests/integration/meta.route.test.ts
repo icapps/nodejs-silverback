@@ -27,7 +27,7 @@ describe('/meta', () => {
     await clearAll(); // Full db clear - empty db after tests
   });
 
-  fdescribe('GET /codes', () => {
+  describe('GET /codes', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let codeType;
     let countryCodeType;
@@ -52,7 +52,7 @@ describe('/meta', () => {
       await clearCodeTypesData();
     });
 
-    fit('Should return all language codes with default pagination', async () => {
+    it('Should return all language codes with default pagination', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${adminToken}`);
@@ -71,7 +71,7 @@ describe('/meta', () => {
       });
     });
 
-    fit('Should return all country codes with provided pagination', async () => {
+    it('Should return all country codes with provided pagination', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${countryCodeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -91,7 +91,7 @@ describe('/meta', () => {
       });
     });
 
-    fit('Should return codes in ascending order for value', async () => {
+    it('Should return codes in ascending order for value', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -112,7 +112,7 @@ describe('/meta', () => {
       });
     });
 
-    fit('Should return all codes matching `EN` in value', async () => {
+    it('Should return all codes matching `EN` in value', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -130,7 +130,7 @@ describe('/meta', () => {
       expect(body.data[0].value).toEqual(found.value);
     });
 
-    fit('Should throw an error when code type is not found', async () => {
+    it('Should throw an error when code type is not found', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/unknownType`)
         .set('Authorization', `Bearer ${adminToken}`);
@@ -138,7 +138,7 @@ describe('/meta', () => {
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    fit('Should throw an error when userId in jwt is not found', async () => {
+    it('Should throw an error when userId in jwt is not found', async () => {
       const invalidToken = await getValidJwt(faker.random.uuid());
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
@@ -147,7 +147,7 @@ describe('/meta', () => {
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    fit('Should throw an error without admin permission', async () => {
+    it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`);
@@ -157,7 +157,7 @@ describe('/meta', () => {
       expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
     });
 
-    fit('Should throw an error without jwt token provided', async () => {
+    it('Should throw an error without jwt token provided', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`);
 
