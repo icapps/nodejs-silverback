@@ -132,9 +132,9 @@ paths:
           schema:
             type: "object"
             required:
-              - "email"
+              - "password"
             properties:
-              email:
+              password:
                 type: "string"
       responses:
         200:

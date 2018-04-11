@@ -18,4 +18,12 @@ export const authSchema = {
       token: Joi.string().required(),
     },
   },
+  forgotPwConfirm: {
+    query: {
+      token: Joi.string().required(),
+    },
+    body: {
+      password: Joi.string().required(),
+    },
+  },
 };

@@ -40,3 +40,16 @@ export async function verifyForgotPw(req: Request, res: Response): Promise<void>
     status: httpStatus.OK,
   });
 }
+
+/**
+ * Confirm newly choosen password
+ */
+export async function confirmForgotPw(req: Request, res: Response): Promise<void> {
+  const { password } = req.body;
+  const { token } = req.query;
+
+  await authService.confirmForgotPw(token, password);
+  responder.success(res, {
+    status: httpStatus.OK,
+  });
+}

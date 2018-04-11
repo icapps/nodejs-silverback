@@ -28,13 +28,22 @@ export async function create(values: UserCreate): Promise<User> {
  * Update an existing user
  */
 export async function update(userId: string, values: UserUpdate | PartialUserUpdate): Promise<User> {
-  // TODO: UpdateAt!!
+  // TODO: UpdatedAt!!
   const query = db(tableNames.USERS)
     .update(values, defaultReturnValues)
     .where('id', userId);
 
   logger.debug(`Update existing user: ${query.toString()}`);
   return (await query)[0];
+}
+
+
+/**
+ * Update the password of an existing user
+ */
+export async function updatePassword(userId: string, password: string): Promise<User> {
+  const hashedPw = await getHashedPassword(password, settings.saltCount);
+  return update(userId, { password: hashedPw, resetPwToken: null });
 }
 
 
