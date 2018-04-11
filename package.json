@@ -15,7 +15,8 @@
     "test:coverage": "jest --coverage --maxWorkers=1 --collectCoverageFrom=src/**/*.ts --forceExit",
     "test:watch": "jest --watchAll",
     "db:seed": "node_modules/knex/bin/cli.js seed:run",
-    "db:migrate": "node_modules/knex/bin/cli.js migrate:latest"
+    "db:migrate": "node_modules/knex/bin/cli.js migrate:latest",
+    "audit": "node_modules/auditjs/audit.js"
   },
   "precommit": [
     "lint"
@@ -27,7 +28,7 @@
     "http-status": "~1.0.1",
     "joi": "~13.1.2",
     "jsonade": "~1.1.0",
-    "knex": "~0.14.4",
+    "knex": "~0.14.5",
     "lodash": "~4.17.5",
     "mandrill-api": "~1.0.45",
     "pg": "~7.4.1",
@@ -43,26 +44,27 @@
     "@types/faker": "~4.1.2",
     "@types/helmet": "~0.0.37",
     "@types/http-status": "~0.2.30",
-    "@types/jest": "~22.2.0",
+    "@types/jest": "~22.2.2",
     "@types/joi": "~13.0.7",
-    "@types/knex": "~0.14.8",
+    "@types/knex": "~0.14.9",
     "@types/lodash": "~4.14.105",
     "@types/mandrill-api": "~1.0.30",
     "@types/supertest": "^2.0.4",
-    "@types/winston": "~2.3.8",
+    "@types/winston": "~2.3.9",
+    "auditjs": "^2.4.3",
     "faker": "^4.1.0",
-    "jest": "^22.4.2",
+    "jest": "^22.4.3",
     "node-mocks-http": "^1.5.8",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.2",
     "supertest": "^3.0.0",
-    "ts-jest": "~22.4.1",
+    "ts-jest": "~22.4.2",
     "tslint": "^5.9.1",
-    "tslint-config-airbnb": "^5.7.0",
-    "typescript": "^2.7.2"
+    "tslint-config-airbnb": "^5.8.0",
+    "typescript": "^2.8.1"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": "8"
   },
   "author": "iCapps <info@icapps.com>",
   "license": "MIT",

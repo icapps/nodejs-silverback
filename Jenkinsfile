@@ -51,8 +51,6 @@ pipeline {
         sh """
           # Fetch the new build version number.
             heroku_build_version=`heroku releases | sed -n 2p | awk '{print \$1}'`
-
-            echo "\$heroku_build_version"
             heroku config:set BUILD_NUMBER=\$heroku_build_version
         """
       }

@@ -5,12 +5,12 @@ exports.seed = function (knex, Promise) {
     .then(function () {
       return knex('code_types').del()
         .then(function () {
-          return knex('code_types').insert([{ code: 'LANGUAGE' }], ['id'])
+          return knex('code_types').insert([{ code: 'LANGUAGES' }], ['id'])
             .then(function (code) {
               return knex('codes').insert([
-                { value: 'EN', codeId: code[0].id },
-                { value: 'NL', codeId: code[0].id },
-                { value: 'FR', codeId: code[0].id }
+                { value: 'EN', codeTypeId: code[0].id },
+                { value: 'NL', codeTypeId: code[0].id },
+                { value: 'FR', codeTypeId: code[0].id }
               ]);
             });
         })
