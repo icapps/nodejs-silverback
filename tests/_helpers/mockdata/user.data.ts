@@ -1,3 +1,5 @@
+import * as crypto from 'crypto';
+import { generateRandomHash } from 'tree-house-authentication';
 import { User } from '../../../src/models/user.model';
 import { roles } from '../../../src/config/roles.config';
 import { tableNames } from '../../../src/constants';
@@ -71,6 +73,12 @@ export function createUser(values: User) {
 
 export function findById(id: string) {
   return userRepository.findById(id);
+}
+
+export async function setResetPwToken(userId: string) {
+  const token = crypto.randomBytes(24).toString('hex'); // TODO: Use tree-house-authentication
+  await userRepository.update(userId, { resetPwToken: token });
+  return token;
 }
 
 /**

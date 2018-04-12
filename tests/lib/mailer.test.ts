@@ -21,6 +21,16 @@ describe('lib/mailer', () => {
       expect(client.messages.send).toBeInstanceOf(Function);
       expect(client.messages.sendTemplate).toBeInstanceOf(Function);
     });
+
+    it('Should return an error when no environment variable was found', () => {
+      expect.assertions(1);
+      try {
+        delete process.env.MANDRILL_API_KEY;
+        mailer.getDefaultClient();
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+    });
   });
 
   describe('send', () => {

@@ -33,4 +33,5 @@ export interface PartialUserUpdate {
   hasAccess?: boolean;
   role?: string; // Code of role
   resetPwToken?: string;
+  password?: string;
 }

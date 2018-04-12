@@ -13,4 +13,17 @@ export const authSchema = {
       email: Joi.string().email().required(),
     },
   },
+  forgotPwVerify: {
+    query: {
+      token: Joi.string().required(),
+    },
+  },
+  forgotPwConfirm: {
+    query: {
+      token: Joi.string().required(),
+    },
+    body: {
+      password: Joi.string().required(),
+    },
+  },
 };

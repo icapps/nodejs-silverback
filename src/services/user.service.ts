@@ -1,4 +1,4 @@
-import { NotFoundError } from 'tree-house-errors';
+import { NotFoundError, BadRequestError } from 'tree-house-errors';
 import { User, UserCreate, UserUpdate, PartialUserUpdate } from '../models/user.model';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
@@ -33,6 +33,9 @@ export async function findAll(filters: Filters): Promise<{ data: User[], totalCo
  */
 export async function create(values: UserCreate): Promise<User> {
   try {
+    const user = await userRepository.findByEmail(values.email);
+    if (user) throw new BadRequestError(); // TODO: Custom error message
+
     return await userRepository.create(values);
   } catch (error) {
     logger.error(`An error occured creating a user: ${error}`);

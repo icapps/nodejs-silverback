@@ -259,6 +259,34 @@ describe('/users', () => {
       });
     });
 
+    it('Should throw an error when trying to create a duplicate user', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          password: 'prutser123',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+      expect(status).toEqual(httpStatus.CREATED);
+
+      const { body: body2, status: status2 } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          password: 'prutser123',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+      expect(status2).toEqual(httpStatus.BAD_REQUEST);
+    });
+
     it('Should throw a validation error when not all fields are provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)

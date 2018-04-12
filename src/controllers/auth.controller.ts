@@ -28,3 +28,28 @@ export async function initForgotPw(req: Request, res: Response): Promise<void> {
     status: httpStatus.OK,
   });
 }
+
+
+/**
+ * Verify if a forgot password reset token is still valid
+ */
+export async function verifyForgotPw(req: Request, res: Response): Promise<void> {
+  const { token } = req.query;
+  await authService.verifyForgotPw(token);
+  responder.success(res, {
+    status: httpStatus.OK,
+  });
+}
+
+/**
+ * Confirm newly choosen password
+ */
+export async function confirmForgotPw(req: Request, res: Response): Promise<void> {
+  const { password } = req.body;
+  const { token } = req.query;
+
+  await authService.confirmForgotPw(token, password);
+  responder.success(res, {
+    status: httpStatus.OK,
+  });
+}

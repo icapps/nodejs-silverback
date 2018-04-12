@@ -28,13 +28,22 @@ export async function create(values: UserCreate): Promise<User> {
  * Update an existing user
  */
 export async function update(userId: string, values: UserUpdate | PartialUserUpdate): Promise<User> {
-  // TODO: UpdateAt!!
+  // TODO: UpdatedAt!!
   const query = db(tableNames.USERS)
     .update(values, defaultReturnValues)
     .where('id', userId);
 
   logger.debug(`Update existing user: ${query.toString()}`);
   return (await query)[0];
+}
+
+
+/**
+ * Update the password of an existing user
+ */
+export async function updatePassword(userId: string, password: string): Promise<User> {
+  const hashedPw = await getHashedPassword(password, settings.saltCount);
+  return update(userId, { password: hashedPw, resetPwToken: null });
 }
 
 
@@ -96,5 +105,19 @@ export async function findByEmail(email: string): Promise<User | undefined> {
     .first();
 
   logger.debug(`Get user by email: ${query.toString()}`);
+  return await query;
+}
+
+
+/**
+ * Find a user via their reset password token
+ */
+export async function findByResetToken(token: string): Promise<User | undefined> {
+  const query = db(tableNames.USERS)
+    .select(defaultReturnValues)
+    .where('resetPwToken', token)
+    .first();
+
+  logger.debug(`Get user by reset password token: ${query.toString()}`);
   return await query;
 }
