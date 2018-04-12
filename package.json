@@ -9,13 +9,13 @@
     "serve": "yarn build && yarn start",
     "clean": "rimraf ./build",
     "lint": "tslint 'src/**/*.ts'",
-    "postinstall": "node_modules/typescript/bin/tsc",
     "pretest": "NODE_ENV=test yarn db:migrate",
     "test": "jest --maxWorkers=1 --forceExit",
     "test:coverage": "jest --coverage --maxWorkers=1 --collectCoverageFrom=src/**/*.ts --forceExit",
     "test:watch": "jest --watchAll",
     "db:seed": "node_modules/knex/bin/cli.js seed:run",
     "db:migrate": "node_modules/knex/bin/cli.js migrate:latest",
+    "heroku-postbuild": "node_modules/typescript/bin/tsc",
     "audit": "node_modules/auditjs/audit.js"
   },
   "precommit": [
