@@ -13,4 +13,5 @@ export const defaultFilters: Filters = {
 
 export const mailTemplates = {
   FORGOT_PW_INIT: '00-forgot-password',
+  SET_INITIAL_PW: '01-initial-password',
 };
