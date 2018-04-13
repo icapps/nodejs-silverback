@@ -7,7 +7,6 @@ import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, validUser, findById, regularUser, setResetPwToken, clearUserData } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 import { getValidJwt, getUserToken } from '../_helpers/mockdata/auth.data';
-
 import * as mailer from '../../src/lib/mailer';
 
 describe('/auth', () => {

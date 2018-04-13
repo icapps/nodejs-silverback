@@ -17,5 +17,6 @@ export function selectAndCount(db: knex, values: string[]) {
  * selectAndCount will provide a total property on every item in the array (let's take the first one)
  */
 export function parseTotalCount(data: any[]): number {
+  if (data.length === 0) return 0;
   return parseInt(data[0].total, 10);
 }

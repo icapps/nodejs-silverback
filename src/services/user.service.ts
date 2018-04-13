@@ -1,10 +1,11 @@
+import * as crypto from 'crypto';
 import { NotFoundError, BadRequestError } from 'tree-house-errors';
 import { User, UserCreate, UserUpdate, PartialUserUpdate } from '../models/user.model';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
+import { getInitialPwChangeContent } from '../templates/initial-pw.mail.template';
 import * as userRepository from '../repositories/user.repository';
-
-
+import * as mailer from '../lib/mailer';
 /**
  * Return a user by id
  */
@@ -31,10 +32,22 @@ export async function findAll(filters: Filters): Promise<{ data: User[], totalCo
 /**
  * Create a new user
  */
-export async function create(values: UserCreate): Promise<User> {
+export async function create(values: UserCreate, changePassword: boolean): Promise<User> {
   try {
     const user = await userRepository.findByEmail(values.email);
     if (user) throw new BadRequestError(); // TODO: Custom error message
+
+    // User must set own password after creation
+    if (changePassword === true) {
+      const token = crypto.randomBytes(24).toString('hex'); // TODO: Integrate this in tree-house-authentication to replace generateRandomHash
+      const created = await userRepository.create(Object.assign({}, values, { resetPwToken: token }));
+
+      // Send mail asynchronous, no need to wait
+      const content = getInitialPwChangeContent(values.email, token);
+      mailer.sendTemplate(content, mailer.getDefaultClient());
+
+      return created;
+    }
 
     return await userRepository.create(values);
   } catch (error) {

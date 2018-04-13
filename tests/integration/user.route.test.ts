@@ -10,6 +10,7 @@ import { usersSchema, userSchema, createUserSchema, userByIdSchema } from '../_h
 import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
 import { roles } from '../../src/config/roles.config';
 import { errors } from '../../src/config/errors.config';
+import * as mailer from '../../src/lib/mailer';
 
 describe('/users', () => {
   const prefix = `/api/${process.env.API_VERSION}`;
@@ -24,6 +25,7 @@ describe('/users', () => {
 
   afterAll(async () => {
     await clearAll(); // Full db clear - empty db after tests
+    jest.clearAllMocks();
   });
 
   describe('GET /', () => {
@@ -257,6 +259,33 @@ describe('/users', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
+    });
+
+    it('Should succesfully create a new user who has to change his password', async () => {
+      const mailSpy = jest.spyOn(mailer, 'sendTemplate').mockImplementation(() => Promise.resolve());
+
+      const { body, status } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .query('changePassword=true')
+        .send({
+          email: 'test@changePw.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          password: 'prutser123',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.CREATED);
+      expect(body.data.email).toEqual('test@changePw.com');
+      Joi.validate(body, createUserSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+
+      const createdUser = await findById(body.data.id);
+      expect(createdUser.resetPwToken).toEqual(expect.any(String));
     });
 
     it('Should throw an error when trying to create a duplicate user', async () => {

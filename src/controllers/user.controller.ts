@@ -36,7 +36,8 @@ export async function findAll(req: Request, res: Response): Promise<void> {
  * Create a new user
  */
 export async function create(req: Request, res: Response): Promise<void> {
-  const result = await userService.create(req.body);
+  const { changePassword } = req.query;
+  const result = await userService.create(req.body, changePassword);
   responder.success(res, {
     status: httpStatus.CREATED,
     payload: result,

@@ -235,6 +235,10 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/PostUser"
+        - name: "changePassword"
+          in: "query"
+          required: false
+          type: "string"
       responses:
         201:
           description: "Success"
@@ -416,9 +420,9 @@ definitions:
         - "email"
         - "firstName"
         - "lastName"
-        - "password"
         - "hasAccess"
         - "role"
+        - "password"
       properties:
         email:
           type: string

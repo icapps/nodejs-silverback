@@ -2,16 +2,16 @@ import * as Joi from 'joi';
 
 export const authSchema = {
   login: {
-    body: {
+    body: Joi.object({
       username: Joi.string().required(),
       password: Joi.string().required(),
       deviceId: Joi.string(),
-    },
+    }),
   },
   forgotPwInit: {
-    body: {
+    body: Joi.object({
       email: Joi.string().email().required(),
-    },
+    }),
   },
   forgotPwVerify: {
     query: {
@@ -22,8 +22,8 @@ export const authSchema = {
     query: {
       token: Joi.string().required(),
     },
-    body: {
+    body: Joi.object({
       password: Joi.string().required(),
-    },
+    }),
   },
 };
