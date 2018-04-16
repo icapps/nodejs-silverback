@@ -5,6 +5,7 @@ import { responder } from '../lib/responder';
 import { authSerializer } from '../serializers/auth.serializer';
 import { extractJwt } from '../lib/utils';
 import { JwtPayload } from '../middleware/permission.middleware';
+import { AuthRequest } from '../models/request.model';
 import * as authService from '../services/auth.service';
 
 /**
@@ -33,6 +34,18 @@ export async function refresh(req: Request, res: Response): Promise<void> {
     status: httpStatus.OK,
     payload: data,
     serializer: authSerializer,
+  });
+}
+
+
+/**
+ * Logout a logged in user
+ */
+export async function logout(req: AuthRequest, res: Response): Promise<void> {
+  const { user } = req.session;
+  await authService.logout(user.id);
+  responder.success(res, {
+    status: httpStatus.OK,
   });
 }
 

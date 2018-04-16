@@ -67,6 +67,19 @@ export async function refresh(userId: string, refreshToken: string) {
 
 
 /**
+ * Logout an existing user by removing its refresh token
+ */
+export async function logout(userId: string) {
+  try {
+    return await userRepository.update(userId, { refreshToken: null });
+  } catch (error) {
+    logger.error(`An error occured trying to logout: %${error}`);
+    throw error;
+  }
+}
+
+
+/**
  * Start the forgot password flow by generating an email with a reset link
  */
 export async function initForgotPw(email: string) {
