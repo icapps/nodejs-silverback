@@ -1,4 +1,13 @@
 export interface Code {
   id?: string;
-  value: string;
+  code: string;
+  name: string;
+  description?: string;
 }
+
+export interface CodeCreate {
+  code: string;
+  name: string;
+  description?: string;
+}
+

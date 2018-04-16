@@ -34,18 +34,17 @@ describe('/meta', () => {
     let languageCodes;
 
     beforeAll(async () => {
-      codeType = await createCodeType({ code: 'LAN', description: 'Languages' });
-      const code1 = await createCode({ codeType, value: 'EN' });
-      const code2 = await createCode({ codeType, value: 'NL' });
-      const code3 = await createCode({ codeType, value: 'FR' });
-      const code4 = await createCode({ codeType, value: 'WEUTELS' });
+      codeType = await createCodeType({ code: 'LAN', name: 'Language' });
+      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN' });
+      const code2 = await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
+      const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
+      const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
       languageCodes = [code1, code2, code3, code4];
 
-      countryCodeType = await createCodeType({ code: 'CNTRY', description: 'Countries' });
-      createCode({ codeType: countryCodeType, value: 'BE' });
-      createCode({ codeType: countryCodeType, value: 'DE' });
-      createCode({ codeType: countryCodeType, value: 'PL' });
-
+      countryCodeType = await createCodeType({ code: 'CNTRY', name: 'Country' });
+      createCode(countryCodeType.id, { name: 'Belgium', code: 'BE' });
+      createCode(countryCodeType.id, { name: 'Germany', code: 'DE' });
+      createCode(countryCodeType.id, { name: 'Poland', code: 'PL' });
     });
 
     afterAll(async () => {
@@ -108,15 +107,15 @@ describe('/meta', () => {
 
       const sorted = sortBy(languageCodes, 'value');
       body.data.forEach((code, index) => {
-        expect(code.value).toEqual(sorted[index].value);
+        expect(code.code).toEqual(sorted[index].code);
       });
     });
 
-    it('Should return all codes matching `EN` in value', async () => {
+    it('Should return all codes matching `English` in value', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${adminToken}`)
-        .query('search=EN');
+        .query('search=English');
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.data).toHaveLength(1);
@@ -126,7 +125,7 @@ describe('/meta', () => {
         totalCount: 1,
       });
 
-      const found = languageCodes.find(x => x.value === 'EN');
+      const found = languageCodes.find(x => x.code === 'EN');
       expect(body.data[0].value).toEqual(found.value);
     });
 

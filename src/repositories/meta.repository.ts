@@ -1,18 +1,18 @@
 import { db, parseTotalCount, selectAndCount } from '../lib/db';
 import { logger } from '../lib/logger';
 import { tableNames, defaultFilters } from '../constants';
-import { Code } from '../models/code.model';
-import { CodeType } from '../models/code-type.model';
+import { Code, CodeCreate } from '../models/code.model';
+import { CodeType, CodeTypeCreate } from '../models/code-type.model';
 import { applyPagination, applySearch, applySorting } from '../lib/filter';
 import { Filters } from '../models/filters.model';
 
-const defaultCodeReturnValues = ['id', 'value', 'codeTypeId'];
-const defaultCodeTypeReturnValues = ['id', 'code', 'description'];
+const defaultCodeReturnValues = ['id', 'code', 'name', 'description', 'codeTypeId'];
+const defaultCodeTypeReturnValues = ['id', 'code', 'name', 'description'];
 
 /**
  * Create a new codeType
  */
-export async function createCodeType(values: CodeType): Promise<CodeType> {
+export async function createCodeType(values: CodeTypeCreate): Promise<CodeType> {
   const query = db.insert(values, defaultCodeTypeReturnValues)
     .into(tableNames.CODETYPES);
 
@@ -20,11 +20,12 @@ export async function createCodeType(values: CodeType): Promise<CodeType> {
   return (await query)[0];
 }
 
+
 /**
  * Create a new code
  */
-export async function createCode(values: Code, codeType: CodeType): Promise<Code> {
-  const allValues = Object.assign({}, values, { codeTypeId: codeType.id });
+export async function createCode(codeTypeId: string, values: CodeCreate): Promise<Code> {
+  const allValues = Object.assign({}, values, { codeTypeId });
   const query = db.insert(allValues, defaultCodeReturnValues)
     .into(tableNames.CODES);
 
@@ -58,8 +59,8 @@ export async function findAllCodes(codeTypeId: string, options: Filters): Promis
     .where('codeTypeId', codeTypeId);
 
   applyPagination(query, allOptions);
-  applySearch(query, allOptions, ['id', 'value']);
-  applySorting(query, allOptions, ['value']);
+  applySearch(query, allOptions, ['id', 'code', 'name']);
+  applySorting(query, allOptions, ['code', 'name']);
   logger.debug(`Get all codes: ${query.toString()}`);
 
   const data = await query;

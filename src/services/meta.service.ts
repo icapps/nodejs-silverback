@@ -18,3 +18,8 @@ export async function findAllCodes(codeType: string, filters: Filters): Promise<
     throw error;
   }
 }
+/*
+
+export async function createCode(codeTypeId: string, values: CodeCreate) {
+
+} */
