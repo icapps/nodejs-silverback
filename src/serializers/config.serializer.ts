@@ -8,7 +8,6 @@ export const appVersionSerializer = new Serializer('versions', {
   ],
 });
 
-
 export const apiVersionSerializer = new Serializer('versions', {
   keyForAttribute: 'camelCase',
   attributes: [

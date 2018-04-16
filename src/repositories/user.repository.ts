@@ -6,7 +6,8 @@ import { applyPagination, applySorting, applySearch } from '../lib/filter';
 import { tableNames, defaultFilters } from '../constants';
 import { User, UserUpdate, UserCreate, PartialUserUpdate } from '../models/user.model';
 import { getHashedPassword } from 'tree-house-authentication';
-const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName', 'hasAccess', 'role', 'resetPwToken', 'createdAt', 'updatedAt'];
+const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName',
+  'hasAccess', 'role', 'refreshToken', 'resetPwToken', 'createdAt', 'updatedAt'];
 
 /**
  * Create new user
@@ -119,5 +120,20 @@ export async function findByResetToken(token: string): Promise<User | undefined>
     .first();
 
   logger.debug(`Get user by reset password token: ${query.toString()}`);
+  return await query;
+}
+
+
+/**
+ * Find a user via their refresh token and user id
+ */
+export async function findByRefreshToken(userId: string, token: string): Promise<User | undefined> {
+  const query = db(tableNames.USERS)
+    .select(defaultReturnValues)
+    .where('refreshToken', token)
+    .andWhere('id', userId)
+    .first();
+
+  logger.debug(`Get user by refresh token: ${query.toString()}`);
   return await query;
 }

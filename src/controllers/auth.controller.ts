@@ -1,7 +1,10 @@
 import * as httpStatus from 'http-status';
+import { decodeJwt } from 'tree-house-authentication';
 import { Request, Response } from 'express';
 import { responder } from '../lib/responder';
 import { authSerializer } from '../serializers/auth.serializer';
+import { extractJwt } from '../lib/utils';
+import { JwtPayload } from '../middleware/permission.middleware';
 import * as authService from '../services/auth.service';
 
 /**
@@ -9,6 +12,24 @@ import * as authService from '../services/auth.service';
  */
 export async function login(req: Request, res: Response): Promise<void> {
   const data = await authService.login(req.body);
+  responder.success(res, {
+    status: httpStatus.OK,
+    payload: data,
+    serializer: authSerializer,
+  });
+}
+
+
+/**
+ * Return a new access token via their refresh token
+ */
+export async function refresh(req: Request, res: Response): Promise<void> {
+  const accessToken = extractJwt(req);
+  console.log(accessToken);
+  const { userId } = <JwtPayload>await decodeJwt(accessToken);
+  const { refreshToken } = req.body;
+
+  const data = await authService.refresh(userId, refreshToken);
   responder.success(res, {
     status: httpStatus.OK,
     payload: data,

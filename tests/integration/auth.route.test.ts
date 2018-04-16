@@ -37,6 +37,9 @@ describe('/auth', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
+
+      const loggedInUser = await findById(user.id);
+      expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
     it('Should throw error when no username or password is provided', async () => {
@@ -85,6 +88,54 @@ describe('/auth', () => {
       expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
     });
 
+  });
+
+  describe('POST /refresh', () => {
+    it('Should succesfully refresh an expired access token', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          username: validUser.email,
+          password: validUser.password,
+        });
+      expect(status).toEqual(httpStatus.OK);
+      const accessToken = body.data.accessToken;
+      const refreshToken = body.data.refreshToken;
+
+      const { body: body2, status: status2 } = await request(app)
+        .post(`${prefix}/auth/refresh`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ refreshToken });
+
+      expect(status2).toEqual(httpStatus.OK);
+      Joi.validate(body2, loginSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+
+      const loggedInUser = await findById(user.id);
+      expect(loggedInUser.refreshToken).not.toEqual(body.data.refreshToken);
+      expect(loggedInUser.refreshToken).toEqual(body2.data.refreshToken);
+    });
+
+
+    it('Should throw an error when trying to refresh without valid access token', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          username: validUser.email,
+          password: validUser.password,
+        });
+      expect(status).toEqual(httpStatus.OK);
+      const accessToken = body.data.accessToken;
+
+      const { status: status2 } = await request(app)
+        .post(`${prefix}/auth/refresh`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ refreshToken: 'notFoundToken' });
+
+      expect(status2).toEqual(httpStatus.NOT_FOUND);
+    });
   });
 
   describe('POST /forgot-password/init', () => {
