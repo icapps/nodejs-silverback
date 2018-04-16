@@ -19,7 +19,7 @@ export const responder: { success: Function, error: Function } = {
   },
   error: (res: Response, errors: any) => {
     logger.debug('Error:', errors);
-    const parsedError = parseErrors(errors); // TODO: Parse DB errors (postgres, mssql support??)
+    const parsedError = parseErrors(errors);
     const serializerError = ErrorSerializer.serialize([parsedError]);
 
     logger.error('Error response: ', serializerError);
