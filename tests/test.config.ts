@@ -10,7 +10,7 @@ export const environment = {
   API_VERSION: 'v1',
   FORGOT_PW_LINK: 'https://test.com/forgot-pw',
   SYSTEM_EMAIL: 'info@icapps.com',
-  BUILD_NUMBER: 'v1',
+  HEROKU_RELEASE_VERSION: 'v1',
   MIN_VERSION_ANDROID: '1.0.0',
   LATEST_VERSION_ANDROID: '2.0.1',
   MIN_VERSION_IOS: '1.0.0',

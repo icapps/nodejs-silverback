@@ -27,7 +27,7 @@ export function getAppVersion(req: Request, res: Response) {
  */
 export function getApiVersion(_req: Request, res: Response) {
   const data = {
-    build: process.env.BUILD_NUMBER,
+    build: process.env.HEROKU_RELEASE_VERSION,
     version: settings.version,
   };
 
