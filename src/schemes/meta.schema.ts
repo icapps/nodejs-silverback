@@ -13,4 +13,19 @@ export const metaSchema = {
       search: Joi.string(),
     },
   },
+  createCode: {
+    params: {
+      codeType: Joi.string().required(),
+    },
+    body: {
+      code: Joi.string().required(),
+      name: Joi.string().required(),
+      description: Joi.string(),
+    },
+  },
+  deprecateCode: {
+    params: {
+      codeId: Joi.string().guid().required(),
+    },
+  },
 };

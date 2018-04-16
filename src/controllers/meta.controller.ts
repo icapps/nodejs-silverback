@@ -19,3 +19,28 @@ export async function findAllCodes(req: Request, res: Response): Promise<void> {
     serializer: codeSerializer,
   });
 }
+
+
+/**
+ * Create a new code
+ */
+export async function createCode(req: Request, res: Response): Promise<void> {
+  const codeType = req.params.codeType;
+  const result = await metaService.createCode(codeType, req.body);
+  responder.success(res, {
+    status: httpStatus.CREATED,
+    payload: result,
+    serializer: codeSerializer,
+  });
+}
+
+
+/**
+ * Deprecate an existing code
+ */
+export async function deprecateCode(req: Request, res: Response): Promise<void> {
+  await metaService.deprecateCode(req.params.codeId);
+  responder.success(res, {
+    status: httpStatus.OK,
+  });
+}
