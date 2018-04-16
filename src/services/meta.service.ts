@@ -35,3 +35,18 @@ export async function createCode(codeType: string, values: CodeCreate) {
     throw error;
   }
 }
+
+
+/**
+ * Deprecate a code
+ */
+export async function deprecateCode(codeId: string) {
+  try {
+    const result = await metaRepository.updateCode(codeId, { deprecated: true });
+    if (!result) throw new NotFoundError();
+    return result;
+  } catch (error) {
+    logger.error(`An error occured deprecating a code: ${error}`);
+    throw error;
+  }
+}

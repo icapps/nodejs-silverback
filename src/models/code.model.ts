@@ -12,3 +12,17 @@ export interface CodeCreate {
   description?: string;
 }
 
+
+export interface CodeUpdate {
+  code: string;
+  name: string;
+  description: string;
+  deprecated: boolean;
+}
+
+export interface PartialCodeUpdate {
+  code?: string;
+  name?: string;
+  description?: string;
+  deprecated?: boolean;
+}

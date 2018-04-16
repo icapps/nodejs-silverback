@@ -33,3 +33,14 @@ export async function createCode(req: Request, res: Response): Promise<void> {
     serializer: codeSerializer,
   });
 }
+
+
+/**
+ * Deprecate an existing code
+ */
+export async function deprecateCode(req: Request, res: Response): Promise<void> {
+  await metaService.deprecateCode(req.params.codeId);
+  responder.success(res, {
+    status: httpStatus.OK,
+  });
+}

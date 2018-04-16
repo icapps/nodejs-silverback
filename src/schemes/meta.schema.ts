@@ -23,4 +23,9 @@ export const metaSchema = {
       description: Joi.string(),
     },
   },
+  deprecateCode: {
+    params: {
+      codeId: Joi.string().guid().required(),
+    },
+  },
 };

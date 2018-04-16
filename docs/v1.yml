@@ -404,6 +404,30 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /meta/codes/{codeId}/deprecate:
+    post:
+      tags:
+      - "metaOptions"
+      summary: "Deprecate an existing code"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          type: "string"
+          name: codeId
+          description: The id of the code
+          required: true
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 definitions:
     User:
       type: object

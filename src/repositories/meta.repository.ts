@@ -1,7 +1,7 @@
 import { db, parseTotalCount, selectAndCount } from '../lib/db';
 import { logger } from '../lib/logger';
 import { tableNames, defaultFilters } from '../constants';
-import { Code, CodeCreate } from '../models/code.model';
+import { Code, CodeCreate, CodeUpdate, PartialCodeUpdate } from '../models/code.model';
 import { CodeType, CodeTypeCreate } from '../models/code-type.model';
 import { applyPagination, applySearch, applySorting } from '../lib/filter';
 import { Filters } from '../models/filters.model';
@@ -30,6 +30,20 @@ export async function createCode(codeTypeId: string, values: CodeCreate): Promis
     .into(tableNames.CODES);
 
   logger.debug(`Create new code: ${query.toString()}`);
+  return (await query)[0];
+}
+
+
+/**
+ * Update an existing code
+ */
+export async function updateCode(codeId: string, values: CodeUpdate | PartialCodeUpdate): Promise<Code> {
+  // TODO: UpdatedAt!!
+  const query = db(tableNames.CODES)
+    .update(values, defaultCodeReturnValues)
+    .where('id', codeId);
+
+  logger.debug(`Update existing code: ${query.toString()}`);
   return (await query)[0];
 }
 
