@@ -8,6 +8,8 @@ export interface User {
   role: string; // Code of role
   refreshToken?: string;
   resetPwToken?: string;
+  createdAt: string;
+  createdBy: string;
 }
 
 export interface UserCreate {
