@@ -3,7 +3,7 @@ import * as Joi from 'joi';
 export const metaSchema = {
   findAllCodes: {
     params: {
-      codeTypeId: Joi.string().required(),
+      codeType: Joi.string().required(),
     },
     query: {
       offset: Joi.number(),
@@ -15,10 +15,12 @@ export const metaSchema = {
   },
   createCode: {
     params: {
-      codeTypeId: Joi.string().required(),
+      codeType: Joi.string().required(),
     },
     body: {
-
+      code: Joi.string().required(),
+      name: Joi.string().required(),
+      description: Joi.string(),
     },
   },
 };

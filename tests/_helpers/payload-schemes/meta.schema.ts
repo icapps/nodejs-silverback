@@ -16,12 +16,14 @@ export const codeTypesSchema = Joi.object().keys({
   data: Joi.array().items(codeTypeSchema),
 });
 
+
 export const codeSchema = Joi.object({
   id: Joi.string().guid().required(),
   code: Joi.string().required(),
   name: Joi.string().required(),
   description: Joi.string().allow(null),
 });
+
 
 export const codesSchema = Joi.object().keys({
   meta: Joi.object().keys({
@@ -30,4 +32,11 @@ export const codesSchema = Joi.object().keys({
     totalCount: Joi.number().required(),
   }),
   data: Joi.array().items(codeSchema),
+});
+
+export const createCodeSchema = Joi.object().keys({
+  meta: Joi.object().keys({
+    type: Joi.string().required().only('codes'),
+  }),
+  data: codeSchema,
 });

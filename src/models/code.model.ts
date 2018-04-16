@@ -3,6 +3,7 @@ export interface Code {
   code: string;
   name: string;
   description?: string;
+  deprecated?: boolean;
 }
 
 export interface CodeCreate {

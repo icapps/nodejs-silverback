@@ -10,8 +10,8 @@ import * as metaService from '../services/meta.service';
  * Return all codes for a specific code type
  */
 export async function findAllCodes(req: Request, res: Response): Promise<void> {
-  const codeTypeId = req.params.codeTypeId;
-  const { data, totalCount } = await metaService.findAllCodes(codeTypeId, req.query);
+  const codeType = req.params.codeType;
+  const { data, totalCount } = await metaService.findAllCodes(codeType, req.query);
   responder.success(res, {
     totalCount,
     status: httpStatus.OK,
@@ -21,7 +21,15 @@ export async function findAllCodes(req: Request, res: Response): Promise<void> {
 }
 
 
+/**
+ * Create a new code
+ */
 export async function createCode(req: Request, res: Response): Promise<void> {
-  const codeTypeId = req.params.codeTypeId;
-  const result = await metaService.createCode(codeTypeId, req.body);
+  const codeType = req.params.codeType;
+  const result = await metaService.createCode(codeType, req.body);
+  responder.success(res, {
+    status: httpStatus.CREATED,
+    payload: result,
+    serializer: codeSerializer,
+  });
 }

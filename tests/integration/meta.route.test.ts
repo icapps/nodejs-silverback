@@ -9,7 +9,7 @@ import { clearAll } from '../_helpers/mockdata/data';
 import { validUsers, createUsers } from '../_helpers/mockdata/user.data';
 import { createCodeType, createCode, clearCodeTypesData, clearCodesData } from '../_helpers/mockdata/meta.data';
 import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
-import { codeTypesSchema, codesSchema } from '../_helpers/payload-schemes/meta.schema';
+import { codeTypesSchema, codesSchema, codeSchema, createCodeSchema } from '../_helpers/payload-schemes/meta.schema';
 import { errors } from '../../src/config/errors.config';
 
 describe('/meta', () => {
@@ -27,7 +27,7 @@ describe('/meta', () => {
     await clearAll(); // Full db clear - empty db after tests
   });
 
-  describe('GET /codes', () => {
+  describe('GET /codes/:codeType', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let codeType;
     let countryCodeType;
@@ -159,6 +159,83 @@ describe('/meta', () => {
     it('Should throw an error without jwt token provided', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`);
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+  });
+
+  describe('POST /codes/:codeType', () => {
+    const prefix = `/api/${process.env.API_VERSION}`;
+    let codeType;
+
+    beforeAll(async () => {
+      codeType = await createCodeType({ code: 'LAN', name: 'Language' });
+    });
+
+    afterAll(async () => {
+      await clearCodeTypesData();
+      await clearCodesData();
+    });
+
+    it('Should succesfully create a new code', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          code: 'NL',
+          name: 'Nederlands',
+        });
+
+      expect(status).toEqual(httpStatus.CREATED);
+      expect(body.data.code).toEqual('NL');
+      expect(body.data.name).toEqual('Nederlands');
+
+      Joi.validate(body, createCodeSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no vaflue to check schema');
+      });
+    });
+
+    it('Should throw an error when code type is not found', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/unknownType`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          code: 'NL',
+          name: 'Nederlands',
+        });
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error when userId in jwt is not found', async () => {
+      const invalidToken = await getValidJwt(faker.random.uuid());
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .set('Authorization', `Bearer ${invalidToken}`)
+        .send({
+          code: 'NL',
+          name: 'Nederlands',
+        });
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error without admin permission', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+
+    it('Should throw an error without jwt token provided', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);

@@ -1,8 +1,9 @@
 import { NotFoundError } from 'tree-house-errors';
-import { Code } from '../models/code.model';
+import { Code, CodeCreate } from '../models/code.model';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
 import * as metaRepository from '../repositories/meta.repository';
+
 
 /**
  * Return all codes for a specific code type
@@ -18,8 +19,19 @@ export async function findAllCodes(codeType: string, filters: Filters): Promise<
     throw error;
   }
 }
-/*
 
-export async function createCode(codeTypeId: string, values: CodeCreate) {
 
-} */
+/**
+ * Create a new code for a specific code type
+ */
+export async function createCode(codeType: string, values: CodeCreate) {
+  try {
+    const type = await metaRepository.findCodeTypeByCode(codeType);
+    if (!type) throw new NotFoundError();
+
+    return metaRepository.createCode(type.id, values);
+  } catch (error) {
+    logger.error(`An error occured in the meta service: ${error}`);
+    throw error;
+  }
+}
