@@ -122,12 +122,12 @@ describe('/auth', () => {
 
     it('Should throw an error when trying to refresh without valid access token', async () => {
       const invalidToken = await getValidJwt(faker.random.uuid());
-      const { status: status2 } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/auth/refresh`)
         .set('Authorization', `Bearer ${invalidToken}`)
         .send({ refreshToken: 'notFoundToken' });
 
-      expect(status2).toEqual(httpStatus.NOT_FOUND);
+      expect(status).toEqual(httpStatus.NOT_FOUND);
     });
   });
 
