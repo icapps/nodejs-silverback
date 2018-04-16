@@ -25,7 +25,6 @@ export async function login(req: Request, res: Response): Promise<void> {
  */
 export async function refresh(req: Request, res: Response): Promise<void> {
   const accessToken = extractJwt(req);
-  console.log(accessToken);
   const { userId } = <JwtPayload>await decodeJwt(accessToken);
   const { refreshToken } = req.body;
 
