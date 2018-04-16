@@ -59,6 +59,8 @@ paths:
       tags:
       - "authentication"
       summary: "Returns a new jwt token via refresh token"
+      security:
+        - Bearer: []
       parameters:
         - name: "refresh request"
           in: "body"

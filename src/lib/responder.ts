@@ -18,6 +18,7 @@ export const responder: { success: Function, error: Function } = {
     return res.status(status).json(serializer.serialize(payload, { totalCount }));
   },
   error: (res: Response, errors: any) => {
+    logger.debug('Error:', errors);
     const parsedError = parseErrors(errors); // TODO: Parse DB errors (postgres, mssql support??)
     const serializerError = ErrorSerializer.serialize([parsedError]);
 

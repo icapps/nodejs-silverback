@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import { AuthCredentials } from '../models/auth.model';
 import { AuthenticationError, UnauthorizedError, NotFoundError } from 'tree-house-errors';
-import { comparePassword, createJwt, generateRandomHash } from 'tree-house-authentication';
+import { comparePassword, createJwt } from 'tree-house-authentication';
 import { jwtConfig } from '../config/auth.config';
 import { logger } from '../lib/logger';
 import { errors } from '../config/errors.config';
@@ -9,6 +9,19 @@ import { getForgotPwContent } from '../templates/forgot-pw.mail.template';
 import { User } from '../models/user.model';
 import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
+
+
+/**
+ * Generate a new jwt token and refresh token for a user
+ */
+export async function generateTokens(userId: string) {
+  const accessToken = await createJwt({ userId }, jwtConfig);
+  const refreshToken = crypto.randomBytes(24).toString('hex'); // TODO: Use tree-house-authentication
+  await userRepository.update(userId, { refreshToken }); // TODO: Write test if refresh token has been stored
+
+  return { accessToken, refreshToken };
+}
+
 
 /**
  * Login user with username and password
@@ -28,14 +41,26 @@ export async function login(payload: AuthCredentials) {
     if (!passwordMatch) throw new AuthenticationError();
 
     // Generate JWT and refresh token
-    const accessToken = await createJwt({ userId: user.id }, jwtConfig);
-    const refreshToken = generateRandomHash('sha256', jwtConfig.secretOrKey);
-
-    // TODO: Store refreshToken
-
-    return { accessToken, refreshToken };
+    return await generateTokens(user.id);
   } catch (error) {
     logger.error(`An error occured trying to login: %${error}`);
+    throw error;
+  }
+}
+
+
+/**
+ * Refresh access token via a refresh token
+ */
+export async function refresh(userId: string, refreshToken: string) {
+  try {
+    const user = await userRepository.findByRefreshToken(userId, refreshToken);
+    if (!user) throw new NotFoundError();
+
+    // Generate JWT and refresh token
+    return await generateTokens(user.id);
+  } catch (error) {
+    logger.error(`An error occured trying to refresh token: %${error}`);
     throw error;
   }
 }
