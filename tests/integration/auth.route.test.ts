@@ -1,12 +1,13 @@
 import * as request from 'supertest';
 import * as httpStatus from 'http-status';
 import * as Joi from 'joi';
+import * as faker from 'faker';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
 import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, validUser, findById, regularUser, setResetPwToken, clearUserData } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
-import { getValidJwt, getUserToken } from '../_helpers/mockdata/auth.data';
+import { getUserToken, getValidJwt } from '../_helpers/mockdata/auth.data';
 import * as mailer from '../../src/lib/mailer';
 
 describe('/auth', () => {
@@ -120,6 +121,18 @@ describe('/auth', () => {
 
 
     it('Should throw an error when trying to refresh without valid access token', async () => {
+      const invalidToken = await getValidJwt(faker.random.uuid());
+      const { status } = await request(app)
+        .post(`${prefix}/auth/refresh`)
+        .set('Authorization', `Bearer ${invalidToken}`)
+        .send({ refreshToken: 'notFoundToken' });
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+  });
+
+  describe('POST /logout', () => {
+    it('Should succesfully logout an active user', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
@@ -129,12 +142,24 @@ describe('/auth', () => {
       expect(status).toEqual(httpStatus.OK);
       const accessToken = body.data.accessToken;
 
-      const { status: status2 } = await request(app)
-        .post(`${prefix}/auth/refresh`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({ refreshToken: 'notFoundToken' });
+      const { body: body2, status: status2 } = await request(app)
+        .post(`${prefix}/auth/logout`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
-      expect(status2).toEqual(httpStatus.NOT_FOUND);
+      expect(status2).toEqual(httpStatus.OK);
+
+      const loggedInUser = await findById(user.id);
+      expect(loggedInUser.refreshToken).toEqual(null);
+    });
+
+
+    it('Should throw an error when user was not found', async () => {
+      const invalidToken = await getValidJwt(faker.random.uuid());
+      const { status } = await request(app)
+        .post(`${prefix}/auth/logout`)
+        .set('Authorization', `Bearer ${invalidToken}`);
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
     });
   });
 
