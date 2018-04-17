@@ -137,32 +137,14 @@ describe('/meta', () => {
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    it('Should throw an error when userId in jwt is not found', async () => {
-      const invalidToken = await getValidJwt(faker.random.uuid());
-      const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${invalidToken}`);
-
-      expect(status).toEqual(httpStatus.NOT_FOUND);
-    });
-
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
-    });
-
-    it('Should throw an error without jwt token provided', async () => {
-      const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`);
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -210,36 +192,14 @@ describe('/meta', () => {
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    it('Should throw an error when userId in jwt is not found', async () => {
-      const invalidToken = await getValidJwt(faker.random.uuid());
-      const { body, status } = await request(app)
-        .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${invalidToken}`)
-        .send({
-          code: 'NL',
-          name: 'Nederlands',
-        });
-
-      expect(status).toEqual(httpStatus.NOT_FOUND);
-    });
-
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
-    });
-
-    it('Should throw an error without jwt token provided', async () => {
-      const { body, status } = await request(app)
-        .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`);
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -281,32 +241,14 @@ describe('/meta', () => {
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
 
-    it('Should throw an error when userId in jwt is not found', async () => {
-      const invalidToken = await getValidJwt(faker.random.uuid());
-      const { body, status } = await request(app)
-        .post(`${prefix}/meta/codes/${code.id}/deprecate`)
-        .set('Authorization', `Bearer ${invalidToken}`);
-
-      expect(status).toEqual(httpStatus.NOT_FOUND);
-    });
-
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${code.id}/deprecate`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
-    });
-
-    it('Should throw an error without jwt token provided', async () => {
-      const { body, status } = await request(app)
-        .post(`${prefix}/meta/codes/${code.id}/deprecate`);
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 });

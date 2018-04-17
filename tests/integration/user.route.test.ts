@@ -156,28 +156,14 @@ describe('/users', () => {
       expect(body.data[0].email).toEqual(found.email);
     });
 
-
-    it('Should throw an error when userId in jwt is not found', async () => {
-      const invalidToken = await getValidJwt(faker.random.uuid());
-      const { body, status } = await request(app)
-        .get(`${prefix}/users`)
-        .set('Authorization', `Bearer ${invalidToken}`);
-
-      expect(status).toEqual(httpStatus.NOT_FOUND);
-    });
-
-    it('Should throw an error without admin permission', async () => {
+    it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-    });
-
-    it('Should throw an error without jwt token provided', async () => {
-      const { body, status } = await request(app)
-        .get(`${prefix}/users`);
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -230,9 +216,10 @@ describe('/users', () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users/${user.id}`)
         .set('Authorization', `Bearer ${userToken}`);
+
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -347,25 +334,8 @@ describe('/users', () => {
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
-    });
-
-    it('Should throw an error when no jwt token is provided', async () => {
-      const { body, status } = await request(app)
-        .post(`${prefix}/users`)
-        .send({
-          email: 'test@unknown.com',
-          firstName: 'Test',
-          lastName: 'Unknown',
-          password: 'prutser123',
-          hasAccess: false,
-          role: roles.ADMIN.code,
-        });
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -467,24 +437,8 @@ describe('/users', () => {
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
-    });
-
-    it('Should throw an error when no JWT token is provided', async () => {
-      const { body, status } = await request(app)
-        .put(`${prefix}/users/${user.id}`)
-        .send({
-          email: 'test@unknown2.com',
-          firstName: 'Test',
-          lastName: 'Unknown',
-          hasAccess: false,
-          role: roles.ADMIN.code,
-        });
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -568,20 +522,8 @@ describe('/users', () => {
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
-    });
-
-    it('Should throw an error when no JWT token is provided', async () => {
-      const { body, status } = await request(app)
-        .patch(`${prefix}/users/${user.id}`)
-        .send({
-          email: 'test@unknown2.com',
-        });
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -637,24 +579,8 @@ describe('/users', () => {
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
-    });
-
-    it('Should throw an error when no JWT token is provided', async () => {
-      const { body, status } = await request(app)
-        .put(`${prefix}/users/${user.id}`)
-        .send({
-          email: 'test@unknown2.com',
-          firstName: 'Test',
-          lastName: 'Unknown',
-          hasAccess: false,
-          role: roles.ADMIN.code,
-        });
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -686,8 +612,8 @@ describe('/users', () => {
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 });

@@ -5,6 +5,7 @@ import { hasRole, extractJwt } from '../lib/utils';
 import { logger } from '../lib/logger';
 import { jwtConfig } from '../config/auth.config';
 import { Role } from '../config/roles.config';
+import { errors } from '../config/errors.config';
 import * as userRepository from '../repositories/user.repository';
 
 export async function hasPermission(req: Request, _res: Response, next: NextFunction, role?: Role) {
@@ -14,11 +15,11 @@ export async function hasPermission(req: Request, _res: Response, next: NextFunc
 
     // Find user
     const user = await userRepository.findById(decodedToken.userId);
-    if (!user) throw new NotFoundError(); // TODO: Custom error message?
+    if (!user) throw new NotFoundError(errors.USER_NOT_FOUND);
 
     // Check if user has proper permission
     if (role && !hasRole(user, role)) {
-      throw new UnauthorizedError(); // TODO: Custom error message?
+      throw new UnauthorizedError(errors.NO_PERMISSION);
     }
 
     Object.assign(req, { session: { user } });

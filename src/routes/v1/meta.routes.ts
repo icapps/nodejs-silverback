@@ -11,10 +11,12 @@ export const routes: Router = Router({ mergeParams: true })
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(metaSchema.findAllCodes, defaultOptions),
     handleAsyncFn(controller.findAllCodes))
+
   .post('/codes/:codeType', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(metaSchema.createCode, defaultOptions),
     handleAsyncFn(controller.createCode))
+
   .post('/codes/:codeId/deprecate', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(metaSchema.deprecateCode, defaultOptions),

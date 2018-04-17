@@ -1,6 +1,6 @@
 
-exports.up = (knex, Promise) => Promise.all([
-  knex.schema.createTable('users', (table) => {
+exports.up = async (knex) => {
+  await knex.schema.createTable('users', (table) => {
     table.uuid("id").primary().defaultTo(knex.raw('uuid_generate_v1mc()')) // Primary key
     table.specificType('recordId', 'serial'); // Record incrementing key
 
@@ -26,8 +26,12 @@ exports.up = (knex, Promise) => Promise.all([
     table.unique('email');
     table.unique('resetPwToken');
     table.unique(['id', 'refreshToken']);
-  }),
-]);
+
+  });
+
+  // Triggers
+  await knex.raw('CREATE TRIGGER update_users_updated BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_modified_column();')
+};
 
 exports.down = (knex) => {
   return knex.schema.dropTable('users');

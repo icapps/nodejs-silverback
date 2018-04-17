@@ -17,7 +17,7 @@ import * as mailer from '../lib/mailer';
 export async function generateTokens(userId: string) {
   const accessToken = await createJwt({ userId }, jwtConfig);
   const refreshToken = crypto.randomBytes(24).toString('hex'); // TODO: Use tree-house-authentication
-  await userRepository.update(userId, { refreshToken }); // TODO: Write test if refresh token has been stored
+  await userRepository.update(userId, { refreshToken });
 
   return { accessToken, refreshToken };
 }
