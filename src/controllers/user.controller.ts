@@ -2,6 +2,8 @@ import * as httpStatus from 'http-status';
 import { Request, Response } from 'express';
 import { responder } from '../lib/responder';
 import { userSerializer } from '../serializers/user.serializer';
+import { roles } from '../config/roles.config';
+import { roleSerializer } from '../serializers/role.serializer';
 import * as userService from '../services/user.service';
 
 
@@ -79,5 +81,19 @@ export async function remove(req: Request, res: Response): Promise<void> {
   await userService.remove(req.params.userId);
   responder.success(res, {
     status: httpStatus.NO_CONTENT,
+  });
+}
+
+
+
+/**
+ * Return all available user roles
+ */
+export async function findAllUserRoles(_req: Request, res: Response): Promise<void> {
+  const result = Object.keys(roles).reduce((array, current) => [...array, roles[current]], []); // Collection to array
+  responder.success(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: roleSerializer,
   });
 }

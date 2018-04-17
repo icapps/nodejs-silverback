@@ -8,6 +8,8 @@ import * as controller from '../../controllers/user.controller';
 export const routes: Router = Router({ mergeParams: true })
   .get('/', (req, res, next) => // TODO: Joi validator for query parameters
     hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(controller.findAll))
+  .get('/roles', (req, res, next) =>
+    hasPermission(req, res, next, roles.ADMIN), handleAsyncFn(controller.findAllUserRoles))
   .get('/:userId', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN), validateSchema(userSchema.findById), handleAsyncFn(controller.findById))
   .post('/', (req, res, next) =>
