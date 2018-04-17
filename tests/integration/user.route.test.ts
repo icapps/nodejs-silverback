@@ -612,8 +612,8 @@ describe('/users', () => {
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
-      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 });
