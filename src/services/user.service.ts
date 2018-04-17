@@ -4,8 +4,10 @@ import { User, UserCreate, UserUpdate, PartialUserUpdate } from '../models/user.
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
 import { getInitialPwChangeContent } from '../templates/initial-pw.mail.template';
+import { errors } from '../config/errors.config';
 import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
+
 /**
  * Return a user by id
  */
@@ -35,7 +37,7 @@ export async function findAll(filters: Filters): Promise<{ data: User[], totalCo
 export async function create(values: UserCreate, changePassword: boolean): Promise<User> {
   try {
     const user = await userRepository.findByEmail(values.email);
-    if (user) throw new BadRequestError(); // TODO: Custom error message
+    if (user) throw new BadRequestError(errors.USER_DUPLICATE);
 
     // User must set own password after creation
     if (changePassword === true) {

@@ -1,5 +1,6 @@
 import { UnauthorizedError } from 'tree-house-errors';
 import * as httpMocks from 'node-mocks-http';
+import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
 import * as utils from '../../src/lib/utils';
 
@@ -39,7 +40,7 @@ describe('lib/utils', () => {
         });
         utils.extractJwt(mockRequest);
       } catch (err) {
-        expect(err).toEqual(new UnauthorizedError());
+        expect(err).toEqual(new UnauthorizedError(errors.MISSING_HEADERS));
       }
     });
   });
