@@ -45,7 +45,7 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
       const created = await userRepository.create(Object.assign({}, values, { resetPwToken: token }));
 
       // Send mail asynchronous, no need to wait
-      const content = getInitialPwChangeContent(values.email, token);
+      const content = getInitialPwChangeContent({ token, email: values.email, firstName: created.firstName });
       mailer.sendTemplate(content, mailer.getDefaultClient());
 
       return created;

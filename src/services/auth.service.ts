@@ -92,7 +92,7 @@ export async function initForgotPw(email: string) {
     await userRepository.update(user.id, { resetPwToken: token });
 
     // Send email with reset link
-    const content = getForgotPwContent(email, token);
+    const content = getForgotPwContent({ email, token, firstName: user.firstName });
     return await mailer.sendTemplate(content, mailer.getDefaultClient());
   } catch (error) {
     logger.error(`An error occured trying to reset password: %${error}`);
