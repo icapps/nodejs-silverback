@@ -29,7 +29,6 @@ export async function create(values: UserCreate): Promise<User> {
  * Update an existing user
  */
 export async function update(userId: string, values: UserUpdate | PartialUserUpdate): Promise<User> {
-  // TODO: UpdatedAt!!
   const query = db(tableNames.USERS)
     .update(values, defaultReturnValues)
     .where('id', userId);

@@ -38,7 +38,6 @@ export async function createCode(codeTypeId: string, values: CodeCreate): Promis
  * Update an existing code
  */
 export async function updateCode(codeId: string, values: CodeUpdate | PartialCodeUpdate): Promise<Code> {
-  // TODO: UpdatedAt!!
   const query = db(tableNames.CODES)
     .update(values, defaultCodeReturnValues)
     .where('id', codeId);
