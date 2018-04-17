@@ -7,6 +7,7 @@ import { app } from '../../src/app';
 import { clearAll } from '../_helpers/mockdata/data';
 import { validUsers, validUser, adminUser, regularUser, createUsers, clearUserData, createUser, findById } from '../_helpers/mockdata/user.data';
 import { usersSchema, userSchema, createUserSchema, userByIdSchema } from '../_helpers/payload-schemes/user.schema';
+import { rolesSchema } from '../_helpers/payload-schemes/role.schema';
 import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
 import { roles } from '../../src/config/roles.config';
 import { errors } from '../../src/config/errors.config';
@@ -650,6 +651,39 @@ describe('/users', () => {
           hasAccess: false,
           role: roles.ADMIN.code,
         });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);
+      expect(body.errors[0].title).toEqual(errors.UNAUTHORIZED.message);
+    });
+  });
+
+  describe('GET /roles', () => {
+    const numberOfRoles = Object.keys(roles).length;
+
+    it('Should succesfully return all roles', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/users/roles`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.data).toHaveLength(numberOfRoles);
+      expect(body.meta).toMatchObject({
+        type: 'roles',
+        count: numberOfRoles,
+        totalCount: numberOfRoles,
+      });
+
+      Joi.validate(body, rolesSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+    });
+
+    it('Should return error when user does not have admin rights', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/roles`)
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.UNAUTHORIZED.code);

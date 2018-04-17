@@ -343,6 +343,26 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /users/roles:
+    get:
+      tags:
+      - "user roles"
+      summary: "Returns all available user roles"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserRoleListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /meta/codes/{codeType}:
     get:
       tags:
@@ -446,6 +466,17 @@ definitions:
         role:
           type: string
           enum: ["USER", "ADMIN"]
+    UserRole:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        level:
+          type: number
     PostLogin:
       type: object
       required:
@@ -569,6 +600,22 @@ definitions:
           type: array
           items:
             $ref: "#/definitions/User"
+    UserRoleListResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: number
+              example: 50
+            totalCount:
+              type: number
+              example: 120
+        data:
+          type: array
+          items:
+            $ref: "#/definitions/UserRole"
     Code:
       type: object
       properties:
