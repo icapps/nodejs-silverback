@@ -1,5 +1,6 @@
 import * as httpStatus from 'http-status';
 import { Request, Response } from 'express';
+import { ValidationError } from 'tree-house-errors';
 import { responder } from '../lib/responder';
 import { userSerializer } from '../serializers/user.serializer';
 import { roles } from '../config/roles.config';
@@ -39,6 +40,10 @@ export async function findAll(req: Request, res: Response): Promise<void> {
  */
 export async function create(req: Request, res: Response): Promise<void> {
   const { changePassword } = req.query;
+
+  // TODO: This should be able via Joi validation?
+  if (!changePassword && !req.body.password) throw new ValidationError();
+
   const result = await userService.create(req.body, changePassword);
   responder.success(res, {
     status: httpStatus.CREATED,

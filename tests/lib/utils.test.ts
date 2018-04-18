@@ -2,12 +2,13 @@ import { UnauthorizedError } from 'tree-house-errors';
 import * as httpMocks from 'node-mocks-http';
 import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
+import { User } from '../../src/models/user.model';
 import * as utils from '../../src/lib/utils';
 
 describe('lib/utils', () => {
   describe('hasRole', () => {
     it('Should return true when the user has the correct role', () => {
-      const user = {
+      const user = <User>{
         role: roles.ADMIN.code,
       };
       const hasRole = utils.hasRole(user, roles.ADMIN);
@@ -15,7 +16,7 @@ describe('lib/utils', () => {
     });
 
     it('Should return true when the user has a higher role than required', () => {
-      const user = {
+      const user = <User>{
         role: roles.SUPERUSER.code,
       };
       const hasRole = utils.hasRole(user, roles.ADMIN);
@@ -23,7 +24,7 @@ describe('lib/utils', () => {
     });
 
     it('Should return false when the user has a lower role than required', () => {
-      const user = {
+      const user = <User>{
         role: roles.USER.code,
       };
       const hasRole = utils.hasRole(user, roles.ADMIN);

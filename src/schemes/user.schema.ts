@@ -25,7 +25,7 @@ export const userSchema = {
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
       role: Joi.string().required(),
-      password: Joi.string().required(),
+      password: Joi.string(),
     }),
   },
   update: {
