@@ -67,7 +67,11 @@
     "node": "8"
   },
   "author": "iCapps <info@icapps.com>",
-  "license": "MIT",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/icapps/nodejs_silverback/issues"
+  },
+  "homepage": "https://github.com/icapps/nodejs_silverback#readme",
   "directories": {
     "test": "tests"
   }
