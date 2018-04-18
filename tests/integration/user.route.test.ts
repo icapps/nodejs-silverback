@@ -276,6 +276,23 @@ describe('/users', () => {
       expect(createdUser.resetPwToken).toEqual(expect.any(String));
     });
 
+
+    it('Should throw an error when trying to create a user without changing pw and providing pw', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
     it('Should throw an error when trying to create a duplicate user', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
