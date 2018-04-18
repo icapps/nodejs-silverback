@@ -3,6 +3,12 @@ language: node_js
 services:
   - postgresql
 
+env:
+  global:
+  - NODE_ENV=test
+  - PGPORT=5432
+  - PGHOST=localhost
+
 before_script:
   - psql -c "CREATE DATABASE silverback_test;" -U postgres
   - psql -c "CREATE USER developer WITH PASSWORD 'developer';" -U postgres
