@@ -1,10 +1,12 @@
 import * as crypto from 'crypto';
 import { NotFoundError, BadRequestError } from 'tree-house-errors';
+import { getHashedPassword } from 'tree-house-authentication';
 import { User, UserCreate, UserUpdate, PartialUserUpdate } from '../models/user.model';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
 import { getInitialPwChangeContent } from '../templates/initial-pw.mail.template';
 import { errors } from '../config/errors.config';
+import { settings } from '../config/app.config';
 import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
 
@@ -42,7 +44,8 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
     // User must set own password after creation
     if (changePassword === true) {
       const token = crypto.randomBytes(24).toString('hex'); // TODO: Integrate this in tree-house-authentication to replace generateRandomHash
-      const created = await userRepository.create(Object.assign({}, values, { resetPwToken: token }));
+      const randomPassword = await getHashedPassword(crypto.randomBytes(24).toString('hex'), settings.saltCount);
+      const created = await userRepository.create(Object.assign({}, values, { resetPwToken: token, password: randomPassword }));
 
       // Send mail asynchronous, no need to wait
       const content = getInitialPwChangeContent({ token, email: values.email, firstName: created.firstName });
@@ -84,6 +87,20 @@ export async function partialUpdate(userId: string, values: PartialUserUpdate): 
     return result;
   } catch (error) {
     logger.error(`An error occured updating a user: ${error}`);
+    throw error;
+  }
+}
+
+
+/**
+ * Update a user's password
+ */
+export async function updatePassword(userId: string, password: string): Promise<{}> {
+  try {
+    const hashedPw = await getHashedPassword(password, settings.saltCount);
+    return await partialUpdate(userId, { password: hashedPw });
+  } catch (error) {
+    logger.error(`An error occured updating a user's password: ${error}`);
     throw error;
   }
 }

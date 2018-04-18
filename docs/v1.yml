@@ -343,6 +343,35 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /users/{userId}/password:
+    put:
+      tags:
+      - "users"
+      summary: "Update an existing user's password"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "password"
+            properties:
+              password:
+                type: "string"
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /users/roles:
     get:
       tags:
