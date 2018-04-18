@@ -236,7 +236,7 @@ describe('/users', () => {
           email: 'test@unknown.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          password: 'prutser123',
+          password: 'developer',
           hasAccess: false,
           role: roles.ADMIN.code,
         });
@@ -260,7 +260,7 @@ describe('/users', () => {
           email: 'test@changePw.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          password: 'prutser123',
+          password: 'developer',
           hasAccess: false,
           role: roles.ADMIN.code,
         });
@@ -284,7 +284,7 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          password: 'prutser123',
+          password: 'developer',
           hasAccess: false,
           role: roles.ADMIN.code,
         });
@@ -297,7 +297,7 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          password: 'prutser123',
+          password: 'developer',
           hasAccess: false,
           role: roles.ADMIN.code,
         });
@@ -312,7 +312,7 @@ describe('/users', () => {
           email: 'test@unknown.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          password: 'prutser123',
+          password: 'developer',
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -328,7 +328,7 @@ describe('/users', () => {
           email: 'test@unknown.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          password: 'prutser123',
+          password: 'developer',
           hasAccess: false,
           role: roles.ADMIN.code,
         });
