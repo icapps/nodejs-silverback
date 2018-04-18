@@ -23,7 +23,7 @@ exports.seed = function (knex, Promise) {
         email: 'development@icapps.com',
         firstName: 'development',
         lastName: 'iCapps',
-        password: '$2b$10$F/M2RyHNlImHF1KnvEBD.OEMcBs5UFsd7LiBa8VpIO74zl3gqreJm', // developer
+        password: '$2b$10$GuXy0I0Dau6aA3EhmvrRkuEYQlEvNpZk/Vkx64ut4rcU0hNdFYxNO', // developer
         hasAccess: true,
         role: 'ADMIN',
       });
