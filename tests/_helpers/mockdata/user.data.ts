@@ -60,14 +60,14 @@ export const validUsers: UserCreate[] = [
   },
 ];
 
-export async function createUsers(users: User[]) {
+export async function createUsers(users: UserCreate[]) {
   for (const userValues of users) {
     await userRepository.create(userValues);
   }
   return await userRepository.findAll();
 }
 
-export function createUser(values: User) {
+export function createUser(values: UserCreate) {
   return userRepository.create(values);
 }
 

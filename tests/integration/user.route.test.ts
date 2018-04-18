@@ -276,6 +276,23 @@ describe('/users', () => {
       expect(createdUser.resetPwToken).toEqual(expect.any(String));
     });
 
+
+    it('Should throw an error when trying to create a user without changing pw and providing pw', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
     it('Should throw an error when trying to create a duplicate user', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
@@ -434,6 +451,80 @@ describe('/users', () => {
           lastName: 'Unknown',
           hasAccess: false,
           role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
+    });
+  });
+
+  describe('PUT /:userId/password', () => {
+    let user;
+
+    beforeAll(async () => {
+      user = await createUser(validUser);
+    });
+
+    afterAll(async () => {
+      await clearUserData(); // Clear user db (except users for tokens)
+    });
+
+    it('Should succesfully update an existing user password', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}/password`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          password: 'myNewPw',
+        });
+      expect(status).toEqual(httpStatus.OK);
+
+      const { status: status2 } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          username: user.email,
+          password: 'myNewPw',
+        });
+      expect(status2).toEqual(httpStatus.OK);
+    });
+
+    it('Should throw an error when user id is not a valid guid', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/unknownId/password`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          password: 'myNewPw',
+        });
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when user does not exist', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${faker.random.uuid()}/password`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          password: 'myNewPw',
+        });
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error when not all fields are provided', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}/password`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({});
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
+    it('Should throw an error when user has no admin rights', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}/password`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          password: 'myNewPw',
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);

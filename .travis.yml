@@ -6,7 +6,7 @@ services:
 before_script:
   - psql -c "CREATE DATABASE silverback_test;" -U postgres
   - psql -c "CREATE USER developer WITH PASSWORD 'developer';" -U postgres
-  - psql -U postgres silverback_test -c 'create extension "uuid-ossp";'
+  - psql -U postgres silverback_test -c 'create extension if not exists "uuid-ossp";'
 
 node_js:
   - "8"
@@ -25,4 +25,8 @@ cache:
 script:
   - yarn lint
   - yarn build
-  - yarn test
+  - yarn test:coverage
+  - yarn audit
+
+# Send coverage data to Coveralls
+after_script: "cat coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
