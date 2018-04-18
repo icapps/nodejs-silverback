@@ -93,6 +93,20 @@ export async function partialUpdate(userId: string, values: PartialUserUpdate): 
 
 
 /**
+ * Update a user's password
+ */
+export async function updatePassword(userId: string, password: string): Promise<{}> {
+  try {
+    const hashedPw = await getHashedPassword(password, settings.saltCount);
+    return await partialUpdate(userId, { password: hashedPw });
+  } catch (error) {
+    logger.error(`An error occured updating a user's password: ${error}`);
+    throw error;
+  }
+}
+
+
+/**
  * Remove an existing user
  */
 export async function remove(userId: string): Promise<{}> {

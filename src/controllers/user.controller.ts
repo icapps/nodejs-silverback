@@ -80,6 +80,18 @@ export async function partialUpdate(req: Request, res: Response): Promise<void> 
 
 
 /**
+ * Update a user's password
+ */
+export async function updatePassword(req: Request, res: Response): Promise<void> {
+  const { password } = req.body;
+  await userService.updatePassword(req.params.userId, password);
+  responder.success(res, {
+    status: httpStatus.OK,
+  });
+}
+
+
+/**
  * Remove an existing user
  */
 export async function remove(req: Request, res: Response): Promise<void> {

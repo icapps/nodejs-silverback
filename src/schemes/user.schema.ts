@@ -40,6 +40,14 @@ export const userSchema = {
       role: Joi.string().required(),
     }),
   },
+  updatePassword: {
+    params: {
+      userId: Joi.string().guid(),
+    },
+    body: Joi.object({
+      password: Joi.string().required(),
+    }),
+  },
   partialUpdate: {
     params: {
       userId: Joi.string().guid(),

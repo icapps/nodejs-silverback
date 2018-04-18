@@ -25,4 +25,8 @@ cache:
 script:
   - yarn lint
   - yarn build
-  - yarn test
+  - yarn audit
+  - yarn test:coverage
+
+# Send coverage data to Coveralls
+after_script: "cat coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
