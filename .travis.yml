@@ -6,7 +6,7 @@ services:
 before_script:
   - psql -c "CREATE DATABASE silverback_test;" -U postgres
   - psql -c "CREATE USER developer WITH PASSWORD 'developer';" -U postgres
-  - psql -c "CREATE EXTENSION IF NOT EXISTS 'uuid-ossp';" -U postgres
+  - psql -c "CREATE EXTENSION IF NOT EXISTS '"uuid-ossp"';" -U postgres
 
 node_js:
   - "8"
