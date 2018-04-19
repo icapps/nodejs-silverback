@@ -13,7 +13,7 @@ export function getForgotPwContent(values: ForgotPwContent): TemplateMailOptions
     message: {
       to: [{ email: values.email }],
       from_email: mailSettings.systemEmail,
-      subject: 'Choose a new password', // TODO: Correct title: i18n?
+      subject: 'Choose a new password',
       global_merge_vars: [
         {
           name: 'resetlink',

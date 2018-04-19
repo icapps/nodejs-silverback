@@ -72,9 +72,9 @@
   "author": "iCapps <info@icapps.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/icapps/nodejs_silverback/issues"
+    "url": "https://github.com/icapps/nodejs-silverback/issues"
   },
-  "homepage": "https://github.com/icapps/nodejs_silverback#readme",
+  "homepage": "https://github.com/icapps/nodejs-silverback#readme",
   "directories": {
     "test": "tests"
   }
