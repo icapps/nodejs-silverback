@@ -161,6 +161,27 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "current user"
+      summary: "Update the current user information"
+      security:
+        - Bearer: []
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PutUser"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /config/version:
     get:
       tags:
@@ -293,7 +314,7 @@ paths:
           schema:
             $ref: "#/definitions/PutUser"
       responses:
-        201:
+        200:
           description: "Success"
           schema:
             $ref: "#/definitions/UserResponse"
@@ -344,6 +365,12 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
   /users/{userId}/password:
+    parameters:
+      - in: path
+        type: "string"
+        name: userId
+        description: The id of the user
+        required: true
     put:
       tags:
       - "users"
