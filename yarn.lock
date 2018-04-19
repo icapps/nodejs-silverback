@@ -141,11 +141,17 @@
   dependencies:
     "@types/node" "*"
 
-"@types/supertest@^2.0.4":
+"@types/supertest@~2.0.4":
   version "2.0.4"
   resolved "https://registry.npmjs.org/@types/supertest/-/supertest-2.0.4.tgz#28770e13293365e240a842d7d5c5a1b3d2dee593"
   dependencies:
     "@types/superagent" "*"
+
+"@types/uuid@~3.4.3":
+  version "3.4.3"
+  resolved "https://registry.npmjs.org/@types/uuid/-/uuid-3.4.3.tgz#121ace265f5569ce40f4f6d0ff78a338c732a754"
+  dependencies:
+    "@types/node" "*"
 
 "@types/winston@~2.3.9":
   version "2.3.9"
@@ -5462,9 +5468,9 @@ supports-color@^5.3.0:
   dependencies:
     has-flag "^3.0.0"
 
-swagger-ui-express@~2.0.9:
-  version "2.0.15"
-  resolved "https://registry.npmjs.org/swagger-ui-express/-/swagger-ui-express-2.0.15.tgz#fba85a357b40c0d629e942537199987b8085587d"
+swagger-ui-express@~3.0.8:
+  version "3.0.8"
+  resolved "https://registry.npmjs.org/swagger-ui-express/-/swagger-ui-express-3.0.8.tgz#75b4a4271f50ec40c774b7e66e08778db267049f"
 
 symbol-tree@^3.2.2:
   version "3.2.2"
@@ -5616,9 +5622,9 @@ tree-house-errors@^1.0.3:
     joi "~13.1.2"
     uuid "~3.2.1"
 
-tree-house@~3.0.5:
-  version "3.0.5"
-  resolved "https://registry.npmjs.org/tree-house/-/tree-house-3.0.5.tgz#509888d1eb6eb6aed1455f34934022997003bafc"
+tree-house@~3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/tree-house/-/tree-house-3.1.0.tgz#e4e5517c23b98171c542d0496dcb659494ebaca4"
   dependencies:
     body-parser "~1.18.2"
     cors "~2.8.4"
@@ -5629,15 +5635,15 @@ tree-house@~3.0.5:
     helmet "~3.12.0"
     https "~1.0.0"
     js-yaml "~3.11.0"
-    swagger-ui-express "~2.0.9"
+    swagger-ui-express "~3.0.8"
 
 trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-ts-jest@~22.4.2:
-  version "22.4.3"
-  resolved "https://registry.npmjs.org/ts-jest/-/ts-jest-22.4.3.tgz#5c06b89359e598d97f08802936ea400be555a9d1"
+ts-jest@~22.4.4:
+  version "22.4.4"
+  resolved "https://registry.npmjs.org/ts-jest/-/ts-jest-22.4.4.tgz#7b5c0abb2188fe7170840df9f80e78659aaf8a24"
   dependencies:
     babel-core "^6.26.0"
     babel-plugin-istanbul "^4.1.4"

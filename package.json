@@ -32,9 +32,10 @@
     "lodash": "~4.17.5",
     "mandrill-api": "~1.0.45",
     "pg": "~7.4.1",
-    "tree-house": "~3.0.5",
+    "tree-house": "~3.1.0",
     "tree-house-authentication": "~2.0.5",
     "tree-house-errors": "^1.0.3",
+    "uuid": "~3.2.1",
     "winston": "~2.4.1"
   },
   "devDependencies": {
@@ -49,17 +50,18 @@
     "@types/knex": "~0.14.11",
     "@types/lodash": "~4.14.105",
     "@types/mandrill-api": "~1.0.30",
-    "@types/supertest": "^2.0.4",
+    "@types/supertest": "~2.0.4",
+    "@types/uuid": "~3.4.3",
     "@types/winston": "~2.3.9",
-    "coveralls": "^3.0.0",
     "auditjs": "^2.4.3",
+    "coveralls": "^3.0.0",
     "faker": "^4.1.0",
     "jest": "^22.4.3",
     "node-mocks-http": "^1.5.8",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.2",
     "supertest": "^3.0.0",
-    "ts-jest": "~22.4.2",
+    "ts-jest": "~22.4.4",
     "tslint": "^5.9.1",
     "tslint-config-airbnb": "^5.8.0",
     "typescript": "^2.8.1"
@@ -70,9 +72,9 @@
   "author": "iCapps <info@icapps.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/icapps/nodejs_silverback/issues"
+    "url": "https://github.com/icapps/nodejs-silverback/issues"
   },
-  "homepage": "https://github.com/icapps/nodejs_silverback#readme",
+  "homepage": "https://github.com/icapps/nodejs-silverback#readme",
   "directories": {
     "test": "tests"
   }

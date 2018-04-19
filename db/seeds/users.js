@@ -1,7 +1,11 @@
 
-const faker = require('faker');
+const dotenv = require('dotenv-safe');
+dotenv.load({ allowEmptyValues: true });
 
-exports.seed = function (knex, Promise) {
+const faker = require('faker');
+const { getHashedPassword } = require('tree-house-authentication');
+
+exports.seed = (knex) => {
   return knex('users').del()
     .then(() => {
       const users = [];
@@ -19,16 +23,20 @@ exports.seed = function (knex, Promise) {
         });
       }
 
-      users.push({
-        email: 'development@icapps.com',
-        firstName: 'development',
-        lastName: 'iCapps',
-        password: '$2b$10$GuXy0I0Dau6aA3EhmvrRkuEYQlEvNpZk/Vkx64ut4rcU0hNdFYxNO', // developer
-        hasAccess: true,
-        role: 'ADMIN',
-      });
+      return getHashedPassword(process.env.INITIAL_SEED_PASSWORD, parseInt(process.env.SALT_COUNT || '10', 10))
+        .then((hashedPw) => {
+          users.push({
+            email: process.env.INITIAL_SEED_USERNAME,
+            firstName: 'development',
+            lastName: 'iCapps',
+            password: hashedPw,
+            hasAccess: true,
+            role: 'ADMIN',
+          });
 
-      // Inserts seed entries
-      return knex('users').insert(users);
+          // Inserts seed entries
+          return knex('users').insert(users);
+        });
+
     });
 };

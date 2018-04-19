@@ -16,7 +16,7 @@ describe('/config', () => {
       expect(status).toEqual(httpStatus.OK);
       expect(body.data).toEqual({
         build: environment.HEROKU_RELEASE_VERSION,
-        version: '1.0.0', // TODO: Dynamic value from package.json
+        version: expect.any(String),
       });
     });
   });

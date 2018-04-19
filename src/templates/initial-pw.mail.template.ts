@@ -13,7 +13,7 @@ export function getInitialPwChangeContent(values: InitialPwContent): TemplateMai
     message: {
       to: [{ email: values.email }],
       from_email: mailSettings.systemEmail,
-      subject: 'Welcome! Choose your new password', // TODO: Correct title: i18n?
+      subject: 'Welcome! Choose your new password',
       global_merge_vars: [
         {
           name: 'email',

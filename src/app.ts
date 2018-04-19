@@ -1,14 +1,19 @@
 import * as express from 'express';
 import * as treehouse from 'tree-house';
-import { responder } from './lib/responder';
 import * as appConfig from './config/app.config';
+import { responder } from './lib/responder';
 
 // Create express instance
 const app: express.Application = express();
 
 // Basic security setup
-treehouse.setLocalHeaders(app, '*');
-treehouse.setBasicSecurity(app, '*');
+treehouse.setBasicSecurity(app, '*', {
+  cors: {
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Cache-Control', 'Pragma', 'Origin', 'Authorization', 'Content-Type', 'X-Requested-With'],
+  },
+});
+
 treehouse.setBodyParser(app, '*');
 // treehouse.setRateLimiter(app, '*'); // TODO: Fix proper settings
 

@@ -1,3 +1,4 @@
+import * as uuid from 'uuid';
 import * as crypto from 'crypto';
 import { NotFoundError, BadRequestError } from 'tree-house-errors';
 import { getHashedPassword } from 'tree-house-authentication';
@@ -43,7 +44,7 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
 
     // User must set own password after creation
     if (changePassword === true) {
-      const token = crypto.randomBytes(24).toString('hex'); // TODO: Integrate this in tree-house-authentication to replace generateRandomHash
+      const token = uuid.v4();
       const randomPassword = await getHashedPassword(crypto.randomBytes(24).toString('hex'), settings.saltCount);
       const created = await userRepository.create(Object.assign({}, values, { resetPwToken: token, password: randomPassword }));
 

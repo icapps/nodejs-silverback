@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import * as uuid from 'uuid';
 import { AuthCredentials } from '../models/auth.model';
 import { AuthenticationError, UnauthorizedError, NotFoundError } from 'tree-house-errors';
 import { comparePassword, createJwt } from 'tree-house-authentication';
@@ -16,7 +16,7 @@ import * as mailer from '../lib/mailer';
  */
 export async function generateTokens(userId: string) {
   const accessToken = await createJwt({ userId }, jwtConfig);
-  const refreshToken = crypto.randomBytes(24).toString('hex'); // TODO: Use tree-house-authentication
+  const refreshToken = uuid.v4();
   await userRepository.update(userId, { refreshToken });
 
   return { accessToken, refreshToken };
@@ -87,8 +87,7 @@ export async function initForgotPw(email: string) {
     const user = await userRepository.findByEmail(email);
     if (!user) throw new NotFoundError();
 
-    // const token = generateRandomHash('sha256', tokenConfig.secretOrKey);
-    const token = crypto.randomBytes(24).toString('hex'); // TODO: Integrate this in tree-house-authentication to replace generateRandomHash
+    const token = uuid.v4();
     await userRepository.update(user.id, { resetPwToken: token });
 
     // Send email with reset link
