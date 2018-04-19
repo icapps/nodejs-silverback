@@ -29,7 +29,7 @@ yarn
 
 When you find issues, please report them:
 
-- web: [https://github.com/icapps/nodejs_silverback/issues](https://github.com/icapps/nodejs-silverback/issues)
+- web: [https://github.com/icapps/nodejs-silverback/issues](https://github.com/icapps/nodejs-silverback/issues)
 
 Be sure to include all of the output from the npm command that didn't work as expected. The npm-debug.log file is also helpful to provide.
 
