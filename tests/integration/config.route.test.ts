@@ -5,8 +5,8 @@ import * as httpStatus from 'http-status';
 import { app } from '../../src/app';
 import { environment } from '../test.config';
 
-describe('/', () => {
-  const prefix = `/api/${process.env.API_VERSION}`;
+describe('/config', () => {
+  const prefix = `/api/${process.env.API_VERSION}/config`;
 
   describe('GET /version', () => {
     it('Should successfully return api version', async () => {
