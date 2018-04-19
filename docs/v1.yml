@@ -161,7 +161,7 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /version:
+  /config/version:
     get:
       tags:
       - "version control"
@@ -175,7 +175,7 @@ paths:
           description: "500 Internal Server Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /version/{os}:
+  /config/version/{os}:
     parameters:
       - in: path
         type: "string"

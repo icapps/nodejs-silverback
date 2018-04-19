@@ -2,9 +2,9 @@
 
 NodeJS Silverback boilerplate project
 
-[![Dependencies](https://david-dm.org/icapps/nodejs_silverback.svg)](https://david-dm.org/icapps/nodejs_silverback.svg)
-[![Build Status](https://travis-ci.org/icapps/nodejs_silverback.svg?branch=master)](https://travis-ci.org/icapps/nodejs_silverback)
-[![Coverage Status](https://coveralls.io/repos/github/icapps/nodejs_silverback/badge.svg)](https://coveralls.io/github/icapps/nodejs_silverback)
+[![Dependencies](https://david-dm.org/icapps/nodejs-silverback.svg)](https://david-dm.org/icapps/nodejs-silverback.svg)
+[![Build Status](https://travis-ci.org/icapps/nodejs-silverback.svg?branch=master)](https://travis-ci.org/icapps/nodejs-silverback)
+[![Coverage Status](https://coveralls.io/repos/github/icapps/nodejs-silverback/badge.svg)](https://coveralls.io/github/icapps/nodejs-silverback)
 
 ## Installation
 
@@ -29,13 +29,13 @@ yarn
 
 When you find issues, please report them:
 
-- web: [https://github.com/icapps/nodejs_silverback/issues](https://github.com/icapps/nodejs_silverback/issues)
+- web: [https://github.com/icapps/nodejs_silverback/issues](https://github.com/icapps/nodejs-silverback/issues)
 
 Be sure to include all of the output from the npm command that didn't work as expected. The npm-debug.log file is also helpful to provide.
 
 ## Authors
 
-See the list of [contributors](https://github.com/icapps/nodejs_silverback/contributors) who participated in this project.
+See the list of [contributors](https://github.com/icapps/nodejs-silverback/contributors) who participated in this project.
 
 ## License
 
