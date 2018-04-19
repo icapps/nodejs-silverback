@@ -8,7 +8,8 @@ import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, validUser, findById, regularUser, setResetPwToken, clearUserData } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 import { getUserToken, getValidJwt } from '../_helpers/mockdata/auth.data';
-import { userByIdSchema } from '../_helpers/payload-schemes/user.schema';
+import { userByIdSchema, createUserSchema } from '../_helpers/payload-schemes/user.schema';
+import { roles } from '../../src/config/roles.config';
 import * as mailer from '../../src/lib/mailer';
 
 describe('/me', () => {
@@ -42,6 +43,35 @@ describe('/me', () => {
       const token = await getValidJwt(faker.random.uuid());
       const { body, status } = await request(app)
         .get(`${prefix}/me`)
+        .set('Authorization', `Bearer ${token}`);
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+  });
+
+  describe('PUT /', () => {
+    it('Should succesfully update personal user\'s information', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/me`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          email: 'test@unknown12.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.OK);
+      Joi.validate(body, createUserSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+    });
+
+    it('Should throw an error when user does not exist', async () => {
+      const token = await getValidJwt(faker.random.uuid());
+      const { body, status } = await request(app)
+        .put(`${prefix}/me`)
         .set('Authorization', `Bearer ${token}`);
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
