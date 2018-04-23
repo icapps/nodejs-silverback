@@ -25,10 +25,12 @@ for (const x in appConfig.VERSIONS) {
   app.use(`/api${appConfig.VERSIONS[x]}`, require(`./routes/${appConfig.VERSIONS[x]}`).routes);
 
   // Set swagger per version
-  treehouse.setSwagger(app, `/api${appConfig.VERSIONS[x]}/documentation`, `docs/${appConfig.VERSIONS[x]}.yml`, {
-    host: process.env.SWAGGER_BASE_URL,
-    schemes: ['http', 'https'],
-  });
+  if (process.env.NODE_ENV !== 'production') {
+    treehouse.setSwagger(app, `/api${appConfig.VERSIONS[x]}/documentation`, `docs/${appConfig.VERSIONS[x]}.yml`, {
+      host: process.env.SWAGGER_BASE_URL,
+      schemes: ['http', 'https'],
+    });
+  }
 }
 
 // Error handling
