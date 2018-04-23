@@ -2,11 +2,14 @@
 import { Router } from 'express';
 import { handleAsyncFn, validateSchema } from 'tree-house';
 import { authSchema } from '../../schemes/auth.schema';
+import { setGlobalBruteforce, setUserBruteForce } from '../../middleware/bruteforce.middleware';
 import { hasPermission } from '../../middleware/permission.middleware';
 import * as controller from '../../controllers/auth.controller';
 
 export const routes: Router = Router({ mergeParams: true })
   .post('/auth/login',
+    setGlobalBruteforce,
+    setUserBruteForce,
     validateSchema(authSchema.login),
     handleAsyncFn(controller.login))
 

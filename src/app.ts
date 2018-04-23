@@ -6,7 +6,7 @@ import { responder } from './lib/responder';
 // Create express instance
 const app: express.Application = express();
 
-// Basic security setup
+treehouse.setBodyParser(app, '*');
 treehouse.setBasicSecurity(app, '*', {
   cors: {
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH'],
@@ -14,11 +14,8 @@ treehouse.setBasicSecurity(app, '*', {
   },
 });
 
-treehouse.setBodyParser(app, '*');
-// treehouse.setRateLimiter(app, '*'); // TODO: Fix proper settings
-
-// Display all versions
-app.get('/', (_req, res) => res.json(appConfig.VERSIONS));
+app.set('trust proxy', 1); // Heroku proxy stuff
+app.get('/', (_req, res) => res.json(appConfig.VERSIONS));// Display all versions
 
 // Load routes (versioned routes go in the routes/ directory)
 for (const x in appConfig.VERSIONS) {
