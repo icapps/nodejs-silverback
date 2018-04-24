@@ -7,8 +7,10 @@ import { logger } from '../lib/logger';
 import { errors } from '../config/errors.config';
 import { getForgotPwContent } from '../templates/forgot-pw.mail.template';
 import { User } from '../models/user.model';
+import { Role } from '../config/roles.config';
 import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
+import { hasRole } from '../lib/utils';
 
 
 /**
@@ -27,11 +29,14 @@ export async function generateTokens(userId: string) {
  * Login user with username and password
  * Returns accessToken and refreshToken
  */
-export async function login(payload: AuthCredentials) {
+export async function login(payload: AuthCredentials, role?: Role) {
   const { username, password } = payload;
   try {
     const user = await userRepository.findByEmail(username);
     if (!user) throw new AuthenticationError();
+
+    // Must have a specific role to login here
+    if (role && !hasRole(user, role)) throw new UnauthorizedError(errors.NO_PERMISSION);
 
     // Check if still has access
     if (!user.hasAccess) throw new UnauthorizedError(errors.USER_INACTIVE);
