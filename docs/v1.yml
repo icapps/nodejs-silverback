@@ -16,7 +16,40 @@ paths:
     post:
       tags:
       - "authentication"
-      summary: "Login a user with email and password"
+      summary: "Login a user with email and password in the application(s)"
+      parameters:
+        - name: "authentication request"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostLogin"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        400:
+          description: "400 Bad request"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "500 Interal error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /auth/login/admin:
+    post:
+      tags:
+      - "authentication"
+      summary: "Login a user with email and password in the Silverback admin panel"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
       parameters:
         - name: "authentication request"
           in: "body"
