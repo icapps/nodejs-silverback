@@ -3,6 +3,7 @@ import * as httpMocks from 'node-mocks-http';
 import { BadRequestError, errors } from 'tree-house-errors';
 import { Serializer } from 'jsonade';
 import { responder } from '../../src/lib/responder';
+import { envs } from '../../src/constants';
 
 describe('lib/responder', () => {
   describe('succes', () => {
@@ -83,7 +84,7 @@ describe('lib/responder', () => {
     });
 
     it('Should return error without stacktrace in production', () => {
-      process.env.NODE_ENV = 'production';
+      process.env.NODE_ENV = envs.PRODUCTION;
 
       const res = httpMocks.createResponse();
       const error = new BadRequestError(errors.INVALID_INPUT, { stack: 'MYSTACK' });
@@ -101,7 +102,7 @@ describe('lib/responder', () => {
         }],
       });
 
-      process.env.NODE_ENV = 'test';
+      process.env.NODE_ENV = envs.TEST;
     });
   });
 });
