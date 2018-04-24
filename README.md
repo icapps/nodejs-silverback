@@ -74,7 +74,11 @@ docker-compose up -d redis
 - Make sure you have a running PostgreSQL and Redis instance
 
 ```shell
+// Start
 yarn start
+
+// Build and start
+yarn serve
 ```
 
 ## Running the tests
