@@ -6,6 +6,8 @@ NodeJS boilerplate project
 [![Build Status](https://travis-ci.org/icapps/nodejs-silverback.svg?branch=master)](https://travis-ci.org/icapps/nodejs-silverback)
 [![Coverage Status](https://coveralls.io/repos/github/icapps/nodejs-silverback/badge.svg)](https://coveralls.io/github/icapps/nodejs-silverback)
 
+![alt text](http://blog.aafnation.com/wp-content/uploads/2016/12/gorilla.png "Silverback Monkey")
+
 ## Getting started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -93,7 +95,7 @@ yarn test:coverage
 
 ## Deployment
 
-- Make sure to build the Typescript project before deploying onto [Heroku](https://travis-ci.org/) or another provider. 
+- Make sure to build the Typescript project before deploying onto [Heroku](https://travis-ci.org/) or another provider.
 - [TravisCI](https://travis-ci.org/) is included in this project, but is not required to run deployments or test suites.
 
 ## Bugs
