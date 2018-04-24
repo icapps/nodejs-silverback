@@ -26,7 +26,6 @@ exports.up = async (knex) => {
     table.unique('email');
     table.unique('resetPwToken');
     table.unique(['id', 'refreshToken']);
-
   });
 
   // Triggers
