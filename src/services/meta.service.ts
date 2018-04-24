@@ -7,6 +7,15 @@ import * as metaRepository from '../repositories/meta.repository';
 
 
 /**
+ * Return a code by id
+ */
+export async function findById(codeId: string): Promise<Code> {
+  const result = await metaRepository.findById(codeId);
+  if (!result) throw new NotFoundError();
+  return result;
+}
+
+/**
  * Return all codes for a specific code type
  */
 export async function findAllCodes(codeType: string, filters: Filters): Promise<{ data: Code[], totalCount: number }> {

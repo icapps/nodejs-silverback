@@ -10,6 +10,18 @@ import { roles } from '../config/roles.config';
 
 
 /**
+ * Get a code by id
+ */
+export async function findById(req: Request, res: Response): Promise<void> {
+  const result = await metaService.findById(req.params.codeId);
+  responder.success(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: codeSerializer,
+  });
+}
+
+/**
  * Return all codes for a specific code type
  */
 export async function findAllCodes(req: AuthRequest, res: Response): Promise<void> {

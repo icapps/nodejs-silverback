@@ -419,7 +419,7 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /meta/codes/{codeType}:
+  /meta/codesByType/{codeType}:
     get:
       tags:
       - "metaOptions"
@@ -481,6 +481,33 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /meta/codes/{codeId}:
+    parameters:
+      - in: path
+        type: "string"
+        name: codeId
+        description: The id of the code
+        required: true
+    get:
+      tags:
+      - "metaOptions"
+      summary: "Returns code by id"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `USER` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodeResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meta/codes/{codeType}:
     post:
       tags:
       - "metaOptions"

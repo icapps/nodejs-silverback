@@ -14,6 +14,11 @@ export const metaSchema = {
       isActive: Joi.boolean(),
     },
   },
+  findById: {
+    params: {
+      codeId: Joi.string().guid(),
+    },
+  },
   createCode: {
     params: {
       codeType: Joi.string().required(),
