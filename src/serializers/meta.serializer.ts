@@ -8,5 +8,7 @@ export const codeSerializer = new Serializer('codes', {
     'name',
     'description',
     'isActive',
+    'createdAt',
+    'updatedAt',
   ],
 });
