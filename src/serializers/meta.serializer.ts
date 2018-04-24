@@ -7,6 +7,8 @@ export const codeSerializer = new Serializer('codes', {
     'code',
     'name',
     'description',
-    'deprecated',
+    'isActive',
+    'createdAt',
+    'updatedAt',
   ],
 });

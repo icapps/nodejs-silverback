@@ -16,7 +16,40 @@ paths:
     post:
       tags:
       - "authentication"
-      summary: "Login a user with email and password"
+      summary: "Login a user with email and password in the application(s)"
+      parameters:
+        - name: "authentication request"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostLogin"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        400:
+          description: "400 Bad request"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "500 Interal error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /auth/login/admin:
+    post:
+      tags:
+      - "authentication"
+      summary: "Login a user with email and password in the Silverback admin panel"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
       parameters:
         - name: "authentication request"
           in: "body"
@@ -427,6 +460,37 @@ paths:
       description: |-
         permission | scope | effect
         - | - | -
+        `USER` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/SortOrder"
+        - $ref: "#/parameters/SortField"
+        - $ref: "#/parameters/Offset"
+        - $ref: "#/parameters/Limit"
+        - $ref: "#/parameters/Search"
+        - in: path
+          type: "string"
+          name: codeType
+          description: The name of the code type
+          required: true
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodesListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meta/codes/{codeType}/all:
+    get:
+      tags:
+      - "metaOptions"
+      summary: "Returns all codes (including inactive codes) for a specific code type"
+      description: |-
+        permission | scope | effect
+        - | - | -
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
@@ -522,6 +586,10 @@ definitions:
         role:
           type: string
           enum: ["USER", "ADMIN"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
     UserRole:
       type: object
       properties:
@@ -686,6 +754,10 @@ definitions:
           type: string
         deprecated:
           type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
     PostCode:
       type: object
       required:

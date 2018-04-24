@@ -5,7 +5,7 @@ import * as faker from 'faker';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
 import { clearAll } from '../_helpers/mockdata/data';
-import { createUser, validUser, findById, regularUser, setResetPwToken, clearUserData } from '../_helpers/mockdata/user.data';
+import { createUser, findById, regularUser, setResetPwToken, clearUserData, adminUser } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 import { getUserToken, getValidJwt } from '../_helpers/mockdata/auth.data';
 import * as mailer from '../../src/lib/mailer';
@@ -13,10 +13,12 @@ import * as mailer from '../../src/lib/mailer';
 describe('/auth', () => {
   const prefix = `/api/${process.env.API_VERSION}`;
   let user;
+  let userAdmin;
 
   beforeAll(async () => {
     await clearAll();
-    user = await createUser(validUser);
+    user = await createUser(regularUser);
+    userAdmin = await createUser(adminUser);
   });
 
   afterAll(async () => {
@@ -30,8 +32,8 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: validUser.email,
-          password: validUser.password,
+          username: regularUser.email,
+          password: regularUser.password,
         });
 
       expect(status).toEqual(httpStatus.OK);
@@ -48,7 +50,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: validUser.email,
+          username: regularUser.email,
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -58,7 +60,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: validUser.email,
+          username: regularUser.email,
           password: 'invalidPw',
         });
 
@@ -70,19 +72,19 @@ describe('/auth', () => {
         .post(`${prefix}/auth/login`)
         .send({
           username: 'unknown@test.com',
-          password: validUser.password,
+          password: regularUser.password,
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it('Should throw error when user has no access', async () => {
-      const noAccessUser = await createUser(Object.assign({}, validUser, { email: 'newuser@gmail.com', hasAccess: false }));
+      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser@gmail.com', hasAccess: false }));
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
           username: 'newuser@gmail.com',
-          password: validUser.password,
+          password: noAccessUser.password,
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
@@ -92,13 +94,46 @@ describe('/auth', () => {
 
   });
 
+  describe('POST /login/admin', () => {
+    it('Should succesfully login a user with correct credentials and ADMIN role', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login/admin`)
+        .send({
+          username: adminUser.email,
+          password: adminUser.password,
+        });
+
+      expect(status).toEqual(httpStatus.OK);
+      Joi.validate(body, loginSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+
+      const loggedInUser = await findById(userAdmin.id);
+      expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
+    });
+
+    it('Should throw error when user has no ADMIN role', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login/admin`)
+        .send({
+          username: regularUser.email,
+          password: regularUser.password,
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
+    });
+  });
+
   describe('POST /refresh', () => {
     it('Should succesfully refresh an expired access token', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: validUser.email,
-          password: validUser.password,
+          username: regularUser.email,
+          password: regularUser.password,
         });
       expect(status).toEqual(httpStatus.OK);
       const accessToken = body.data.accessToken;
@@ -137,8 +172,8 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: validUser.email,
-          password: validUser.password,
+          username: regularUser.email,
+          password: regularUser.password,
         });
       expect(status).toEqual(httpStatus.OK);
       const accessToken = body.data.accessToken;
@@ -169,7 +204,7 @@ describe('/auth', () => {
     it('Should succesfully send a forgot password email with unique link', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/forgot-password/init`)
-        .send({ email: user.email });
+        .send({ email: regularUser.email });
 
       expect(status).toEqual(httpStatus.OK);
       expect(body).toEqual({});

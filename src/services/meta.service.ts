@@ -46,7 +46,7 @@ export async function createCode(codeType: string, values: CodeCreate): Promise<
  */
 export async function deprecateCode(codeId: string) {
   try {
-    const result = await metaRepository.updateCode(codeId, { deprecated: true });
+    const result = await metaRepository.updateCode(codeId, { isActive: true });
     if (!result) throw new NotFoundError();
     return result;
   } catch (error) {

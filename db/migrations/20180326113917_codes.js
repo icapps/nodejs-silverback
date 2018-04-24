@@ -11,7 +11,7 @@ exports.up = async (knex) => {
 
     // Nullable
     table.text('description').nullable();
-    table.boolean('deprecated').nullable();
+    table.boolean('isActive').defaultTo(true);
 
     // Tracking
     table.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
