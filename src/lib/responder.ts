@@ -20,6 +20,8 @@ export const responder: { success: Function, error: Function } = {
   error: (res: Response, errors: any) => {
     logger.debug('Error:', errors);
     const parsedError = parseErrors(errors);
+
+    if (process.env.NODE_ENV === 'production') Object.assign(parsedError, { meta: undefined }); // Do not send stacktrace in production
     const serializerError = ErrorSerializer.serialize([parsedError]);
 
     logger.error('Error response: ', serializerError);

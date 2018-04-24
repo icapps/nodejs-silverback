@@ -68,7 +68,7 @@ describe('lib/responder', () => {
       responder.error(res, error);
       expect(res.statusCode).toEqual(httpStatus.BAD_REQUEST);
       expect(res._isJSON()).toEqual(true);
-      expect(JSON.parse(res._getData())).toMatchObject({
+      expect(JSON.parse(res._getData())).toEqual({
         errors: [{
           id: expect.any(String),
           status: httpStatus.BAD_REQUEST,
@@ -80,6 +80,28 @@ describe('lib/responder', () => {
           },
         }],
       });
+    });
+
+    it('Should return error without stacktrace in production', () => {
+      process.env.NODE_ENV = 'production';
+
+      const res = httpMocks.createResponse();
+      const error = new BadRequestError(errors.INVALID_INPUT, { stack: 'MYSTACK' });
+
+      responder.error(res, error);
+      expect(res.statusCode).toEqual(httpStatus.BAD_REQUEST);
+      expect(res._isJSON()).toEqual(true);
+      expect(JSON.parse(res._getData())).toEqual({
+        errors: [{
+          id: expect.any(String),
+          status: httpStatus.BAD_REQUEST,
+          code: errors.INVALID_INPUT.code,
+          title: errors.INVALID_INPUT.message,
+          detail: errors.INVALID_INPUT.message,
+        }],
+      });
+
+      process.env.NODE_ENV = 'test';
     });
   });
 });
