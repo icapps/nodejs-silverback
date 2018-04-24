@@ -100,3 +100,16 @@ export async function findAllCodes(codeTypeId: string, options: Filters): Promis
   const data = await query;
   return { data, totalCount: parseTotalCount(data) };
 }
+
+/**
+ * Get a code by id
+ */
+export async function findById(id: string): Promise<Code> {
+  const query = db(tableNames.CODES)
+    .select(defaultCodeReturnValues)
+    .where('id', id)
+    .first();
+
+  logger.debug(`Get code by id: ${query.toString()}`);
+  return await query;
+}

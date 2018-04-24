@@ -28,6 +28,13 @@ export const codeSchema = Joi.object({
   updatedAt: Joi.date().iso().raw(),
 });
 
+export const codeByIdSchema = Joi.object().keys({
+  meta: Joi.object().keys({
+    type: Joi.string().required().only('codes'),
+  }),
+  data: codeSchema,
+});
+
 export const codesSchema = Joi.object().keys({
   meta: Joi.object().keys({
     type: Joi.string().required().only('codes'),

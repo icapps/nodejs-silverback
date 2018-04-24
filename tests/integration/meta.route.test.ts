@@ -9,7 +9,7 @@ import { clearAll } from '../_helpers/mockdata/data';
 import { validUsers, createUsers } from '../_helpers/mockdata/user.data';
 import { createCodeType, createCode, clearCodeTypesData, clearCodesData } from '../_helpers/mockdata/meta.data';
 import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
-import { codeTypesSchema, codesSchema, codeSchema, createCodeSchema } from '../_helpers/payload-schemes/meta.schema';
+import { codeTypesSchema, codesSchema, codeSchema, createCodeSchema, codeByIdSchema } from '../_helpers/payload-schemes/meta.schema';
 import { errors } from '../../src/config/errors.config';
 
 describe('/meta', () => {
@@ -27,7 +27,7 @@ describe('/meta', () => {
     await clearAll(); // Full db clear - empty db after tests
   });
 
-  describe('GET /codes/:codeType', () => {
+  describe('GET /codesByType/:codeType', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let codeType;
     let countryCodeType;
@@ -53,7 +53,7 @@ describe('/meta', () => {
 
     it('Should return language codes where with default pagination as a regular user', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.OK);
@@ -72,7 +72,7 @@ describe('/meta', () => {
 
     it('Should return language codes where with default pagination as an admin user', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(status).toEqual(httpStatus.OK);
@@ -90,7 +90,7 @@ describe('/meta', () => {
 
     it('Should return all country codes with provided pagination', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${countryCodeType.code.toLowerCase()}`)
+        .get(`${prefix}/meta/codesByType/${countryCodeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`)
         .query('limit=1')
         .query('offset=2');
@@ -110,7 +110,7 @@ describe('/meta', () => {
 
     it('Should return codes in ascending order for code', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`)
         .query('sortField=code')
         .query('sortOrder=asc');
@@ -132,7 +132,7 @@ describe('/meta', () => {
 
     it('Should return all codes matching `English` in code', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`)
         .query('search=English');
 
@@ -150,14 +150,14 @@ describe('/meta', () => {
 
     it('Should throw an error when code type is not found', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/unknownType`)
+        .get(`${prefix}/meta/codesByType/unknownType`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
   });
 
-  describe('GET /codes/:codeType/all', () => {
+  describe('GET /codesByType/:codeType/all', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let codeType;
     let languageCodes;
@@ -177,7 +177,7 @@ describe('/meta', () => {
 
     it('Should return all language codes with default pagination', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}/all`)
+        .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}/all`)
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(status).toEqual(httpStatus.OK);
@@ -195,12 +195,59 @@ describe('/meta', () => {
 
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}/all`)
+        .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}/all`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
       expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
+    });
+  });
+
+  describe('GET /codes/:codeId', () => {
+    const prefix = `/api/${process.env.API_VERSION}`;
+    let languageCodes;
+
+    beforeAll(async () => {
+      const codeType = await createCodeType({ code: 'LAN', name: 'Language' });
+      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN' });
+      const code2 = await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
+      const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
+      const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
+      languageCodes = [code1, code2, code3, code4];
+    });
+
+    afterAll(async () => {
+      await clearCodeTypesData();
+    });
+
+    it('Should return a code via id', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/meta/codes/${languageCodes[0].id}`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.meta).toMatchObject({
+        type: 'codes',
+      });
+
+      Joi.validate(body, codeByIdSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+    });
+    it('Should throw an error when code id is not a valid guid', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/meta/codes/unknownId`)
+        .set('Authorization', `Bearer ${adminToken}`);
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when code does not exist', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/meta/codes/${faker.random.uuid()}`)
+        .set('Authorization', `Bearer ${adminToken}`);
+      expect(status).toEqual(httpStatus.NOT_FOUND);
     });
   });
 
@@ -232,7 +279,7 @@ describe('/meta', () => {
 
       Joi.validate(body, createCodeSchema, (err, value) => {
         if (err) throw err;
-        if (!value) throw new Error('no vaflue to check schema');
+        if (!value) throw new Error('no value to check schema');
       });
     });
 
