@@ -35,7 +35,7 @@ describe('/meta', () => {
 
     beforeAll(async () => {
       codeType = await createCodeType({ code: 'LAN', name: 'Language' });
-      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', isActive: false });
+      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', deprecated: true });
       const code2 = await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
       const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
       const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
@@ -51,10 +51,29 @@ describe('/meta', () => {
       await clearCodeTypesData();
     });
 
-    it('Should return language codes where isActive=true with default pagination', async () => {
+    it('Should return language codes where with default pagination as a regular user', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`);
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.meta).toMatchObject({
+        type: 'codes',
+        count: 3,
+        totalCount: 3,
+      });
+
+      Joi.validate(body, codesSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+    });
+
+
+    it('Should return language codes where with default pagination as an admin user', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .set('Authorization', `Bearer ${adminToken}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.meta).toMatchObject({
@@ -89,11 +108,11 @@ describe('/meta', () => {
       });
     });
 
-    it('Should return codes in ascending order for value', async () => {
+    it('Should return codes in ascending order for code', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`)
-        .query('sortField=value')
+        .query('sortField=code')
         .query('sortOrder=asc');
 
       expect(status).toEqual(httpStatus.OK);
@@ -104,14 +123,14 @@ describe('/meta', () => {
         totalCount: 3,
       });
 
-      const activeLanguageCodes = languageCodes.filter(c => c.isActive);
-      const sorted = sortBy(activeLanguageCodes, 'value');
+      const activeLanguageCodes = languageCodes.filter(c => !c.deprecated);
+      const sorted = sortBy(activeLanguageCodes, 'code');
       body.data.forEach((code, index) => {
         expect(code.code).toEqual(sorted[index].code);
       });
     });
 
-    it('Should return all codes matching `English` in value', async () => {
+    it('Should return all codes matching `English` in code', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${userToken}`)
@@ -145,7 +164,7 @@ describe('/meta', () => {
 
     beforeAll(async () => {
       codeType = await createCodeType({ code: 'LAN', name: 'Language' });
-      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', isActive: true });
+      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', deprecated: true });
       const code2 = await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
       const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
       const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
@@ -173,6 +192,7 @@ describe('/meta', () => {
         if (!value) throw new Error('no value to check schema');
       });
     });
+
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}/all`)
