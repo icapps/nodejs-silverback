@@ -22,7 +22,7 @@ export const codeSchema = Joi.object({
   code: Joi.string().required(),
   name: Joi.string().required(),
   description: Joi.string().allow(null),
-  deprecated: Joi.boolean().allow(null),
+  isActive: Joi.boolean().allow(null),
 });
 
 

@@ -35,7 +35,7 @@ describe('/meta', () => {
 
     beforeAll(async () => {
       codeType = await createCodeType({ code: 'LAN', name: 'Language' });
-      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', deprecated: true });
+      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', isActive: false });
       const code2 = await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
       const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
       const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
@@ -51,29 +51,10 @@ describe('/meta', () => {
       await clearCodeTypesData();
     });
 
-    it('Should return all language codes with default pagination', async () => {
+    it('Should return language codes where isActive=true with default pagination', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`);
-
-      expect(status).toEqual(httpStatus.OK);
-      expect(body.meta).toMatchObject({
-        type: 'codes',
-        count: 4,
-        totalCount: 4,
-      });
-
-
-      Joi.validate(body, codesSchema, (err, value) => {
-        if (err) throw err;
-        if (!value) throw new Error('no value to check schema');
-      });
-    });
-    it('Should return all language codes where deprecated=false', async () => {
-      const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
-        .query('deprecated=false');
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.meta).toMatchObject({
@@ -82,17 +63,17 @@ describe('/meta', () => {
         totalCount: 3,
       });
 
+
       Joi.validate(body, codesSchema, (err, value) => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
-      expect(body.data.filter(c => c.deprecated === true)).toHaveLength(0);
     });
 
     it('Should return all country codes with provided pagination', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${countryCodeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${userToken}`)
         .query('limit=1')
         .query('offset=2');
 
@@ -112,19 +93,20 @@ describe('/meta', () => {
     it('Should return codes in ascending order for value', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${userToken}`)
         .query('sortField=value')
         .query('sortOrder=asc');
 
       expect(status).toEqual(httpStatus.OK);
-      expect(body.data).toHaveLength(4);
+      expect(body.data).toHaveLength(3);
       expect(body.meta).toMatchObject({
         type: 'codes',
-        count: 4,
-        totalCount: 4,
+        count: 3,
+        totalCount: 3,
       });
 
-      const sorted = sortBy(languageCodes, 'value');
+      const activeLanguageCodes = languageCodes.filter(c => c.isActive);
+      const sorted = sortBy(activeLanguageCodes, 'value');
       body.data.forEach((code, index) => {
         expect(code.code).toEqual(sorted[index].code);
       });
@@ -133,7 +115,7 @@ describe('/meta', () => {
     it('Should return all codes matching `English` in value', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${userToken}`)
         .query('search=English');
 
       expect(status).toEqual(httpStatus.OK);
@@ -151,14 +133,50 @@ describe('/meta', () => {
     it('Should throw an error when code type is not found', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/unknownType`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
+  });
 
+  describe('GET /codes/:codeType/all', () => {
+    const prefix = `/api/${process.env.API_VERSION}`;
+    let codeType;
+    let languageCodes;
+
+    beforeAll(async () => {
+      codeType = await createCodeType({ code: 'LAN', name: 'Language' });
+      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', isActive: true });
+      const code2 = await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
+      const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
+      const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
+      languageCodes = [code1, code2, code3, code4];
+    });
+
+    afterAll(async () => {
+      await clearCodeTypesData();
+    });
+
+    it('Should return all language codes with default pagination', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}/all`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.meta).toMatchObject({
+        type: 'codes',
+        count: 4,
+        totalCount: 4,
+      });
+
+      Joi.validate(body, codesSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+    });
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}/all`)
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);

@@ -427,6 +427,37 @@ paths:
       description: |-
         permission | scope | effect
         - | - | -
+        `USER` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      parameters:
+        - $ref: "#/parameters/SortOrder"
+        - $ref: "#/parameters/SortField"
+        - $ref: "#/parameters/Offset"
+        - $ref: "#/parameters/Limit"
+        - $ref: "#/parameters/Search"
+        - in: path
+          type: "string"
+          name: codeType
+          description: The name of the code type
+          required: true
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodesListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meta/codes/{codeType}/all:
+    get:
+      tags:
+      - "metaOptions"
+      summary: "Returns all codes (including inactive codes) for a specific code type"
+      description: |-
+        permission | scope | effect
+        - | - | -
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
@@ -436,11 +467,6 @@ paths:
         - $ref: "#/parameters/Offset"
         - $ref: "#/parameters/Limit"
         - $ref: "#/parameters/Search"
-        - in: query
-          type: "boolean"
-          name: deprecated
-          description: Search for codes matching deprecated value
-          required: false
         - in: path
           type: "string"
           name: codeType

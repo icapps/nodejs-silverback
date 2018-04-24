@@ -11,7 +11,7 @@ export const metaSchema = {
       sortOrder: Joi.string().valid('asc', 'desc'),
       sortField: Joi.string(),
       search: Joi.string(),
-      deprecated: Joi.boolean(),
+      isActive: Joi.boolean(),
     },
   },
   createCode: {

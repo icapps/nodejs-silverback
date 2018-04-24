@@ -8,6 +8,10 @@ import * as controller from '../../controllers/meta.controller';
 const defaultOptions = { allowUnknownQuery: false };
 export const routes: Router = Router({ mergeParams: true })
   .get('/codes/:codeType', (req, res, next) =>
+    hasPermission(req, res, next, roles.USER),
+    validateSchema(metaSchema.findAllCodes, defaultOptions),
+    handleAsyncFn(controller.findAllCodes))
+  .get('/codes/:codeType/all', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(metaSchema.findAllCodes, defaultOptions),
     handleAsyncFn(controller.findAllCodes))
