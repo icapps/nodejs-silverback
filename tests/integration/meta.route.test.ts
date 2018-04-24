@@ -72,7 +72,7 @@ describe('/meta', () => {
 
     it('Should return language codes where with default pagination as an admin user', async () => {
       const { body, status } = await request(app)
-        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(status).toEqual(httpStatus.OK);
