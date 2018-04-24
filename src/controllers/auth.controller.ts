@@ -6,13 +6,14 @@ import { authSerializer } from '../serializers/auth.serializer';
 import { extractJwt } from '../lib/utils';
 import { JwtPayload } from '../middleware/permission.middleware';
 import { AuthRequest, BruteRequest } from '../models/request.model';
+import { Role } from '../config/roles.config';
 import * as authService from '../services/auth.service';
 
 /**
  * Return all users
  */
-export async function login(req: BruteRequest, res: Response): Promise<void> {
-  const data = await authService.login(req.body);
+export async function login(req: BruteRequest, res: Response, role?: Role): Promise<void> {
+  const data = await authService.login(req.body, role);
 
   // Reset brute force protection and return response
   req.brute.reset(() => {
