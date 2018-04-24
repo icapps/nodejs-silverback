@@ -3,15 +3,21 @@ import { Request, Response } from 'express';
 import { responder } from '../lib/responder';
 import { codeSerializer } from '../serializers/meta.serializer';
 import * as metaService from '../services/meta.service';
+import { AuthRequest } from '../models/request.model';
+import { hasRole } from '../lib/utils';
+import { roles } from '../config/roles.config';
 
 
 
 /**
  * Return all codes for a specific code type
  */
-export async function findAllCodes(req: Request, res: Response): Promise<void> {
+export async function findAllCodes(req: AuthRequest, res: Response): Promise<void> {
   const codeType = req.params.codeType;
-  const { data, totalCount } = await metaService.findAllCodes(codeType, req.query);
+  // if user is not an ADMIN, hide inactive codes
+  const filters = Object.assign({}, req.query, { hideInactive: !hasRole(req.session.user, roles.ADMIN) });
+
+  const { data, totalCount } = await metaService.findAllCodes(codeType, filters);
   responder.success(res, {
     totalCount,
     status: httpStatus.OK,

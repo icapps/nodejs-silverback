@@ -6,7 +6,7 @@ import { CodeType, CodeTypeCreate } from '../models/code-type.model';
 import { applyPagination, applySearch, applySorting } from '../lib/filter';
 import { Filters } from '../models/filters.model';
 
-const defaultCodeReturnValues = ['id', 'code', 'name', 'description', 'codeTypeId', 'deprecated', 'createdAt', 'updatedAt'];
+const defaultCodeReturnValues = ['id', 'code', 'name', 'description', 'codeTypeId', 'isActive', 'createdAt', 'updatedAt'];
 const defaultCodeTypeReturnValues = ['id', 'code', 'name', 'description', 'createdAt', 'updatedAt'];
 
 /**
@@ -87,6 +87,9 @@ export async function findAllCodes(codeTypeId: string, options: Filters): Promis
     .from(tableNames.CODES)
     .where('codeTypeId', codeTypeId);
 
+  if (allOptions.hideInactive) {
+    query.where('isActive', true);
+  }
   applyPagination(query, allOptions);
   applySearch(query, allOptions, ['id', 'code', 'name']);
   applySorting(query, allOptions, ['code', 'name']);

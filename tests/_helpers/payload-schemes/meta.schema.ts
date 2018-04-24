@@ -18,17 +18,15 @@ export const codeTypesSchema = Joi.object().keys({
   data: Joi.array().items(codeTypeSchema),
 });
 
-
 export const codeSchema = Joi.object({
   id: Joi.string().guid().required(),
   code: Joi.string().required(),
   name: Joi.string().required(),
   description: Joi.string().allow(null),
-  deprecated: Joi.boolean().allow(null),
+  isActive: Joi.boolean().allow(null),
   createdAt: Joi.date().iso().raw(),
   updatedAt: Joi.date().iso().raw(),
 });
-
 
 export const codesSchema = Joi.object().keys({
   meta: Joi.object().keys({
