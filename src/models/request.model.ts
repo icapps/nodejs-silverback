@@ -6,3 +6,10 @@ export interface AuthRequest extends Request {
     user: User;
   };
 }
+
+export interface BruteRequest extends Request {
+  brute: {
+    reset: (fn: Function) => {};
+  };
+}
+

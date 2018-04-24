@@ -25,6 +25,7 @@ describe('/auth', () => {
   });
 
   describe('POST /login', () => {
+    // TODO: Test if brute force protection gets reset after successful attempt!
     it('Should succesfully login a user with correct credentials', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)

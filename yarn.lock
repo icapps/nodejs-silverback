@@ -65,6 +65,12 @@
   version "1.2.0"
   resolved "https://registry.npmjs.org/@types/events/-/events-1.2.0.tgz#81a6731ce4df43619e5c8c945383b3e62a89ea86"
 
+"@types/express-brute@~0.0.36":
+  version "0.0.36"
+  resolved "https://registry.npmjs.org/@types/express-brute/-/express-brute-0.0.36.tgz#018b06f5068a407de03527ca310c2b5f75c38c6e"
+  dependencies:
+    "@types/express" "*"
+
 "@types/express-serve-static-core@*":
   version "4.11.1"
   resolved "https://registry.npmjs.org/@types/express-serve-static-core/-/express-serve-static-core-4.11.1.tgz#f6f7212382d59b19d696677bcaa48a37280f5d45"
@@ -127,6 +133,13 @@
 "@types/node@*":
   version "9.6.5"
   resolved "https://registry.npmjs.org/@types/node/-/node-9.6.5.tgz#ee700810fdf49ac1c399fc5980b7559b3e5a381d"
+
+"@types/redis@~2.8.6":
+  version "2.8.6"
+  resolved "https://registry.npmjs.org/@types/redis/-/redis-2.8.6.tgz#3674d07a13ad76bccda4c37dc3909e4e95757e7e"
+  dependencies:
+    "@types/events" "*"
+    "@types/node" "*"
 
 "@types/serve-static@*":
   version "1.13.1"
@@ -1352,6 +1365,10 @@ dotenv-safe@~5.0.1:
 dotenv@^5.0.0, dotenv@^5.0.1:
   version "5.0.1"
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-5.0.1.tgz#a5317459bd3d79ab88cff6e44057a6a3fbb1fcef"
+
+double-ended-queue@^2.1.0-0:
+  version "2.1.0-0"
+  resolved "https://registry.npmjs.org/double-ended-queue/-/double-ended-queue-2.1.0-0.tgz#103d3527fd31528f40188130c841efdd78264e5c"
 
 duplexer3@^0.1.4:
   version "0.1.4"
@@ -4751,9 +4768,25 @@ rechoir@^0.6.2:
   dependencies:
     resolve "^1.1.6"
 
+redis-commands@^1.2.0:
+  version "1.3.5"
+  resolved "https://registry.npmjs.org/redis-commands/-/redis-commands-1.3.5.tgz#4495889414f1e886261180b1442e7295602d83a2"
+
+redis-parser@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.npmjs.org/redis-parser/-/redis-parser-2.6.0.tgz#52ed09dacac108f1a631c07e9b69941e7a19504b"
+
 redis@~0.10.0:
   version "0.10.3"
   resolved "https://registry.npmjs.org/redis/-/redis-0.10.3.tgz#8927fe2110ee39617bcf3fd37b89d8e123911bb6"
+
+redis@~2.8.0:
+  version "2.8.0"
+  resolved "https://registry.npmjs.org/redis/-/redis-2.8.0.tgz#202288e3f58c49f6079d97af7a10e1303ae14b02"
+  dependencies:
+    double-ended-queue "^2.1.0-0"
+    redis-commands "^1.2.0"
+    redis-parser "^2.6.0"
 
 referrer-policy@1.1.0:
   version "1.1.0"
@@ -5622,9 +5655,9 @@ tree-house-errors@^1.0.3:
     joi "~13.1.2"
     uuid "~3.2.1"
 
-tree-house@~3.1.0:
-  version "3.1.0"
-  resolved "https://registry.npmjs.org/tree-house/-/tree-house-3.1.0.tgz#e4e5517c23b98171c542d0496dcb659494ebaca4"
+tree-house@~3.2.0:
+  version "3.2.0"
+  resolved "https://registry.npmjs.org/tree-house/-/tree-house-3.2.0.tgz#6d0c26b96548ed046a82fdcfe8ffb3fb04a3ae7f"
   dependencies:
     body-parser "~1.18.2"
     cors "~2.8.4"

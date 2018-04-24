@@ -5,18 +5,22 @@ import { responder } from '../lib/responder';
 import { authSerializer } from '../serializers/auth.serializer';
 import { extractJwt } from '../lib/utils';
 import { JwtPayload } from '../middleware/permission.middleware';
-import { AuthRequest } from '../models/request.model';
+import { AuthRequest, BruteRequest } from '../models/request.model';
 import * as authService from '../services/auth.service';
 
 /**
  * Return all users
  */
-export async function login(req: Request, res: Response): Promise<void> {
+export async function login(req: BruteRequest, res: Response): Promise<void> {
   const data = await authService.login(req.body);
-  responder.success(res, {
-    status: httpStatus.OK,
-    payload: data,
-    serializer: authSerializer,
+
+  // Reset brute force protection and return response
+  req.brute.reset(() => {
+    responder.success(res, {
+      status: httpStatus.OK,
+      payload: data,
+      serializer: authSerializer,
+    });
   });
 }
 

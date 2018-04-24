@@ -11,6 +11,7 @@ export const environment = {
   MIN_VERSION_IOS: '1.0.0',
   LATEST_VERSION_IOS: '2.0.2',
   MANDRILL_API_KEY: 'myKey',
+  REDISCLOUD_URL: 'redis://0.0.0.0:6379',
 };
 
 Object.keys(environment).forEach((key) => {
