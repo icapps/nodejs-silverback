@@ -10,6 +10,8 @@ export const userSchema = Joi.object({
   lastName: Joi.string().required(),
   hasAccess: Joi.boolean().required(),
   role: Joi.string().required().valid(roleNames),
+  createdAt: Joi.string(),
+  updatedAt: Joi.string(),
 });
 
 export const createUserSchema = Joi.object().keys({

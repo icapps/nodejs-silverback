@@ -9,5 +9,7 @@ export const userSerializer = new Serializer('users', {
     'lastName',
     'hasAccess',
     'role',
+    'createdAt',
+    'updatedAt',
   ],
 });

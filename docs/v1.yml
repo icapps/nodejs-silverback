@@ -522,6 +522,10 @@ definitions:
         role:
           type: string
           enum: ["USER", "ADMIN"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
     UserRole:
       type: object
       properties:
@@ -686,6 +690,10 @@ definitions:
           type: string
         deprecated:
           type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
     PostCode:
       type: object
       required:

@@ -5,6 +5,8 @@ export const codeTypeSchema = Joi.object({
   code: Joi.string().required(),
   name: Joi.string().required(),
   description: Joi.string().allow(null),
+  createdAt: Joi.string(),
+  updatedAt: Joi.string(),
 });
 
 export const codeTypesSchema = Joi.object().keys({
@@ -23,6 +25,8 @@ export const codeSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().allow(null),
   deprecated: Joi.boolean().allow(null),
+  createdAt: Joi.string(),
+  updatedAt: Joi.string(),
 });
 
 

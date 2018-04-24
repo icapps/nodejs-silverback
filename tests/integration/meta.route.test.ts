@@ -63,7 +63,6 @@ describe('/meta', () => {
         totalCount: 4,
       });
 
-
       Joi.validate(body, codesSchema, (err, value) => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
