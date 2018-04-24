@@ -50,7 +50,7 @@ export async function updateCode(codeId: string, values: CodeUpdate | PartialCod
 /**
  * Find a code type via its code
  */
-export async function findCodeTypeByCode(code: string): Promise<{ id: string }> {
+export async function findCodeTypeByCode(code: string): Promise<Code> {
   const query = selectAndCount(db, defaultCodeTypeReturnValues)
     .from(tableNames.CODETYPES)
     .where('code', code.toUpperCase())
@@ -58,6 +58,22 @@ export async function findCodeTypeByCode(code: string): Promise<{ id: string }> 
 
   logger.debug(`Get code type by code: ${query.toString()}`);
   return await query;
+}
+
+
+
+/**
+ * Return whether a code is unique
+ */
+export async function isUniqueCode(code: string, codeTypeId: string): Promise<boolean> {
+  const query = db(tableNames.CODES)
+    .select(defaultCodeReturnValues)
+    .where('code', code.toUpperCase())
+    .andWhere('codeTypeId', codeTypeId)
+    .first();
+
+  logger.debug(`Get code by code and codeTypeId: ${query.toString()}`);
+  return !(await query); // If no result -> code is unique
 }
 
 

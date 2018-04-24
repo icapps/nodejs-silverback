@@ -8,5 +8,6 @@ export const errors = Object.assign({}, defaults, {
   MISSING_HEADERS:    { code: 'MISSING_HEADERS', message: 'Not all required headers are provided' },
   NO_PERMISSION:      { code: 'NO_PERMISSION', message:'You do not have the proper permissions to execute this operation' },
   TOO_MANY_REQUESTS:  { code: 'TOO_MANY_REQUESTS', message: 'You\'ve made too many failed attempts in a short period of time, please try again later' },
+  CODE_DUPLICATE:     { code: 'CODE_DUPLICATE', message: 'A code with this code already exists' },
 });
   // tslint:enable:max-line-length

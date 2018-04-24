@@ -180,6 +180,24 @@ describe('/meta', () => {
       });
     });
 
+    it('Should throw an error when trying to create a duplicate code', async () => {
+      const { status } = await request(app)
+        .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ code: 'FE', name: 'Nederlands' });
+
+      expect(status).toEqual(httpStatus.CREATED);
+
+      const { body, status: status2 } = await request(app)
+        .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ code: 'FE', name: 'Another NL' });
+
+      expect(status2).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.CODE_DUPLICATE.code);
+      expect(body.errors[0].title).toEqual(errors.CODE_DUPLICATE.message);
+    });
+
     it('Should throw an error when code type is not found', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/unknownType`)
