@@ -436,6 +436,11 @@ paths:
         - $ref: "#/parameters/Offset"
         - $ref: "#/parameters/Limit"
         - $ref: "#/parameters/Search"
+        - in: query
+          type: "boolean"
+          name: deprecated
+          description: Search for codes matching deprecated value
+          required: false
         - in: path
           type: "string"
           name: codeType

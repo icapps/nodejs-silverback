@@ -87,6 +87,9 @@ export async function findAllCodes(codeTypeId: string, options: Filters): Promis
     .from(tableNames.CODES)
     .where('codeTypeId', codeTypeId);
 
+  if ('deprecated' in allOptions) {
+    query.where('deprecated', allOptions.deprecated);
+  }
   applyPagination(query, allOptions);
   applySearch(query, allOptions, ['id', 'code', 'name']);
   applySorting(query, allOptions, ['code', 'name']);

@@ -35,7 +35,7 @@ describe('/meta', () => {
 
     beforeAll(async () => {
       codeType = await createCodeType({ code: 'LAN', name: 'Language' });
-      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN' });
+      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', deprecated: true });
       const code2 = await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
       const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
       const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
@@ -68,6 +68,25 @@ describe('/meta', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
+    });
+    it('Should return all language codes where deprecated=false', async () => {
+      const { body, status } = await request(app)
+        .get(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .query('deprecated=false');
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.meta).toMatchObject({
+        type: 'codes',
+        count: 3,
+        totalCount: 3,
+      });
+
+      Joi.validate(body, codesSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+      expect(body.data.filter(c => c.deprecated === true)).toHaveLength(0);
     });
 
     it('Should return all country codes with provided pagination', async () => {
