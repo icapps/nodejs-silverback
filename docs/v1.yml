@@ -454,7 +454,7 @@ paths:
     get:
       tags:
       - "metaOptions"
-      summary: "Returns all codes (including inactive codes) for a specific code type"
+      summary: "Returns all codes (including deprecated codes) for a specific code type"
       description: |-
         permission | scope | effect
         - | - | -
