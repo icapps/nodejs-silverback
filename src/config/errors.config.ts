@@ -1,7 +1,7 @@
-import { errors as defaults } from 'tree-house-errors';
+import { errors as defaults, ErrorType } from 'tree-house-errors';
 
 // tslint:disable:max-line-length
-export const errors = Object.assign({}, defaults, {
+export const errors = <Error>Object.assign({}, defaults, {
   USER_INACTIVE:      { code: 'USER_INACTIVE', message: 'Activate user account before login' },
   USER_DUPLICATE:     { code: 'USER_DUPLICATE', message: 'A user with this email already exists' },
   USER_NOT_FOUND:     { code: 'USER_NOT_FOUND', message: 'User not found' },
@@ -11,3 +11,7 @@ export const errors = Object.assign({}, defaults, {
   CODE_DUPLICATE:     { code: 'CODE_DUPLICATE', message: 'A code with this code already exists' },
 });
   // tslint:enable:max-line-length
+
+export interface Error {
+  [key: string]: ErrorType;
+}

@@ -27,7 +27,6 @@ describe('/auth', () => {
   });
 
   describe('POST /login', () => {
-    // TODO: Test if brute force protection gets reset after successful attempt!
     it('Should succesfully login a user with correct credentials', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
@@ -269,6 +268,9 @@ describe('/auth', () => {
 
       expect(status).toEqual(httpStatus.OK);
       expect(body).toEqual({});
+
+      const updatedUser = await findById(newUser.id);
+      expect(updatedUser.registrationCompleted).toEqual(true);
 
       // Try to login with changed password
       const { body: body2, status: status2 } = await request(app)
