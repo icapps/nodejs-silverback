@@ -31,9 +31,9 @@ export const routes: Router = Router({ mergeParams: true })
   .post('/codes/:codeId/deprecate', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(metaSchema.deprecateCode, defaultOptions),
-    handleAsyncFn((req: AuthRequest, res) => controller.deprecateCode(req, res, true)))
+    handleAsyncFn(controller.deprecateCode))
 
   .post('/codes/:codeId/undeprecate', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(metaSchema.deprecateCode, defaultOptions),
-    handleAsyncFn((req: AuthRequest, res) => controller.deprecateCode(req, res, false)));
+    handleAsyncFn(controller.undeprecateCode));
