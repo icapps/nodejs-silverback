@@ -53,10 +53,10 @@ export async function createCode(req: Request, res: Response): Promise<void> {
 
 
 /**
- * Deprecate an existing code
+ * Deprecate / undeprecate an existing code
  */
-export async function deprecateCode(req: Request, res: Response): Promise<void> {
-  await metaService.deprecateCode(req.params.codeId);
+export async function deprecateCode(req: Request, res: Response, deprecate: boolean): Promise<void> {
+  await metaService.deprecateCode(req.params.codeId, deprecate);
   responder.success(res, {
     status: httpStatus.OK,
   });

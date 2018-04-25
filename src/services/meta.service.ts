@@ -51,11 +51,11 @@ export async function createCode(codeType: string, values: CodeCreate): Promise<
 
 
 /**
- * Deprecate a code
+ * Deprecate / undeprecate a code
  */
-export async function deprecateCode(codeId: string) {
+export async function deprecateCode(codeId: string, deprecated: boolean) {
   try {
-    const result = await metaRepository.updateCode(codeId, { deprecated: true });
+    const result = await metaRepository.updateCode(codeId, { deprecated });
     if (!result) throw new NotFoundError();
     return result;
   } catch (error) {
