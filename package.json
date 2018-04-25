@@ -71,7 +71,7 @@
     "typescript": "^2.8.3"
   },
   "engines": {
-    "node": "8"
+    "node": ">=8"
   },
   "author": "iCapps <info@icapps.com>",
   "license": "ISC",
