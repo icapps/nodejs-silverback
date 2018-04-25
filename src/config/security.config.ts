@@ -4,6 +4,7 @@ import { InternalServerError, ApiError } from 'tree-house-errors';
 import { getRedisClient } from '../lib/memory-store';
 import { logger } from '../lib/logger';
 import { errors } from './errors.config';
+import { envs } from '../constants';
 
 
 /**
@@ -36,7 +37,7 @@ export const globalBruteConfig: RateLimiterOptions = {
   minWait: 25 * 60 * 60 * 1000, // 1 day 1 hour (should never reach this wait time)
   maxWait: 25 * 60 * 60 * 1000, // 1 day 1 hour (should never reach this wait time)
   lifetime: 24 * 60 * 60, // 1 day (seconds not milliseconds)
-  redis: process.env.NODE_ENV === 'development' ? undefined : { client: getRedisClient() }, // Use our existing Redis client (in staging/production)
+  redis: process.env.NODE_ENV === envs.DEVELOP ? undefined : { client: getRedisClient() }, // Use our existing Redis client (in staging/production)
 };
 
 
@@ -49,7 +50,7 @@ export const userBruteConfig: RateLimiterOptions = {
   freeRetries: 5,
   minWait: 5 * 60 * 1000, // 5 minutes
   maxWait: 60 * 60 * 1000, // 1 hour,
-  redis: process.env.NODE_ENV === 'development' ? undefined : { client: getRedisClient() }, // Use our existing Redis client (in staging/production)
+  redis: process.env.NODE_ENV === envs.DEVELOP ? undefined : { client: getRedisClient() }, // Use our existing Redis client (in staging/production)
 };
 
 

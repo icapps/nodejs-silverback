@@ -1,7 +1,8 @@
 import * as knex from 'knex';
+import { envs } from '../constants';
 const dbConfig = require('../../knexfile.js');
 
-export const db = knex(dbConfig[process.env.NODE_ENV || 'development']);
+export const db = knex(dbConfig[process.env.NODE_ENV || envs.DEVELOP]);
 
 
 /**

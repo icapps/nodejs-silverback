@@ -1,5 +1,7 @@
+import { envs } from '../src/constants';
+
 export const environment = {
-  NODE_ENV: 'test',
+  NODE_ENV: envs.TEST,
   LOG_LEVEL: 'info',
   DATABASE_URL: 'postgres://developer:developer@localhost:5432/silverback_test',
   API_VERSION: 'v1',
