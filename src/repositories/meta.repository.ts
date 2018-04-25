@@ -6,8 +6,8 @@ import { CodeType, CodeTypeCreate } from '../models/code-type.model';
 import { applyPagination, applySearch, applySorting } from '../lib/filter';
 import { Filters } from '../models/filters.model';
 
-const defaultCodeReturnValues = ['id', 'code', 'name', 'description', 'codeTypeId', 'deprecated'];
-const defaultCodeTypeReturnValues = ['id', 'code', 'name', 'description'];
+const defaultCodeReturnValues = ['id', 'code', 'name', 'description', 'codeTypeId', 'deprecated', 'createdAt', 'updatedAt'];
+const defaultCodeTypeReturnValues = ['id', 'code', 'name', 'description', 'createdAt', 'updatedAt'];
 
 /**
  * Create a new codeType
@@ -50,7 +50,7 @@ export async function updateCode(codeId: string, values: CodeUpdate | PartialCod
 /**
  * Find a code type via its code
  */
-export async function findCodeTypeByCode(code: string): Promise<{ id: string }> {
+export async function findCodeTypeByCode(code: string): Promise<Code> {
   const query = selectAndCount(db, defaultCodeTypeReturnValues)
     .from(tableNames.CODETYPES)
     .where('code', code.toUpperCase())
@@ -58,6 +58,22 @@ export async function findCodeTypeByCode(code: string): Promise<{ id: string }> 
 
   logger.debug(`Get code type by code: ${query.toString()}`);
   return await query;
+}
+
+
+
+/**
+ * Return whether a code is unique
+ */
+export async function isUniqueCode(code: string, codeTypeId: string): Promise<boolean> {
+  const query = db(tableNames.CODES)
+    .select(defaultCodeReturnValues)
+    .where('code', code.toUpperCase())
+    .andWhere('codeTypeId', codeTypeId)
+    .first();
+
+  logger.debug(`Get code by code and codeTypeId: ${query.toString()}`);
+  return !(await query); // If no result -> code is unique
 }
 
 
@@ -71,6 +87,11 @@ export async function findAllCodes(codeTypeId: string, options: Filters): Promis
     .from(tableNames.CODES)
     .where('codeTypeId', codeTypeId);
 
+  // Hide deprecated codes unless otherwise requested
+  if (!allOptions.showDeprecated) {
+    query.where('deprecated', false);
+  }
+
   applyPagination(query, allOptions);
   applySearch(query, allOptions, ['id', 'code', 'name']);
   applySorting(query, allOptions, ['code', 'name']);
@@ -78,4 +99,17 @@ export async function findAllCodes(codeTypeId: string, options: Filters): Promis
 
   const data = await query;
   return { data, totalCount: parseTotalCount(data) };
+}
+
+/**
+ * Get a code by id
+ */
+export async function findById(id: string): Promise<Code> {
+  const query = db(tableNames.CODES)
+    .select(defaultCodeReturnValues)
+    .where('id', id)
+    .first();
+
+  logger.debug(`Get code by id: ${query.toString()}`);
+  return await query;
 }

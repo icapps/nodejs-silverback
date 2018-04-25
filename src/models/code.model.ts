@@ -10,6 +10,7 @@ export interface CodeCreate {
   code: string;
   name: string;
   description?: string;
+  deprecated?: boolean;
 }
 
 

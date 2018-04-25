@@ -13,6 +13,11 @@ export const metaSchema = {
       search: Joi.string(),
     },
   },
+  findById: {
+    params: {
+      codeId: Joi.string().guid(),
+    },
+  },
   createCode: {
     params: {
       codeType: Joi.string().required(),

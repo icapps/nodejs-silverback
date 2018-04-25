@@ -3,15 +3,32 @@ import { Request, Response } from 'express';
 import { responder } from '../lib/responder';
 import { codeSerializer } from '../serializers/meta.serializer';
 import * as metaService from '../services/meta.service';
+import { AuthRequest } from '../models/request.model';
+import { Filters } from '../models/filters.model';
 
 
+/**
+ * Get a code by id
+ */
+export async function findById(req: Request, res: Response): Promise<void> {
+  const result = await metaService.findById(req.params.codeId);
+  responder.success(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: codeSerializer,
+  });
+}
 
 /**
  * Return all codes for a specific code type
  */
-export async function findAllCodes(req: Request, res: Response): Promise<void> {
+export async function findAllCodes(req: AuthRequest, res: Response, showDeprecated?: boolean): Promise<void> {
   const codeType = req.params.codeType;
-  const { data, totalCount } = await metaService.findAllCodes(codeType, req.query);
+
+  // if deprecated codes are requested add them to filters object
+  const filters: Filters = Object.assign({}, req.query, { showDeprecated });
+
+  const { data, totalCount } = await metaService.findAllCodes(codeType, filters);
   responder.success(res, {
     totalCount,
     status: httpStatus.OK,

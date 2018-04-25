@@ -43,15 +43,15 @@
     "@types/express" "*"
     "@types/node" "*"
 
-"@types/cors@~2.8.3":
-  version "2.8.3"
-  resolved "https://registry.npmjs.org/@types/cors/-/cors-2.8.3.tgz#eaf6e476da0d36bee6b061a24d57e343ddce86d6"
+"@types/cors@~2.8.4":
+  version "2.8.4"
+  resolved "https://registry.npmjs.org/@types/cors/-/cors-2.8.4.tgz#50991a759a29c0b89492751008c6af7a7c8267b0"
   dependencies:
     "@types/express" "*"
 
-"@types/dotenv-safe@~4.0.1":
-  version "4.0.1"
-  resolved "https://registry.npmjs.org/@types/dotenv-safe/-/dotenv-safe-4.0.1.tgz#f224ef369824f17ad6ce9ac09f75467f4e7c5637"
+"@types/dotenv-safe@~5.0.0":
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/@types/dotenv-safe/-/dotenv-safe-5.0.0.tgz#a122a0a9e9f4608674ac315dbc4b22a7845d2c3d"
   dependencies:
     "@types/dotenv" "*"
 
@@ -108,9 +108,9 @@
   version "13.0.7"
   resolved "https://registry.npmjs.org/@types/joi/-/joi-13.0.7.tgz#89cd7092fc24160b9d59597270cd0d3620e709d8"
 
-"@types/knex@~0.14.11":
-  version "0.14.11"
-  resolved "https://registry.npmjs.org/@types/knex/-/knex-0.14.11.tgz#9c5efd53969d9bdd6c4294567c7e671b4ee9ee10"
+"@types/knex@~0.14.12":
+  version "0.14.12"
+  resolved "https://registry.npmjs.org/@types/knex/-/knex-0.14.12.tgz#e86a275c5cabd645a16ebe59fab9c63c2d5fd714"
   dependencies:
     "@types/bluebird" "*"
     "@types/events" "*"
@@ -5776,9 +5776,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^2.8.1:
-  version "2.8.1"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-2.8.1.tgz#6160e4f8f195d5ba81d4876f9c0cc1fbc0820624"
+typescript@^2.8.3:
+  version "2.8.3"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-2.8.3.tgz#5d817f9b6f31bb871835f4edf0089f21abe6c170"
 
 uglify-js@^2.6:
   version "2.8.29"
@@ -6037,9 +6037,20 @@ window-size@0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/window-size/-/window-size-0.1.0.tgz#5438cd2ea93b202efa3a19fe8887aee7c94f9c9d"
 
-winston@^2.4.0, winston@~2.4.1:
+winston@^2.4.0:
   version "2.4.1"
   resolved "https://registry.npmjs.org/winston/-/winston-2.4.1.tgz#a3a9265105564263c6785b4583b8c8aca26fded6"
+  dependencies:
+    async "~1.0.0"
+    colors "1.0.x"
+    cycle "1.0.x"
+    eyes "0.1.x"
+    isstream "0.1.x"
+    stack-trace "0.0.x"
+
+winston@~2.4.2:
+  version "2.4.2"
+  resolved "https://registry.npmjs.org/winston/-/winston-2.4.2.tgz#3ca01f763116fc48db61053b7544e750431f8db0"
   dependencies:
     async "~1.0.0"
     colors "1.0.x"
