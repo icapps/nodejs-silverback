@@ -1,4 +1,5 @@
 import './config/load-env'; // Load our environment variables
+import 'newrelic';
 
 import * as treehouse from 'tree-house';
 import { logger } from './lib/logger';
