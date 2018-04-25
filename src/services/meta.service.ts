@@ -1,5 +1,5 @@
 import { NotFoundError, BadRequestError } from 'tree-house-errors';
-import { Code, CodeCreate } from '../models/code.model';
+import { Code, CodeCreate, PartialCodeUpdate } from '../models/code.model';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
 import { errors } from '../config/errors.config';
@@ -51,15 +51,15 @@ export async function createCode(codeType: string, values: CodeCreate): Promise<
 
 
 /**
- * Deprecate a code
+ * Update existing properties of a code
  */
-export async function deprecateCode(codeId: string) {
+export async function partialCodeUpdate(codeId: string, values: PartialCodeUpdate): Promise<Code> {
   try {
-    const result = await metaRepository.updateCode(codeId, { deprecated: true });
+    const result = await metaRepository.updateCode(codeId, values);
     if (!result) throw new NotFoundError();
     return result;
   } catch (error) {
-    logger.error(`An error occured deprecating a code: ${error}`);
+    logger.error(`An error occured updating a code: ${error}`);
     throw error;
   }
 }

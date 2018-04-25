@@ -56,7 +56,18 @@ export async function createCode(req: Request, res: Response): Promise<void> {
  * Deprecate an existing code
  */
 export async function deprecateCode(req: Request, res: Response): Promise<void> {
-  await metaService.deprecateCode(req.params.codeId);
+  await metaService.partialCodeUpdate(req.params.codeId, { deprecated: true });
+  responder.success(res, {
+    status: httpStatus.OK,
+  });
+}
+
+
+/**
+ * Undeprecate an existing code
+ */
+export async function undeprecateCode(req: Request, res: Response): Promise<void> {
+  await metaService.partialCodeUpdate(req.params.codeId, { deprecated: false });
   responder.success(res, {
     status: httpStatus.OK,
   });

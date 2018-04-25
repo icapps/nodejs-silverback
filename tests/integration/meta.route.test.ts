@@ -372,4 +372,52 @@ describe('/meta', () => {
       expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
+  describe('POST /codes/:codeId/undeprecate', () => {
+    const prefix = `/api/${process.env.API_VERSION}`;
+    let code;
+
+    beforeAll(async () => {
+      const codeType = await createCodeType({ code: 'LAN', name: 'Language' });
+      code = await createCode(codeType.id, { name: 'Zalosh', code: 'ZL', deprecated: true });
+    });
+
+    afterAll(async () => {
+      await clearCodeTypesData();
+      await clearCodesData();
+    });
+
+    it('Should succesfully deprecate an existing code', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/${code.id}/undeprecate`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.OK);
+    });
+
+    it('Should throw an error when code is not a valid guid', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/unknownType/undeprecate`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when code is not found', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/${faker.random.uuid()}/undeprecate`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error without admin permission', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/meta/codes/${code.id}/undeprecate`)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
+    });
+  });
 });
