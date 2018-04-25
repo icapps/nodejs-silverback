@@ -483,7 +483,7 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /meta/codes/{codeType}/all:
+  /meta/codesByType/{codeType}/all:
     get:
       tags:
       - "metaOptions"
