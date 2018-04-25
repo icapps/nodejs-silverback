@@ -1,5 +1,12 @@
 import { Filters } from './models/filters.model';
 
+export const envs = {
+  TEST: 'test',
+  DEVELOP: 'development',
+  STAGING: 'staging',
+  PRODUCTION: 'production',
+};
+
 export const tableNames = {
   USERS: 'users',
   CODES: 'codes',

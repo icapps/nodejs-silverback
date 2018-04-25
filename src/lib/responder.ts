@@ -2,6 +2,7 @@ import * as httpStatus from 'http-status';
 import { Response } from 'express';
 import { parseErrors } from 'tree-house-errors';
 import { ErrorSerializer } from 'jsonade';
+import { envs } from '../constants';
 import { logger } from '../lib/logger';
 
 /**
@@ -20,6 +21,8 @@ export const responder: { success: Function, error: Function } = {
   error: (res: Response, errors: any) => {
     logger.debug('Error:', errors);
     const parsedError = parseErrors(errors);
+
+    if (process.env.NODE_ENV === envs.PRODUCTION) Object.assign(parsedError, { meta: undefined }); // Do not send stacktrace in production
     const serializerError = ErrorSerializer.serialize([parsedError]);
 
     logger.error('Error response: ', serializerError);

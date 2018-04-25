@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as treehouse from 'tree-house';
 import * as appConfig from './config/app.config';
 import { responder } from './lib/responder';
+import { envs } from './constants';
 
 // Create express instance
 const app: express.Application = express();
@@ -22,7 +23,7 @@ for (const x in appConfig.VERSIONS) {
   app.use(`/api${appConfig.VERSIONS[x]}`, require(`./routes/${appConfig.VERSIONS[x]}`).routes);
 
   // Set swagger per version
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== envs.PRODUCTION) {
     treehouse.setSwagger(app, `/api${appConfig.VERSIONS[x]}/documentation`, `docs/${appConfig.VERSIONS[x]}.yml`, {
       host: process.env.SWAGGER_BASE_URL,
       schemes: ['http', 'https'],
