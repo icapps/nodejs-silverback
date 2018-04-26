@@ -46,7 +46,7 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
     if (changePassword === true) {
       const token = uuid.v4();
       const randomPassword = await getHashedPassword(crypto.randomBytes(24).toString('hex'), settings.saltCount);
-      const created = await userRepository.create(Object.assign({}, values, { resetPwToken: token, password: randomPassword, completed: false }));
+      const created = await userRepository.create(Object.assign({}, values, { resetPwToken: token, password: randomPassword }));
 
       // Send mail asynchronous, no need to wait
       const content = getInitialPwChangeContent({ token, email: values.email, firstName: created.firstName });
@@ -99,7 +99,7 @@ export async function partialUpdate(userId: string, values: PartialUserUpdate): 
 export async function updatePassword(userId: string, password: string): Promise<{}> {
   try {
     const hashedPw = await getHashedPassword(password, settings.saltCount);
-    return await partialUpdate(userId, { password: hashedPw, completed: true });
+    return await partialUpdate(userId, { password: hashedPw, registrationCompleted: true });
   } catch (error) {
     logger.error(`An error occured updating a user's password: ${error}`);
     throw error;

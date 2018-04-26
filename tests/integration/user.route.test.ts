@@ -273,7 +273,7 @@ describe('/users', () => {
       });
       const createdUser = await findById(body.data.id);
       expect(createdUser.resetPwToken).toEqual(expect.any(String));
-      expect(createdUser.completed).toEqual(false);
+      expect(createdUser.registrationCompleted).toEqual(false);
     });
 
 
@@ -441,7 +441,7 @@ describe('/users', () => {
       expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
     });
 
-    it('Should throw an error when trying to manually update completed status', async () => {
+    it('Should throw an error when trying to manually update registrationCompleted status', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -451,13 +451,13 @@ describe('/users', () => {
           lastName: 'Unknown',
           hasAccess: false,
           role: roles.ADMIN.code,
-          completed: true,
+          registrationCompleted: true,
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
       expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
       expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
-      expect(body.errors[0].detail[0].messages[0]).toMatch(/"completed" is not allowed/);
+      expect(body.errors[0].detail[0].messages[0]).toMatch(/"registrationCompleted" is not allowed/);
     });
 
     it('Should throw an error when user has no admin rights', async () => {
@@ -498,7 +498,7 @@ describe('/users', () => {
         });
       expect(status).toEqual(httpStatus.OK);
       const updatedUser = await findById(user.id);
-      expect(updatedUser.completed).toEqual(true);
+      expect(updatedUser.registrationCompleted).toEqual(true);
 
       const { status: status2 } = await request(app)
         .post(`${prefix}/auth/login`)
