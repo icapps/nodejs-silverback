@@ -5681,7 +5681,7 @@ tree-house-authentication@~2.0.5:
     bcrypt "~2.0.0"
     jsonwebtoken "~8.2.0"
 
-tree-house-errors@^1.0.3:
+tree-house-errors@~1.0.3:
   version "1.0.3"
   resolved "https://registry.npmjs.org/tree-house-errors/-/tree-house-errors-1.0.3.tgz#976438f1435a1a11d2d5a9ceb506db4d467bd577"
   dependencies:
