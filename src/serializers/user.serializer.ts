@@ -8,6 +8,7 @@ export const userSerializer = new Serializer('users', {
     'firstName',
     'lastName',
     'hasAccess',
+    'completed',
     'role',
     'createdAt',
     'updatedAt',

@@ -9,6 +9,7 @@ export const userSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   hasAccess: Joi.boolean().required(),
+  completed: Joi.boolean().required(),
   role: Joi.string().required().valid(roleNames),
   createdAt: Joi.date().iso().raw(),
   updatedAt: Joi.date().iso().raw(),

@@ -7,7 +7,7 @@ import { tableNames, defaultFilters } from '../constants';
 import { User, UserUpdate, UserCreate, PartialUserUpdate } from '../models/user.model';
 import { getHashedPassword } from 'tree-house-authentication';
 const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName',
-  'hasAccess', 'role', 'refreshToken', 'resetPwToken', 'createdAt', 'updatedAt'];
+  'hasAccess', 'completed', 'role', 'refreshToken', 'resetPwToken', 'createdAt', 'updatedAt'];
 
 /**
  * Create new user
