@@ -43,7 +43,7 @@ export async function update(userId: string, values: UserUpdate | PartialUserUpd
  */
 export async function updatePassword(userId: string, password: string): Promise<User> {
   const hashedPw = await getHashedPassword(password, settings.saltCount);
-  return update(userId, { password: hashedPw, resetPwToken: null });
+  return update(userId, { password: hashedPw, resetPwToken: null, registrationCompleted: true });
 }
 
 

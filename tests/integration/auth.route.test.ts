@@ -269,6 +269,9 @@ describe('/auth', () => {
       expect(status).toEqual(httpStatus.OK);
       expect(body).toEqual({});
 
+      const updatedUser = await findById(newUser.id);
+      expect(updatedUser.registrationCompleted).toEqual(true);
+
       // Try to login with changed password
       const { body: body2, status: status2 } = await request(app)
         .post(`${prefix}/auth/login`)
