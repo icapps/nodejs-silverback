@@ -18,7 +18,7 @@ describe('bruteforce middleware', () => {
     await clearMemoryStore();
   });
 
-  fit('Should start blocking requests with the same ip and username after number of retries', async () => {
+  it('Should start blocking requests with the same ip and username after number of retries', async () => {
     app.use('/test', setUserBruteForce, (_req, res) => res.status(httpStatus.OK).send('Welcome'));
     app.use((error, req, res, _next) => responder.error(req, res, error));
 
