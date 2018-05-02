@@ -32,7 +32,7 @@ for (const x in appConfig.VERSIONS) {
 }
 
 // Error handling
-app.use((error, _req, res, _next) => responder.error(res, error));
+app.use((error, req, res, _next) => responder.error(req, res, error));
 app.all('*', (_req, res) => res.sendStatus(404));
 
 export { app };

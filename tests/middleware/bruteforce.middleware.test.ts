@@ -20,7 +20,7 @@ describe('bruteforce middleware', () => {
 
   it('Should start blocking requests with the same ip and username after number of retries', async () => {
     app.use('/test', setUserBruteForce, (_req, res) => res.status(httpStatus.OK).send('Welcome'));
-    app.use((error, _req, res, _next) => responder.error(res, error));
+    app.use((error, req, res, _next) => responder.error(req, res, error));
 
     const numberOfCalls = userBruteConfig.freeRetries + 1;
 

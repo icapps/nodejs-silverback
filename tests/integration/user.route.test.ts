@@ -159,6 +159,7 @@ describe('/users', () => {
     it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
+        .set('Accept-Language', 'nl')
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);

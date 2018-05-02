@@ -63,10 +63,11 @@ describe('lib/responder', () => {
 
   describe('error', () => {
     it('Should return error with matching properties and status code', () => {
+      const req = httpMocks.createRequest();
       const res = httpMocks.createResponse();
       const error = new BadRequestError(errors.INVALID_INPUT);
 
-      responder.error(res, error);
+      responder.error(req, res, error);
       expect(res.statusCode).toEqual(httpStatus.BAD_REQUEST);
       expect(res._isJSON()).toEqual(true);
       expect(JSON.parse(res._getData())).toEqual({
@@ -86,10 +87,11 @@ describe('lib/responder', () => {
     it('Should return error without stacktrace in production', () => {
       process.env.NODE_ENV = envs.PRODUCTION;
 
+      const req = httpMocks.createRequest();
       const res = httpMocks.createResponse();
       const error = new BadRequestError(errors.INVALID_INPUT, { stack: 'MYSTACK' });
 
-      responder.error(res, error);
+      responder.error(req, res, error);
       expect(res.statusCode).toEqual(httpStatus.BAD_REQUEST);
       expect(res._isJSON()).toEqual(true);
       expect(JSON.parse(res._getData())).toEqual({

@@ -1,4 +1,5 @@
-import { envs } from '../src/constants';
+import { envs, errorTranslations } from '../src/constants';
+import { existsSync, mkdirSync } from 'fs';
 
 export const environment = {
   NODE_ENV: envs.TEST,
@@ -22,6 +23,11 @@ Object.keys(environment).forEach((key) => {
 
 // Must be after env variables
 import { logger } from '../src/lib/logger';
+
+// Locales folder
+if (!existsSync(errorTranslations)) {
+  mkdirSync(errorTranslations);
+}
 
 // Overwrite error console.logs
 logger.error = jest.fn((error) => { });

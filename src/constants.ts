@@ -1,5 +1,7 @@
 import { Filters } from './models/filters.model';
 
+export const errorTranslations = `${process.cwd()}/locales`;
+
 export const envs = {
   TEST: 'test',
   DEVELOP: 'development',
