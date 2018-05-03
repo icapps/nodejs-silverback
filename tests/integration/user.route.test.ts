@@ -11,6 +11,7 @@ import { rolesSchema } from '../_helpers/payload-schemes/role.schema';
 import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
 import { roles } from '../../src/config/roles.config';
 import { errors } from '../../src/config/errors.config';
+import { findRoleByCode } from '../../src/lib/utils';
 import * as mailer from '../../src/lib/mailer';
 
 describe('/users', () => {
@@ -191,8 +192,9 @@ describe('/users', () => {
         firstName: user.firstName,
         lastName: user.lastName,
         hasAccess: user.hasAccess,
-        role: user.role,
+        role: findRoleByCode(user.role.code),
       });
+
       Joi.validate(body, userByIdSchema, (err, value) => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
@@ -395,7 +397,7 @@ describe('/users', () => {
         lastName: 'Unknown',
         password: expect.any(String),
         hasAccess: false,
-        role: roles.ADMIN.code,
+        role: findRoleByCode(roles.ADMIN.code),
       });
     });
 

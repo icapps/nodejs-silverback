@@ -1,11 +1,13 @@
+import { getHashedPassword } from 'tree-house-authentication';
 import { db, selectAndCount, parseTotalCount } from '../lib/db';
 import { settings } from '../config/app.config';
 import { logger } from '../lib/logger';
 import { Filters } from '../models/filters.model';
+import { User, UserUpdate, UserCreate, PartialUserUpdate } from '../models/user.model';
+import { findRoleByCode } from '../lib/utils';
 import { applyPagination, applySorting, applySearch } from '../lib/filter';
 import { tableNames, defaultFilters } from '../constants';
-import { User, UserUpdate, UserCreate, PartialUserUpdate } from '../models/user.model';
-import { getHashedPassword } from 'tree-house-authentication';
+
 const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName',
   'hasAccess', 'registrationCompleted', 'role', 'refreshToken', 'resetPwToken', 'createdAt', 'updatedAt'];
 
@@ -21,7 +23,8 @@ export async function create(values: UserCreate): Promise<User> {
     .insert(valuesToInsert, defaultReturnValues);
 
   logger.debug(`Create new user: ${query.toString()}`);
-  return (await query)[0];
+  const data = (await query)[0];
+  return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 
 
@@ -34,7 +37,8 @@ export async function update(userId: string, values: UserUpdate | PartialUserUpd
     .where('id', userId);
 
   logger.debug(`Update existing user: ${query.toString()}`);
-  return (await query)[0];
+  const data = (await query)[0];
+  return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 
 
@@ -76,7 +80,7 @@ export async function findAll(options: Filters = {}): Promise<{ data: User[], to
   applySorting(query, allOptions, sortFields);
   logger.debug(`Get all users: ${query.toString()}`);
 
-  const data = await query;
+  const data = (await query).map(x => Object.assign(x, { role: findRoleByCode(x.role) })); // Add full role object
   return { data, totalCount: parseTotalCount(data) };
 }
 
@@ -91,7 +95,8 @@ export async function findById(id: string): Promise<User> {
     .first();
 
   logger.debug(`Get user by id: ${query.toString()}`);
-  return await query;
+  const data = await query;
+  return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 
 
@@ -105,7 +110,8 @@ export async function findByEmail(email: string): Promise<User | undefined> {
     .first();
 
   logger.debug(`Get user by email: ${query.toString()}`);
-  return await query;
+  const data = await query;
+  return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 
 

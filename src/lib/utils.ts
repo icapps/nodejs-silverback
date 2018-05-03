@@ -8,8 +8,15 @@ import { errors } from '../config/errors.config';
  * Check whether a user has the correct role level or higher
  */
 export function hasRole(user: User, role: Role): boolean {
-  const userRole = roles[Object.keys(roles).find(x => roles[x].code === user.role)];
-  return userRole.level >= role.level;
+  return user.role.level >= role.level;
+}
+
+
+/**
+ * Find a user role by code
+ */
+export function findRoleByCode(code: string) {
+  return roles[Object.keys(roles).find(x => roles[x].code === code)];
 }
 
 

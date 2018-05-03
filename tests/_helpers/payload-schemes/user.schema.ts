@@ -3,6 +3,13 @@ import { roles } from '../../../src/config/roles.config';
 
 const roleNames = Object.keys(roles).reduce((acc, current: any) => [...acc, roles[current].code], []);
 
+export const userRoleSchema = Joi.object({
+  name: Joi.string().required(),
+  code: Joi.string().required().allow(roleNames),
+  description: Joi.string(),
+  level: Joi.number().required(),
+});
+
 export const userSchema = Joi.object({
   id: Joi.string().guid().required(),
   email: Joi.string().required(),
@@ -10,9 +17,9 @@ export const userSchema = Joi.object({
   lastName: Joi.string().required(),
   hasAccess: Joi.boolean().required(),
   registrationCompleted: Joi.boolean().required(),
-  role: Joi.string().required().valid(roleNames),
-  createdAt: Joi.date().iso().raw(),
-  updatedAt: Joi.date().iso().raw(),
+  role: userRoleSchema,
+  createdAt: Joi.date().iso().raw(), //.required(),
+  updatedAt: Joi.date().iso().raw() //.required(),
 });
 
 export const createUserSchema = Joi.object().keys({

@@ -9,7 +9,7 @@ describe('lib/utils', () => {
   describe('hasRole', () => {
     it('Should return true when the user has the correct role', () => {
       const user = <User>{
-        role: roles.ADMIN.code,
+        role: roles.ADMIN,
       };
       const hasRole = utils.hasRole(user, roles.ADMIN);
       expect(hasRole).toEqual(true);
@@ -17,7 +17,7 @@ describe('lib/utils', () => {
 
     it('Should return true when the user has a higher role than required', () => {
       const user = <User>{
-        role: roles.SUPERUSER.code,
+        role: roles.SUPERUSER,
       };
       const hasRole = utils.hasRole(user, roles.ADMIN);
       expect(hasRole).toEqual(true);
@@ -25,7 +25,7 @@ describe('lib/utils', () => {
 
     it('Should return false when the user has a lower role than required', () => {
       const user = <User>{
-        role: roles.USER.code,
+        role: roles.USER,
       };
       const hasRole = utils.hasRole(user, roles.ADMIN);
       expect(hasRole).toEqual(false);
