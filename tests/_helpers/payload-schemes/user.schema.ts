@@ -18,8 +18,8 @@ export const userSchema = Joi.object({
   hasAccess: Joi.boolean().required(),
   registrationCompleted: Joi.boolean().required(),
   role: userRoleSchema,
-  createdAt: Joi.date().iso().raw(), //.required(),
-  updatedAt: Joi.date().iso().raw() //.required(),
+  createdAt: Joi.date().iso().raw().required(),
+  updatedAt: Joi.date().iso().raw().required(),
 });
 
 export const createUserSchema = Joi.object().keys({
