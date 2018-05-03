@@ -13,4 +13,12 @@ export const userSerializer = new Serializer('users', {
     'createdAt',
     'updatedAt',
   ],
+  role: {
+    attributes: [
+      'name',
+      'code',
+      'description',
+      'level',
+    ],
+  },
 });

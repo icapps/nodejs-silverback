@@ -1,4 +1,7 @@
 import * as Joi from 'joi';
+import { roles } from '../config/roles.config';
+
+const availableRoles = Object.keys(roles).reduce((array, current) => [...array, roles[current].code], []); // Collection to array
 
 export const userSchema = {
   findAllUsers: {
@@ -24,7 +27,7 @@ export const userSchema = {
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
-      role: Joi.string().required(),
+      role: Joi.string().required().allow(availableRoles),
       password: Joi.string(),
     }),
   },
@@ -37,7 +40,7 @@ export const userSchema = {
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
-      role: Joi.string().required(),
+      role: Joi.string().required().allow(availableRoles),
     }),
   },
   updatePassword: {
@@ -57,7 +60,7 @@ export const userSchema = {
       firstName: Joi.string(),
       lastName: Joi.string(),
       hasAccess: Joi.boolean(),
-      role: Joi.string(),
+      role: Joi.string().allow(availableRoles),
     }),
   },
   remove: {

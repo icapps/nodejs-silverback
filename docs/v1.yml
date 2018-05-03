@@ -540,7 +540,6 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /meta/codes/{codeType}:
     post:
       tags:
       - "metaOptions"
@@ -635,8 +634,7 @@ definitions:
         hasAccess:
           type: boolean
         role:
-          type: string
-          enum: ["USER", "ADMIN"]
+          $ref: "#/definitions/UserRole"
         createdAt:
           type: string
         updatedAt:
