@@ -15,7 +15,7 @@ export function hasRole(user: User, role: Role): boolean {
 /**
  * Find a user role by code
  */
-export function findRoleByCode(code: string) {
+export function findRoleByCode(code: string): Role {
   return roles[Object.keys(roles).find(x => roles[x].code === code)];
 }
 
