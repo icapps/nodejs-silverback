@@ -2,31 +2,29 @@
 exports.up = async (knex) => {
   await knex.schema.createTable('users', (table) => {
     table.uuid("id").primary().defaultTo(knex.raw('uuid_generate_v1mc()')) // Primary key
-    table.specificType('recordId', 'serial'); // Record incrementing key
+    table.specificType('record_id', 'serial'); // Record incrementing key
 
     // Not nullable
-    table.text('firstName').notNullable();
-    table.text('lastName').notNullable();
+    table.text('first_name').notNullable();
+    table.text('last_name').notNullable();
     table.text('email').notNullable();
     table.text('role').notNullable();
-    table.boolean('registrationCompleted').defaultTo(false);
+    table.boolean('registration_completed').defaultTo(false);
 
     // Nullable
     table.text('password').nullable();
-    table.boolean('hasAccess').nullable();
-    table.text('resetPwToken').nullable();
-    table.text('refreshToken').nullable();
+    table.boolean('has_access').nullable();
+    table.text('reset_pw_token').nullable();
+    table.text('refresh_token').nullable();
 
     // Tracking
-    table.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
-    table.text('createdBy');
-    table.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
-    table.text('updatedBy');
+    table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
+    table.timestamp('updated_at').notNullable().defaultTo(knex.fn.now());
 
     // Unique constraints (generates index automatically due to this constraint)
     table.unique('email');
-    table.unique('resetPwToken');
-    table.unique(['id', 'refreshToken']);
+    table.unique('reset_pw_token');
+    table.unique(['id', 'refresh_token']);
   });
 
   // Triggers

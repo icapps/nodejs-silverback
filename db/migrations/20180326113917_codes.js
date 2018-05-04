@@ -2,29 +2,27 @@
 exports.up = async (knex) => {
   await knex.schema.createTable('codes', (table) => {
     table.uuid("id").primary().defaultTo(knex.raw('uuid_generate_v1mc()')) // Primary key
-    table.specificType('recordId', 'serial'); // Record incrementing key
+    table.specificType('record_id', 'serial'); // Record incrementing key
 
     // Not nullable
     table.text('code').notNullable();
     table.text('name').notNullable();
-    table.uuid('codeTypeId').notNullable();
+    table.uuid('code_type_id').notNullable();
 
     // Nullable
     table.text('description').nullable();
     table.boolean('deprecated').defaultTo(false);
 
     // Tracking
-    table.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
-    table.text('createdBy');
-    table.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
-    table.text('updatedBy');
+    table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
+    table.timestamp('updated_at').notNullable().defaultTo(knex.fn.now());
 
     // FK's
-    table.foreign('codeTypeId').references('code_types.id')
+    table.foreign('code_type_id').references('code_types.id')
       .onDelete('CASCADE').onUpdate('CASCADE');
 
     // Unique constraints (generates index automatically due to this constraint)
-    table.unique(['codeTypeId', 'code']);
+    table.unique(['code_type_id', 'code']);
   });
 
   // Triggers

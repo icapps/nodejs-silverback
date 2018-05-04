@@ -8,9 +8,9 @@ exports.seed = function (knex, Promise) {
           return knex('code_types').insert([{ code: 'LANGUAGES', name: 'Languages' }], ['id'])
             .then(function (code) {
               return knex('codes').insert([
-                { code: 'EN', name: 'English', codeTypeId: code[0].id },
-                { code: 'NL', name: 'Nederlands', codeTypeId: code[0].id },
-                { code: 'FR', name: 'French', codeTypeId: code[0].id }
+                { code: 'EN', name: 'English', code_type_id: code[0].id },
+                { code: 'NL', name: 'Nederlands', code_type_id: code[0].id },
+                { code: 'FR', name: 'French', code_type_id: code[0].id }
               ]);
             });
         })
