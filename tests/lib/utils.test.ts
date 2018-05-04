@@ -45,4 +45,12 @@ describe('lib/utils', () => {
       }
     });
   });
+
+
+  describe('snakeCaseArray', () => {
+    it('Should snake_case strings inside array', () => {
+      const result = utils.snakeCaseArray(['valueOne', 'valueTwo']);
+      expect(result).toEqual(['value_one', 'value_two']);
+    });
+  });
 });

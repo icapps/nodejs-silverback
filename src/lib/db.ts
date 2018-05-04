@@ -1,5 +1,6 @@
 import * as knex from 'knex';
 const dbConfig = require('../../knexfile.js');
+import { snakeCaseArray } from './utils';
 
 export const db = knex(dbConfig[process.env.NODE_ENV]);
 
@@ -8,7 +9,7 @@ export const db = knex(dbConfig[process.env.NODE_ENV]);
  * Select values and count total
  */
 export function selectAndCount(db: knex, values: string[]) {
-  return db.select(db.raw(`${values.map(x => `"${x}"`).join(',')}, count(*) OVER() AS total`));
+  return db.select(db.raw(`${snakeCaseArray(values).map(x => `"${x}"`).join(',')}, count(*) OVER() AS total`));
 }
 
 

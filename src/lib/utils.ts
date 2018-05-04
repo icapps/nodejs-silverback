@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { Request } from 'express';
 import { UnauthorizedError } from 'tree-house-errors';
 import { Role, roles } from '../config/roles.config';
@@ -17,6 +18,14 @@ export function hasRole(user: User, role: Role): boolean {
  */
 export function findRoleByCode(code: string): Role {
   return roles[Object.keys(roles).find(x => roles[x].code === code)];
+}
+
+
+/**
+ * Snake_case strings in an array
+ */
+export function snakeCaseArray(arr: string[]): string[] {
+  return arr.map(x => _.snakeCase(x));
 }
 
 

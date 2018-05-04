@@ -15,10 +15,10 @@ exports.seed = (knex) => {
         const randomRole = Math.floor(Math.random() * roles.length);
         users.push({
           email: faker.internet.email(),
-          firstName: faker.name.firstName(),
-          lastName: faker.name.lastName(),
+          first_name: faker.name.firstName(),
+          last_name: faker.name.lastName(),
           password: faker.internet.password(),
-          hasAccess: faker.random.boolean(),
+          has_access: faker.random.boolean(),
           role: roles[randomRole],
         });
       }
@@ -27,10 +27,10 @@ exports.seed = (knex) => {
         .then((hashedPw) => {
           users.push({
             email: process.env.INITIAL_SEED_USERNAME,
-            firstName: 'development',
-            lastName: 'iCapps',
+            first_name: 'development',
+            last_name: 'iCapps',
             password: hashedPw,
-            hasAccess: true,
+            has_access: true,
             role: 'ADMIN',
           });
 
