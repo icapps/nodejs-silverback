@@ -1,10 +1,12 @@
 import * as httpStatus from 'http-status';
 import { Request, Response } from 'express';
-import { ValidationError } from 'tree-house-errors';
+import { ValidationError, BadRequestError } from 'tree-house-errors';
 import { responder } from '../lib/responder';
 import { userSerializer } from '../serializers/user.serializer';
 import { roles } from '../config/roles.config';
+import { errors } from '../config/errors.config';
 import { roleSerializer } from '../serializers/role.serializer';
+import { AuthRequest } from '../models/request.model';
 import * as userService from '../services/user.service';
 
 
@@ -94,7 +96,8 @@ export async function updatePassword(req: Request, res: Response): Promise<void>
 /**
  * Remove an existing user
  */
-export async function remove(req: Request, res: Response): Promise<void> {
+export async function remove(req: AuthRequest, res: Response): Promise<void> {
+  if (req.session.user.id === req.params.userId) throw new BadRequestError(errors.USER_DELETE_OWN);
   await userService.remove(req.params.userId);
   responder.success(res, {
     status: httpStatus.NO_CONTENT,

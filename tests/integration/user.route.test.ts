@@ -665,6 +665,19 @@ describe('/users', () => {
       expect(removed).toBeUndefined();
     });
 
+    it('Should throw an error when trying to delete your own user', async () => {
+      const newUser = await createUser(Object.assign({}, validUser, { email: 'notnotexisting@hotmail.com' }));
+      const validJwt = await getValidJwt(newUser.id);
+
+      const { body, status } = await request(app)
+        .delete(`${prefix}/users/${newUser.id}`)
+        .set('Authorization', `Bearer ${validJwt}`);
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.USER_DELETE_OWN.code);
+      expect(body.errors[0].title).toEqual(errors.USER_DELETE_OWN.message);
+    });
+
     it('Should throw an error when user does not exist', async () => {
       const { body, status } = await request(app)
         .delete(`${prefix}/users/${faker.random.uuid()}`)
