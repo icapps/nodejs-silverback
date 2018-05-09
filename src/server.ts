@@ -2,8 +2,8 @@ import './config/load-env'; // Load our environment variables
 import 'newrelic';
 
 import * as treehouse from 'tree-house';
-import { importTranslations } from 'tree-house-errors';
 import { logger } from './lib/logger';
+import { importTranslations } from './lib/translator';
 import { app } from './app';
 import { errorTranslations } from './constants';
 
