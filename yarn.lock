@@ -5951,15 +5951,14 @@ tree-house-authentication@~2.0.5:
     bcrypt "~2.0.0"
     jsonwebtoken "~8.2.0"
 
-tree-house-errors@~1.1.2:
-  version "1.1.2"
-  resolved "https://registry.npmjs.org/tree-house-errors/-/tree-house-errors-1.1.2.tgz#c20a130aaa3395eae1fb591ad4d69942f32e1fe5"
+tree-house-errors@~1.2.0:
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/tree-house-errors/-/tree-house-errors-1.2.0.tgz#85e1112237126f8f8ca150d8472d6fd3f56d59d2"
   dependencies:
     express-validation "~1.0.2"
     http-status "~1.1.0"
     i18n "~0.8.3"
     joi "~13.2.0"
-    tree-house-translations "~1.1.0"
     uuid "~3.2.1"
 
 tree-house-translations@~1.1.0:

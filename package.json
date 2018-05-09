@@ -36,7 +36,8 @@
     "redis": "~2.8.0",
     "tree-house": "~3.3.0",
     "tree-house-authentication": "~2.0.5",
-    "tree-house-errors": "~1.1.2",
+    "tree-house-errors": "~1.2.0",
+    "tree-house-translations": "~1.1.0",
     "uuid": "~3.2.1",
     "winston": "~2.4.2"
   },
