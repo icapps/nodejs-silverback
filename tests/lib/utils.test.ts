@@ -50,7 +50,33 @@ describe('lib/utils', () => {
   describe('snakeCaseArray', () => {
     it('Should snake_case strings inside array', () => {
       const result = utils.snakeCaseArray(['valueOne', 'valueTwo']);
-      expect(result).toEqual(['value_one', 'value_two']);
+      expect(result).toEqual(['\"value_one\"', '\"value_two\"']);
     });
+
+    it('Should snake_case strings inside array with dot notation v1', () => {
+      const result = utils.snakeCaseArray(['valueOne.two', 'valueTwo.three']);
+      expect(result).toEqual(['\"value_one\".\"two\"', '\"value_two\".\"three\"']);
+    });
+
+    it('Should snake_case strings inside array with dot notation v2', () => {
+      const result = utils.snakeCaseArray(['valueOne.twoThree', 'valueTwo.threeFour']);
+      expect(result).toEqual(['\"value_one\".\"two_three\"', '\"value_two\".\"three_four\"']);
+    });
+
+    it('Should snake_case strings inside array with dot notation v3', () => {
+      const result = utils.snakeCaseArray(['valueOne.twoThree.four', 'valueTwo.threeFour.five']);
+      expect(result).toEqual(['\"value_one\".\"two_three\".\"four\"', '\"value_two\".\"three_four\".\"five\"']);
+    });
+
+    it('Should snake_case strings inside array with dot notation v4', () => {
+      const result = utils.snakeCaseArray(['valueOne', 'valueTwo.threeFour.five']);
+      expect(result).toEqual(['\"value_one\"', '\"value_two\".\"three_four\".\"five\"']);
+    });
+
+    it('Should snake_case strings inside array with dot notation v4', () => {
+      const result = utils.snakeCaseArray(['valueOne', 'valueTwo.threeFour.five']);
+      expect(result).toEqual(['\"value_one\"', '\"value_two\".\"three_four\".\"five\"']);
+    });
+
   });
 });
