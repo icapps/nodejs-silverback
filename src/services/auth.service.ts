@@ -32,7 +32,7 @@ export async function generateTokens(userId: string) {
 export async function login(payload: AuthCredentials, role?: Role) {
   const { username, password } = payload;
   try {
-    const user = await userRepository.findByEmail(username.toLowerCase());
+    const user = await userRepository.findByEmail(username);
     if (!user) throw new AuthenticationError();
 
     // Must have a specific role to login here
