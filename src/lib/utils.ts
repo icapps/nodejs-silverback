@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { Request } from 'express';
 import { UnauthorizedError } from 'tree-house-errors';
 import { Role, roles } from '../config/roles.config';
@@ -25,7 +24,10 @@ export function findRoleByCode(code: string): Role {
  * Snake_case strings in an array
  */
 export function snakeCaseArray(arr: string[]): string[] {
-  return arr.map(x => _.snakeCase(x));
+  return arr.map((x) => {
+    const snakeCased = x.replace(/([A-Z])/g, '_$1').toLowerCase();
+    return snakeCased.indexOf('.') ? `"${snakeCased.replace(/\./g, '"."')}"` : snakeCased;
+  });
 }
 
 

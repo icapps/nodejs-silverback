@@ -45,6 +45,24 @@ describe('/auth', () => {
       expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
+    it('Should succesfully login a user with correct credentials case insensitive', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          username: regularUser.email.toUpperCase(),
+          password: regularUser.password,
+        });
+
+      expect(status).toEqual(httpStatus.OK);
+      Joi.validate(body, loginSchema, (err, value) => {
+        if (err) throw err;
+        if (!value) throw new Error('no value to check schema');
+      });
+
+      const loggedInUser = await findById(user.id);
+      expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
+    });
+
     it('Should throw error when no username or password is provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)

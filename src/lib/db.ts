@@ -9,7 +9,7 @@ export const db = knex(dbConfig[process.env.NODE_ENV]);
  * Select values and count total
  */
 export function selectAndCount(db: knex, values: string[]) {
-  return db.select(db.raw(`${snakeCaseArray(values).map(x => `"${x}"`).join(',')}, count(*) OVER() AS total`));
+  return db.select(db.raw(`${snakeCaseArray(values).join(',')}, count(*) OVER() AS total`));
 }
 
 
