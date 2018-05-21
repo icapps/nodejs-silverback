@@ -106,7 +106,7 @@ export async function findById(id: string): Promise<User> {
 export async function findByEmail(email: string): Promise<User | undefined> {
   const query = db(tableNames.USERS)
     .select(defaultReturnValues)
-    .where('email', email)
+    .whereRaw('LOWER(email)=LOWER(?)', [email])
     .first();
 
   logger.debug(`Get user by email: ${query.toString()}`);
