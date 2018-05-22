@@ -2,7 +2,7 @@ import { errors as defaults, ErrorType } from 'tree-house-errors';
 
 // tslint:disable:max-line-length
 export const errors = <Error>Object.assign({}, defaults, {
-  USER_INACTIVE:      { code: 'USER_INACTIVE', message: 'Activate user account before login' },
+  USER_INACTIVE:      { code: 'USER_INACTIVE', message: 'Your account is not active. Please contact your administrator.' },
   USER_DUPLICATE:     { code: 'USER_DUPLICATE', message: 'A user with this email already exists' },
   USER_NOT_FOUND:     { code: 'USER_NOT_FOUND', message: 'User not found' },
   MISSING_HEADERS:    { code: 'MISSING_HEADERS', message: 'Not all required headers are provided' },
