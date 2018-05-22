@@ -24,13 +24,13 @@ export async function generateTokens(userId: string) {
 }
 
 /**
- * Login user with username and password
+ * Login user with email and password
  * Returns accessToken and refreshToken
  */
 export async function login(payload: AuthCredentials, role?: Role) {
-  const { username, password } = payload;
+  const { email, password } = payload;
   try {
-    const user = await userRepository.findByEmail(username);
+    const user = await userRepository.findByEmail(email);
     if (!user) throw new AuthenticationError();
 
     // Must have a specific role to login here

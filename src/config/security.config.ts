@@ -10,7 +10,7 @@ import { envs } from '../constants';
  * Handle a rejected request due to too many requests for example
  */
 const failCallback = (req, _res, next, nextTry) => {
-  logger.info(`User with username ${req.body.username} has tried to login too many times. Reset time: ${new Date(nextTry).toISOString()}`);
+  logger.info(`User with email ${req.body.email} has tried to login too many times. Reset time: ${new Date(nextTry).toISOString()}`);
   next(new ApiError(httpStatus.TOO_MANY_REQUESTS, errors.TOO_MANY_REQUESTS));
 };
 
@@ -50,10 +50,10 @@ export const userBruteConfig: RateLimiterOptions = {
 };
 
 /**
- * Check for same key per request (username)
+ * Check for same key per request (email)
  */
 export const userBruteMiddlewareConfig = {
   failCallback,
   ignoreIP: false,
-  key: (req, _res, next) => next(req.body.username), // Call per username per ip
+  key: (req, _res, next) => next(req.body.email), // Call per email per ip
 };
