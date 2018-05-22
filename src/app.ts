@@ -16,7 +16,7 @@ treehouse.setBasicSecurity(app, '*', {
 });
 
 app.set('trust proxy', 1); // Heroku proxy stuff
-app.get('/', (_req, res) => res.json(appConfig.VERSIONS));// Display all versions
+app.get('/', (_req, res) => res.json(appConfig.VERSIONS)); // Display all versions
 
 // Load routes (versioned routes go in the routes/ directory)
 for (const x in appConfig.VERSIONS) {
@@ -36,4 +36,3 @@ app.use((error, req, res, _next) => responder.error(req, res, error));
 app.all('*', (_req, res) => res.sendStatus(404));
 
 export { app };
-

@@ -38,4 +38,3 @@ export interface TemplateMailOptions extends MailOptions {
     content: string;
   }[];
 }
-

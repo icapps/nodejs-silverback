@@ -21,7 +21,6 @@ export function getAppVersion(req: Request, res: Response) {
   });
 }
 
-
 /**
  * Returns the current build and version number of the api
  */

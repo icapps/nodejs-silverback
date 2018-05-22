@@ -46,4 +46,3 @@ export const routes: Router = Router({ mergeParams: true })
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(userSchema.remove),
     handleAsyncFn(controller.remove));
-

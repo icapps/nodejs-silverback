@@ -27,7 +27,6 @@ export async function create(values: UserCreate): Promise<User> {
   return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 
-
 /**
  * Update an existing user
  */
@@ -41,7 +40,6 @@ export async function update(userId: string, values: UserUpdate | PartialUserUpd
   return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 
-
 /**
  * Update the password of an existing user
  */
@@ -49,7 +47,6 @@ export async function updatePassword(userId: string, password: string): Promise<
   const hashedPw = await getHashedPassword(password, settings.saltCount);
   return update(userId, { password: hashedPw, resetPwToken: null, registrationCompleted: true });
 }
-
 
 /**
  * Remove an existing user
@@ -62,7 +59,6 @@ export async function remove(userId: string): Promise<{ affectedRows: number }> 
   logger.debug(`Delete existing user: ${query.toString()}`);
   return { affectedRows: (await query) };
 }
-
 
 /**
  * Return all users
@@ -84,7 +80,6 @@ export async function findAll(options: Filters = {}): Promise<{ data: User[], to
   return { data, totalCount: parseTotalCount(data) };
 }
 
-
 /**
  * Get a user by id
  */
@@ -98,7 +93,6 @@ export async function findById(id: string): Promise<User> {
   const data = await query;
   return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
-
 
 /**
  * Find a user by email
@@ -114,7 +108,6 @@ export async function findByEmail(email: string): Promise<User | undefined> {
   return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 
-
 /**
  * Find a user via their reset password token
  */
@@ -127,7 +120,6 @@ export async function findByResetToken(token: string): Promise<User | undefined>
   logger.debug(`Get user by reset password token: ${query.toString()}`);
   return await query;
 }
-
 
 /**
  * Find a user via their refresh token and user id

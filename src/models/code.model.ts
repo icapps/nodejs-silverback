@@ -13,7 +13,6 @@ export interface CodeCreate {
   deprecated?: boolean;
 }
 
-
 export interface CodeUpdate {
   code: string;
   name: string;

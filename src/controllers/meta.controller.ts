@@ -6,7 +6,6 @@ import * as metaService from '../services/meta.service';
 import { AuthRequest } from '../models/request.model';
 import { Filters } from '../models/filters.model';
 
-
 /**
  * Get a code by id
  */
@@ -37,7 +36,6 @@ export async function findAllCodes(req: AuthRequest, res: Response, showDeprecat
   });
 }
 
-
 /**
  * Create a new code
  */
@@ -51,7 +49,6 @@ export async function createCode(req: Request, res: Response): Promise<void> {
   });
 }
 
-
 /**
  * Deprecate an existing code
  */
@@ -61,7 +58,6 @@ export async function deprecateCode(req: Request, res: Response): Promise<void> 
     status: httpStatus.OK,
   });
 }
-
 
 /**
  * Undeprecate an existing code

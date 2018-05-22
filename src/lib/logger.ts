@@ -1,4 +1,5 @@
 import * as winston from 'winston';
+import * as Raven from 'raven';
 import config from '../config/logger.config';
 
 // Singleton logger instance
@@ -11,3 +12,5 @@ export const logger = {
   error: (message: string, ...args: any[]) => instance.error(message, args),
   silly: (message: string, ...args: any[]) => instance.silly(message, args),
 };
+
+export const raven = new Raven.Client();

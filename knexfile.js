@@ -9,6 +9,10 @@ const nestFlatlist = flatList => {
   return nestedObject;
 }
 
+function snakeCase(str) {
+  return str.replace(/([A-Z])/g, $1 => "_" + $1.toLowerCase());
+}
+
 const defaultConfig = {
   client: 'pg',
   pool: {
@@ -34,8 +38,8 @@ const defaultConfig = {
 
   // snake_case keys in query
   wrapIdentifier: (value, origImpl, queryContext) => {
-    if (value === '*') return value;
-    return origImpl(_.snakeCase(value));
+    if (value === '*' || value === 'COUNT(*) OVER()') return value;
+    return origImpl(snakeCase(value));
   },
 };
 
