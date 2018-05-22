@@ -324,6 +324,24 @@ describe('/users', () => {
       expect(status2).toEqual(httpStatus.BAD_REQUEST);
     });
 
+    it('Should throw a validation error when password does not have the minimum length', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@noPw124.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          password: '1',
+          hasAccess: false,
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
     it('Should throw a validation error when not all fields are provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
@@ -506,7 +524,7 @@ describe('/users', () => {
       const { status: status2 } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: user.email,
+          email: user.email,
           password: 'myNewPw',
         });
       expect(status2).toEqual(httpStatus.OK);

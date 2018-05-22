@@ -28,7 +28,7 @@ export const userSchema = {
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
       role: Joi.string().required().allow(availableRoles),
-      password: Joi.string(),
+      password: Joi.string().min(6),
     }),
   },
   update: {
@@ -48,7 +48,7 @@ export const userSchema = {
       userId: Joi.string().guid(),
     },
     body: Joi.object({
-      password: Joi.string().required(),
+      password: Joi.string().min(6).required(),
     }),
   },
   partialUpdate: {
