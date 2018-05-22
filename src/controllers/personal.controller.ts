@@ -17,7 +17,6 @@ export function findCurrentUser(req: AuthRequest, res: Response): void {
   });
 }
 
-
 /**
  * Update current user's information
  */

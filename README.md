@@ -21,16 +21,10 @@ This will make it easy to run the project locally and all tests without having t
 
 ### Installation
 
-Install all dependencies via npm
+Install all dependencies
 
 ```shell
 npm install
-```
-
-or via yarn
-
-```shell
-yarn
 ```
 
 ## Databases
@@ -48,14 +42,14 @@ docker-compose up -d postgres
 ### Migrations
 
 The project uses a sql query builder called [knex.js](http://knexjs.org/) which provides migration support.
-Run all migrations via `yarn db:migrate`.
+Run all migrations via `npm run db:migrate`.
 
 - This will take you `DATABASE_URL` from the environment variables.
 
 ### Seeds
 
 The project uses a sql query builder called [knex.js](http://knexjs.org/) which provides seeding support.
-Run all initial seeds via `yarn db:seed`.
+Run all initial seeds via `npm run db:seed`.
 
 - This will take you `DATABASE_URL` from the environment variables.
 - It will use `INITIAL_SEED_USERNAME` and `INITIAL_SEED_PASSWORD` from the environment variables to create an initial Admin user.
@@ -75,10 +69,10 @@ docker-compose up -d redis
 
 ```shell
 // Start
-yarn start
+npm run start
 
 // Build and start
-yarn serve
+npm run serve
 ```
 
 ## Running the tests
@@ -88,13 +82,13 @@ yarn serve
 ### Run all tests
 
 ```shell
-yarn test
+npm run test
 ```
 
 ### Run all tests with coverage report
 
 ```shell
-yarn test:coverage
+npm run test:coverage
 ```
 
 ## Deployment

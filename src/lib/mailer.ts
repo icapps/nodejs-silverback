@@ -10,7 +10,6 @@ export function getDefaultClient() {
   return new mandrill.Mandrill(process.env.MANDRILL_API_KEY, process.env.LOG_LEVEL === 'debug');
 }
 
-
 /**
  * Send an email with html or text
  */
@@ -25,7 +24,6 @@ export async function send(options: MailOptions, client: MailClient) {
     });
   });
 }
-
 
 /**
  * Send an email with a template from Mandrill/Mailchimp provided

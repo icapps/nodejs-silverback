@@ -9,7 +9,6 @@ export function applyPagination(query: knex.QueryBuilder, filters: Filters): voi
   if (filters.offset) query.offset(filters.offset);
 }
 
-
 /**
  * Apply basic sorting to a query (field must be available for sorting)
  */
@@ -20,7 +19,6 @@ export function applySorting(query: knex.QueryBuilder, filters: Filters, availab
     }
   }
 }
-
 
 /**
  * Apply search functionality to a query (field must be available for search)

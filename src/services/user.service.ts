@@ -20,7 +20,6 @@ export async function findById(userId: string): Promise<User> {
   return result;
 }
 
-
 /**
  * Return all users
  */
@@ -32,7 +31,6 @@ export async function findAll(filters: Filters): Promise<{ data: User[], totalCo
     throw error;
   }
 }
-
 
 /**
  * Create a new user
@@ -62,7 +60,6 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
   }
 }
 
-
 /**
  * Update existing user
  */
@@ -76,7 +73,6 @@ export async function update(userId: string, values: UserUpdate): Promise<User> 
     throw error;
   }
 }
-
 
 /**
  * Update existing properties of a user
@@ -92,7 +88,6 @@ export async function partialUpdate(userId: string, values: PartialUserUpdate): 
   }
 }
 
-
 /**
  * Update a user's password
  */
@@ -105,7 +100,6 @@ export async function updatePassword(userId: string, password: string): Promise<
     throw error;
   }
 }
-
 
 /**
  * Remove an existing user

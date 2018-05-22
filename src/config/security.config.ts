@@ -6,7 +6,6 @@ import { logger } from '../lib/logger';
 import { errors } from './errors.config';
 import { envs } from '../constants';
 
-
 /**
  * Handle a rejected request due to too many requests for example
  */
@@ -15,7 +14,6 @@ const failCallback = (req, _res, next, nextTry) => {
   next(new ApiError(httpStatus.TOO_MANY_REQUESTS, errors.TOO_MANY_REQUESTS));
 };
 
-
 /**
  * Handle a store error that occured with the persistent memory store (Redis)
  */
@@ -23,7 +21,6 @@ const handleStoreError = (error) => {
   logger.error(error);
   throw new InternalServerError(errors.INTERNAL_ERROR, { message: error.message });
 };
-
 
 /**
  * No more than 1000 attempts per day per IP
@@ -40,7 +37,6 @@ export const globalBruteConfig: RateLimiterOptions = {
   redis: process.env.NODE_ENV === envs.DEVELOP ? undefined : { client: getRedisClient() }, // Use our existing Redis client (in staging/production)
 };
 
-
 /**
  * Start slowing requests after 5 failed attempts
  */
@@ -52,7 +48,6 @@ export const userBruteConfig: RateLimiterOptions = {
   maxWait: 60 * 60 * 1000, // 1 hour,
   redis: process.env.NODE_ENV === envs.DEVELOP ? undefined : { client: getRedisClient() }, // Use our existing Redis client (in staging/production)
 };
-
 
 /**
  * Check for same key per request (username)

@@ -6,7 +6,6 @@ const options: redis.ClientOpts = {
   url: process.env.REDISCLOUD_URL,
 };
 
-
 /**
  * Make sure we return the same instance
  * Don't create the instance on startup (not needed in all environments)

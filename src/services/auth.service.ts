@@ -12,7 +12,6 @@ import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
 import { hasRole } from '../lib/utils';
 
-
 /**
  * Generate a new jwt token and refresh token for a user
  */
@@ -23,7 +22,6 @@ export async function generateTokens(userId: string) {
 
   return { accessToken, refreshToken };
 }
-
 
 /**
  * Login user with username and password
@@ -53,7 +51,6 @@ export async function login(payload: AuthCredentials, role?: Role) {
   }
 }
 
-
 /**
  * Refresh access token via a refresh token
  */
@@ -70,7 +67,6 @@ export async function refresh(userId: string, refreshToken: string) {
   }
 }
 
-
 /**
  * Logout an existing user by removing its refresh token
  */
@@ -82,7 +78,6 @@ export async function logout(userId: string) {
     throw error;
   }
 }
-
 
 /**
  * Start the forgot password flow by generating an email with a reset link
@@ -104,7 +99,6 @@ export async function initForgotPw(email: string) {
   }
 }
 
-
 /**
  * Verify if a forgot password reset token is still valid
  */
@@ -117,7 +111,6 @@ export async function verifyForgotPw(token: string): Promise<void> {
     throw error;
   }
 }
-
 
 /**
  * Confirm a newly choosen password
