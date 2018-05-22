@@ -94,7 +94,7 @@ export async function findAllCodes(codeTypeId: string, options: Filters): Promis
 
   applyPagination(query, allOptions);
   applySearch(query, allOptions, ['id', 'code', 'name']);
-  applySorting(query, allOptions, ['code', 'name']);
+  applySorting(query, allOptions, ['code', 'name', 'deprecated']);
   logger.debug(`Get all codes: ${query.toString()}`);
 
   const data = await query;
