@@ -70,7 +70,7 @@ export async function remove(userId: string): Promise<{ affectedRows: number }> 
 export async function findAll(options: Filters = {}): Promise<{ data: User[], totalCount: number }> {
   const allOptions = Object.assign({}, defaultFilters, options);
   const searchFields = ['id', 'email', 'firstName', 'lastName'];
-  const sortFields = ['email', 'firstName', 'lastName'];
+  const sortFields = ['email', 'firstName', 'lastName', 'role', 'hasAccess', 'registrationCompleted'];
 
   const query = selectAndCount(db, defaultReturnValues)
     .from(tableNames.USERS);
