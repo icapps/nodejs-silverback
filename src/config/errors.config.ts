@@ -10,6 +10,7 @@ export const errors = <Error>Object.assign({}, defaults, {
   TOO_MANY_REQUESTS:  { code: 'TOO_MANY_REQUESTS', message: 'You\'ve made too many failed attempts in a short period of time, please try again later' },
   CODE_DUPLICATE:     { code: 'CODE_DUPLICATE', message: 'A code with this code already exists' },
   USER_DELETE_OWN:    { code: 'USER_DELETE_OWN', message: 'You can\'t delete your own user' },
+  INVALID_TOKEN:      { code: 'INVALID_TOKEN', message: 'The supplied token is invalid.' },
 });
   // tslint:enable:max-line-length
 
