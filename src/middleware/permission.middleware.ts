@@ -10,8 +10,13 @@ import * as userRepository from '../repositories/user.repository';
 
 export async function hasPermission(req: Request, _res: Response, next: NextFunction, role?: Role) {
   try {
-    const accessToken = extractJwt(req);
-    const decodedToken = <JwtPayload>await authenticateJwt(accessToken, jwtConfig);
+    let decodedToken;
+    try {
+      const accessToken = extractJwt(req);
+      decodedToken = <JwtPayload> await authenticateJwt(accessToken, jwtConfig);
+    } catch (err) {
+      throw new UnauthorizedError(errors.INVALID_TOKEN);
+    }
 
     // Find user
     const user = await userRepository.findById(decodedToken.userId);
