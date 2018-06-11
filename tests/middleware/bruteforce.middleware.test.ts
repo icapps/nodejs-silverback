@@ -18,7 +18,7 @@ describe('bruteforce middleware', () => {
     await clearMemoryStore();
   });
 
-  it('Should start blocking requests with the same ip and username after number of retries', async () => {
+  it('Should start blocking requests with the same ip and email after number of retries', async () => {
     app.use('/test', setUserBruteForce, (_req, res) => res.status(httpStatus.OK).send('Welcome'));
     app.use((error, req, res, _next) => responder.error(req, res, error));
 
@@ -28,23 +28,23 @@ describe('bruteforce middleware', () => {
     for (const call of Array(numberOfCalls)) {
       const { status } = await request(app)
         .post('/test')
-        .send({ username: 'test@icapps.com' });
+        .send({ email: 'test@icapps.com' });
       expect(status).toEqual(httpStatus.OK);
     }
 
     // Blocked call
     const { status, body } = await request(app)
       .post('/test')
-      .send({ username: 'test@icapps.com' });
+      .send({ email: 'test@icapps.com' });
 
     expect(status).toEqual(httpStatus.TOO_MANY_REQUESTS);
     expect(body.errors[0].code).toEqual(errors.TOO_MANY_REQUESTS.code);
     expect(body.errors[0].title).toEqual(errors.TOO_MANY_REQUESTS.message);
 
-    // Allow call with other username
+    // Allow call with other email
     const { status: status2, body: body2 } = await request(app)
       .post('/test')
-      .send({ username: 'test2@icapps.com' });
+      .send({ email: 'test2@icapps.com' });
     expect(status2).toEqual(httpStatus.OK);
   });
 });

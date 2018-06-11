@@ -12,4 +12,3 @@ export interface BruteRequest extends Request {
     reset: (fn: Function) => {};
   };
 }
-

@@ -25,7 +25,6 @@ export async function login(req: BruteRequest, res: Response, role?: Role): Prom
   });
 }
 
-
 /**
  * Return a new access token via their refresh token
  */
@@ -42,7 +41,6 @@ export async function refresh(req: Request, res: Response): Promise<void> {
   });
 }
 
-
 /**
  * Logout a logged in user
  */
@@ -53,7 +51,6 @@ export async function logout(req: AuthRequest, res: Response): Promise<void> {
     status: httpStatus.OK,
   });
 }
-
 
 /**
  * Start the forgot password flow by generating an email with a reset link
@@ -67,7 +64,6 @@ export async function initForgotPw(req: Request, res: Response): Promise<void> {
   });
 }
 
-
 /**
  * Verify if a forgot password reset token is still valid
  */
@@ -78,7 +74,6 @@ export async function verifyForgotPw(req: Request, res: Response): Promise<void>
     status: httpStatus.OK,
   });
 }
-
 
 /**
  * Confirm newly choosen password

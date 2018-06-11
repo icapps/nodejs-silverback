@@ -9,7 +9,6 @@ import { roleSerializer } from '../serializers/role.serializer';
 import { AuthRequest } from '../models/request.model';
 import * as userService from '../services/user.service';
 
-
 /**
  * Get a user by id
  */
@@ -21,7 +20,6 @@ export async function findById(req: Request, res: Response): Promise<void> {
     serializer: userSerializer,
   });
 }
-
 
 /**
  * Return all users
@@ -35,7 +33,6 @@ export async function findAll(req: Request, res: Response): Promise<void> {
     serializer: userSerializer,
   });
 }
-
 
 /**
  * Create a new user
@@ -54,7 +51,6 @@ export async function create(req: Request, res: Response): Promise<void> {
   });
 }
 
-
 /**
  * Update an existing user
  */
@@ -66,7 +62,6 @@ export async function update(req: Request, res: Response): Promise<void> {
     serializer: userSerializer,
   });
 }
-
 
 /**
  * Update a property of an existing user
@@ -80,7 +75,6 @@ export async function partialUpdate(req: Request, res: Response): Promise<void> 
   });
 }
 
-
 /**
  * Update a user's password
  */
@@ -92,7 +86,6 @@ export async function updatePassword(req: Request, res: Response): Promise<void>
   });
 }
 
-
 /**
  * Remove an existing user
  */
@@ -103,8 +96,6 @@ export async function remove(req: AuthRequest, res: Response): Promise<void> {
     status: httpStatus.NO_CONTENT,
   });
 }
-
-
 
 /**
  * Return all available user roles

@@ -5,7 +5,6 @@ import { logger } from '../lib/logger';
 import { errors } from '../config/errors.config';
 import * as metaRepository from '../repositories/meta.repository';
 
-
 /**
  * Return a code by id
  */
@@ -14,7 +13,6 @@ export async function findById(codeId: string): Promise<Code> {
   if (!result) throw new NotFoundError();
   return result;
 }
-
 
 /**
  * Return all codes for a specific code type
@@ -30,7 +28,6 @@ export async function findAllCodes(codeType: string, filters: Filters): Promise<
     throw error;
   }
 }
-
 
 /**
  * Create a new code for a specific code type
@@ -49,7 +46,6 @@ export async function createCode(codeType: string, values: CodeCreate): Promise<
     throw error;
   }
 }
-
 
 /**
  * Update existing properties of a code

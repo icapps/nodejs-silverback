@@ -31,7 +31,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: regularUser.email,
+          email: regularUser.email,
           password: regularUser.password,
         });
 
@@ -49,7 +49,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: regularUser.email.toUpperCase(),
+          email: regularUser.email.toUpperCase(),
           password: regularUser.password,
         });
 
@@ -63,11 +63,22 @@ describe('/auth', () => {
       expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
-    it('Should throw error when no username or password is provided', async () => {
+    it('Should throw error when no email or password is provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: regularUser.email,
+          email: regularUser.email,
+        });
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw error when invalid email is provided', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          email: 'noValidEmail',
+          password: 'prutser123',
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -77,7 +88,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: regularUser.email,
+          email: regularUser.email,
           password: 'invalidPw',
         });
 
@@ -88,7 +99,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: 'unknown@test.com',
+          email: 'unknown@test.com',
           password: regularUser.password,
         });
 
@@ -100,7 +111,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: 'newuser@gmail.com',
+          email: 'newuser@gmail.com',
           password: noAccessUser.password,
         });
 
@@ -116,7 +127,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login/admin`)
         .send({
-          username: adminUser.email,
+          email: adminUser.email,
           password: adminUser.password,
         });
 
@@ -134,7 +145,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login/admin`)
         .send({
-          username: regularUser.email,
+          email: regularUser.email,
           password: regularUser.password,
         });
 
@@ -149,7 +160,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: regularUser.email,
+          email: regularUser.email,
           password: regularUser.password,
         });
       expect(status).toEqual(httpStatus.OK);
@@ -189,7 +200,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: regularUser.email,
+          email: regularUser.email,
           password: regularUser.password,
         });
       expect(status).toEqual(httpStatus.OK);
@@ -294,7 +305,7 @@ describe('/auth', () => {
       const { body: body2, status: status2 } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          username: newUser.email,
+          email: newUser.email,
           password: 'newPassword123',
         });
       expect(status2).toEqual(httpStatus.OK);

@@ -20,7 +20,6 @@ export async function createCodeType(values: CodeTypeCreate): Promise<CodeType> 
   return (await query)[0];
 }
 
-
 /**
  * Create a new code
  */
@@ -33,7 +32,6 @@ export async function createCode(codeTypeId: string, values: CodeCreate): Promis
   return (await query)[0];
 }
 
-
 /**
  * Update an existing code
  */
@@ -45,7 +43,6 @@ export async function updateCode(codeId: string, values: CodeUpdate | PartialCod
   logger.debug(`Update existing code: ${query.toString()}`);
   return (await query)[0];
 }
-
 
 /**
  * Find a code type via its code
@@ -60,8 +57,6 @@ export async function findCodeTypeByCode(code: string): Promise<Code> {
   return await query;
 }
 
-
-
 /**
  * Return whether a code is unique
  */
@@ -75,7 +70,6 @@ export async function isUniqueCode(code: string, codeTypeId: string): Promise<bo
   logger.debug(`Get code by code and codeTypeId: ${query.toString()}`);
   return !(await query); // If no result -> code is unique
 }
-
 
 /**
  * Return all codes for a specific code type

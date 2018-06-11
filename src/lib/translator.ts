@@ -8,7 +8,6 @@ const defaultOptions = <any> {
   exportType: 'json',
 };
 
-
 /**
  * Import translations from the icapps translations service
  */

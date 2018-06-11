@@ -6,15 +6,13 @@ import { logger } from '../lib/logger';
 import { errors } from './errors.config';
 import { envs } from '../constants';
 
-
 /**
  * Handle a rejected request due to too many requests for example
  */
 const failCallback = (req, _res, next, nextTry) => {
-  logger.info(`User with username ${req.body.username} has tried to login too many times. Reset time: ${new Date(nextTry).toISOString()}`);
+  logger.info(`User with email ${req.body.email} has tried to login too many times. Reset time: ${new Date(nextTry).toISOString()}`);
   next(new ApiError(httpStatus.TOO_MANY_REQUESTS, errors.TOO_MANY_REQUESTS));
 };
-
 
 /**
  * Handle a store error that occured with the persistent memory store (Redis)
@@ -23,7 +21,6 @@ const handleStoreError = (error) => {
   logger.error(error);
   throw new InternalServerError(errors.INTERNAL_ERROR, { message: error.message });
 };
-
 
 /**
  * No more than 1000 attempts per day per IP
@@ -40,7 +37,6 @@ export const globalBruteConfig: RateLimiterOptions = {
   redis: process.env.NODE_ENV === envs.DEVELOP ? undefined : { client: getRedisClient() }, // Use our existing Redis client (in staging/production)
 };
 
-
 /**
  * Start slowing requests after 5 failed attempts
  */
@@ -53,12 +49,11 @@ export const userBruteConfig: RateLimiterOptions = {
   redis: process.env.NODE_ENV === envs.DEVELOP ? undefined : { client: getRedisClient() }, // Use our existing Redis client (in staging/production)
 };
 
-
 /**
- * Check for same key per request (username)
+ * Check for same key per request (email)
  */
 export const userBruteMiddlewareConfig = {
   failCallback,
   ignoreIP: false,
-  key: (req, _res, next) => next(req.body.username), // Call per username per ip
+  key: (req, _res, next) => next(req.body.email), // Call per email per ip
 };

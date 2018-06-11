@@ -29,5 +29,5 @@ if (!existsSync(errorTranslations)) {
   mkdirSync(errorTranslations);
 }
 
-// Overwrite error console.logs
-logger.error = jest.fn((error) => { });
+// Overwrite warn/error console.logs
+logger.error = jest.fn(() => {});

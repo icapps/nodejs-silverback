@@ -2,7 +2,6 @@ import { mailTemplates } from '../constants';
 import { mailSettings } from '../config/app.config';
 import { TemplateMailOptions } from '../models/mail.model';
 
-
 /**
  * Forgot PW initial reset link
  */

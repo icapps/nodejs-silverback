@@ -653,10 +653,10 @@ definitions:
     PostLogin:
       type: object
       required:
-        - "username"
+        - "email"
         - "password"
       properties:
-        username:
+        email:
           type: string
         password:
           type: string
@@ -891,7 +891,7 @@ definitions:
           title:
             type: string
             description: 'General error message'
-            example: 'No valid username provided'
+            example: 'No valid email provided'
           detail:
             type: string
             description: 'Extra details (optional)'
