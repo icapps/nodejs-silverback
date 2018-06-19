@@ -27,7 +27,7 @@ export const userSchema = {
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
-      role: Joi.string().required().allow(availableRoles),
+      role: Joi.string().required().valid(availableRoles),
       password: Joi.string().min(6),
     }),
   },
@@ -40,7 +40,7 @@ export const userSchema = {
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
-      role: Joi.string().required().allow(availableRoles),
+      role: Joi.string().required().valid(availableRoles),
     }),
   },
   updatePassword: {
