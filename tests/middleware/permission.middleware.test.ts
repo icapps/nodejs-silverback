@@ -73,8 +73,8 @@ describe('hasPermission middleware', () => {
 
     expect.assertions(2);
     const result = await hasPermission(request, response, (nxt) => {
-      expect(nxt.code).toEqual(errors.MISSING_HEADERS.code);
-      expect(nxt.message).toEqual(errors.MISSING_HEADERS.message);
+      expect(nxt.code).toEqual(errors.INVALID_TOKEN.code);
+      expect(nxt.message).toEqual(errors.INVALID_TOKEN.message);
     });
   });
 });
