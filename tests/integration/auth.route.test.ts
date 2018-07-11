@@ -124,9 +124,8 @@ describe('/auth', () => {
         .post(`${prefix}/auth/login`)
         .send({
           email: 'newuser@gmail.com',
-          password: noAccessUser.password,
+          password: 'developer',
         });
-
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
       expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
