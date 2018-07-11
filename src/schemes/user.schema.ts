@@ -28,7 +28,10 @@ export const userSchema = {
       lastName: Joi.string().required(),
       hasAccess: Joi.boolean().required(),
       role: Joi.string().required().valid(availableRoles),
-      password: Joi.string().min(6),
+      password: Joi.string().min(6).when('query.changePassword', {
+        is: Joi.valid(true),
+        then: Joi.required(),
+      }),
     }),
   },
   update: {

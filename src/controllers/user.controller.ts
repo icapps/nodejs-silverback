@@ -40,9 +40,6 @@ export async function findAll(req: Request, res: Response): Promise<void> {
 export async function create(req: Request, res: Response): Promise<void> {
   const { changePassword } = req.query;
 
-  // TODO: This should be able via Joi validation?
-  if (!changePassword && !req.body.password) throw new ValidationError();
-
   const result = await userService.create(req.body, changePassword);
   responder.success(res, {
     status: httpStatus.CREATED,
