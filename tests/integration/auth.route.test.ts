@@ -95,7 +95,7 @@ describe('/auth', () => {
       expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
       expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
-    it('Should throw error when invalid password is provided', async () => {
+    it('Should throw error when invalid user is provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
