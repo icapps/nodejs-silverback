@@ -31,7 +31,7 @@ export async function login(payload: AuthCredentials, role?: Role) {
   const { email, password } = payload;
   try {
     const user = await userRepository.findByEmail(email);
-    if (!user) throw new AuthenticationError();
+    if (!user) throw new AuthenticationError(errors.USER_INVALID_CREDENTIALS);
 
     // Must have a specific role to login here
     if (role && !hasRole(user, role)) throw new UnauthorizedError(errors.NO_PERMISSION);
@@ -41,7 +41,7 @@ export async function login(payload: AuthCredentials, role?: Role) {
 
     // Match password
     const passwordMatch = await comparePassword(password, user.password);
-    if (!passwordMatch) throw new AuthenticationError();
+    if (!passwordMatch) throw new AuthenticationError(errors.USER_INVALID_CREDENTIALS);
 
     // Generate JWT and refresh token
     return await generateTokens(user.id);
