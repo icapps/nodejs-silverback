@@ -183,7 +183,6 @@ describe('/auth', () => {
       expect(loggedInUser.refreshToken).toEqual(body2.data.refreshToken);
     });
 
-
     it('Should throw an error when trying to refresh without valid access token', async () => {
       const invalidToken = await getValidJwt(faker.random.uuid());
       const { status } = await request(app)
@@ -272,6 +271,8 @@ describe('/auth', () => {
         .get(`${prefix}/forgot-password/verify`)
         .query('token=unknownToken');
       expect(status).toEqual(httpStatus.NOT_FOUND);
+      expect(body.errors[0].code).toEqual(errors.LINK_EXPIRED.code);
+      expect(body.errors[0].detail).toEqual(errors.LINK_EXPIRED.message);
     });
 
     it('Should throw an error when no token is provided', async () => {
