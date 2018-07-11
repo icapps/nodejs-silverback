@@ -28,6 +28,17 @@ export const metaSchema = {
       description: Joi.string(),
     },
   },
+  updateCode: {
+    params: {
+      codeId: Joi.string().guid(),
+    },
+    body: Joi.object({
+      code: Joi.string(),
+      name: Joi.string(),
+      description: Joi.string(),
+      deprecated: Joi.boolean(),
+    }).min(1),
+  },
   deprecateCode: {
     params: {
       codeId: Joi.string().guid().required(),

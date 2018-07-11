@@ -324,6 +324,90 @@ describe('/meta', () => {
     });
   });
 
+  describe('PUT /codes/:codeId', () => {
+    const prefix = `/api/${process.env.API_VERSION}`;
+    let code;
+
+    beforeAll(async () => {
+      const codeType = await createCodeType({ code: 'LAN', name: 'Language' });
+      code = await createCode(codeType.id, { name: 'Zalosh', code: 'ZL' });
+    });
+
+    afterAll(async () => {
+      await clearCodeTypesData();
+      await clearCodesData();
+    });
+
+    it('Should validate that there is at least 1 field to update', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+    it('Should succesfully update an code', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          code: 'NL',
+        });
+
+      expect(body.data.code).toEqual('NL');
+      expect(status).toEqual(httpStatus.OK);
+    });
+    it('Should succesfully update an name', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          name: 'newname',
+        });
+
+      expect(body.data.name).toEqual('newname');
+      expect(status).toEqual(httpStatus.OK);
+    });
+    it('Should succesfully update an description', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          description: 'newdescription',
+        });
+
+      expect(body.data.description).toEqual('newdescription');
+      expect(status).toEqual(httpStatus.OK);
+    });
+    it('Should succesfully update an deprecated state', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          deprecated: true,
+        });
+
+      expect(body.data.deprecated).toEqual(true);
+      expect(status).toEqual(httpStatus.OK);
+    });
+    it('Should succesfully update all values', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          code: 'NL2',
+          name: 'newname2',
+          description: 'newdescription2',
+          deprecated: false,
+        });
+
+      expect(body.data.deprecated).toEqual(false);
+      expect(body.data.description).toEqual('newdescription2');
+      expect(body.data.name).toEqual('newname2');
+      expect(body.data.code).toEqual('NL2');
+      expect(status).toEqual(httpStatus.OK);
+    });
+  });
+
   describe('POST /codes/:codeId/deprecate', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let code;
