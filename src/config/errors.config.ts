@@ -11,6 +11,7 @@ export const errors = <Error>Object.assign({}, defaults, {
   USER_DELETE_OWN:    { code: 'USER_DELETE_OWN', message: 'You can\'t delete your own user' },
   USER_DUPLICATE:     { code: 'USER_DUPLICATE', message: 'A user with this email already exists' },
   USER_INACTIVE:      { code: 'USER_INACTIVE', message: 'Your account is not active. Please contact your administrator.' },
+  USER_INVALID_CREDENTIALS:      { code: 'USER_INVALID_CREDENTIALS', message: 'Incorrect username or password. Please try again.' },
   USER_NOT_FOUND:     { code: 'USER_NOT_FOUND', message: 'User not found' },
 });
   // tslint:enable:max-line-length
