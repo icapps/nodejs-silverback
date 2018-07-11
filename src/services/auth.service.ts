@@ -105,7 +105,7 @@ export async function initForgotPw(email: string) {
 export async function verifyForgotPw(token: string): Promise<void> {
   try {
     const user = await userRepository.findByResetToken(token);
-    if (!user || !user.resetPwToken) throw new NotFoundError();
+    if (!user || !user.resetPwToken) throw new NotFoundError(errors.LINK_EXPIRED);
   } catch (error) {
     logger.error(`An error occured trying to verify reset password token: %${error}`);
     throw error;
