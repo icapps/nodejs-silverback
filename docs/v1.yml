@@ -859,9 +859,6 @@ definitions:
         name:
           type: string
           description: "Full name"
-        code:
-          type: string
-          description: "Unique identifier"
         description:
           type: string
         deprecate:

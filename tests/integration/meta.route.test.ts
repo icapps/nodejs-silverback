@@ -345,16 +345,15 @@ describe('/meta', () => {
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
-    it('Should succesfully update an code', async () => {
+    it('Should not accept code changes', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           code: 'NL',
         });
-
-      expect(body.data.code).toEqual('NL');
-      expect(status).toEqual(httpStatus.OK);
+      expect(body.errors[0].code).toEqual("INVALID_INPUT");
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
     it('Should succesfully update an name', async () => {
       const { body, status } = await request(app)
@@ -394,7 +393,6 @@ describe('/meta', () => {
         .put(`${prefix}/meta/codes/${code.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
-          code: 'NL2',
           name: 'newname2',
           description: 'newdescription2',
           deprecated: false,
@@ -403,7 +401,6 @@ describe('/meta', () => {
       expect(body.data.deprecated).toEqual(false);
       expect(body.data.description).toEqual('newdescription2');
       expect(body.data.name).toEqual('newname2');
-      expect(body.data.code).toEqual('NL2');
       expect(status).toEqual(httpStatus.OK);
     });
   });
