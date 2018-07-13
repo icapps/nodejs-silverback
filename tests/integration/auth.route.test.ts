@@ -91,7 +91,17 @@ describe('/auth', () => {
           email: regularUser.email,
           password: 'invalidPw',
         });
-
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
+      expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
+    });
+    it('Should throw error when invalid user is provided', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          email: 'fakeuser@icapps.com',
+          password: 'invalidPw',
+        });
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
@@ -104,6 +114,8 @@ describe('/auth', () => {
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
+      expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
 
     it('Should throw error when user has no access', async () => {
@@ -112,9 +124,8 @@ describe('/auth', () => {
         .post(`${prefix}/auth/login`)
         .send({
           email: 'newuser@gmail.com',
-          password: noAccessUser.password,
+          password: 'developer',
         });
-
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
       expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
