@@ -280,7 +280,6 @@ describe('/users', () => {
       expect(createdUser.status).toEqual(statuses.COMPLETE_REGISTRATON.code);
     });
 
-
     it('Should throw an error when trying to create a user without changing pw and providing pw', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)

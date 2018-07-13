@@ -570,11 +570,42 @@ paths:
           description: "401 Unauthorized"
           schema:
             $ref: "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "metaOptions"
+      summary: "Create an existing code"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          type: "string"
+          name: id
+          description: The id of the code
+          required: true
+        - name: "code values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PutCode"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodeResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /meta/codes/{codeId}/deprecate:
     post:
       tags:
       - "metaOptions"
       summary: "Deprecate an existing code"
+      deprecated: true
       description: |-
         permission | scope | effect
         - | - | -
@@ -599,6 +630,7 @@ paths:
       tags:
       - "metaOptions"
       summary: "Undeprecate an existing code"
+      deprecated: true
       description: |-
         permission | scope | effect
         - | - | -
@@ -821,6 +853,16 @@ definitions:
           description: "Unique identifier"
         description:
           type: string
+    PutCode:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Full name"
+        description:
+          type: string
+        deprecate:
+          type: boolean
     CodeResponse:
       type: object
       properties:
