@@ -50,6 +50,17 @@ export async function createCode(req: Request, res: Response): Promise<void> {
 }
 
 /**
+ * Update an existing code
+ */
+export async function updateCode(req: Request, res: Response): Promise<void> {
+  const result = await metaService.partialCodeUpdate(req.params.codeId, req.body);
+  responder.success(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: codeSerializer,
+  });
+}
+/**
  * Deprecate an existing code
  */
 export async function deprecateCode(req: Request, res: Response): Promise<void> {
