@@ -1,6 +1,6 @@
 import * as httpStatus from 'http-status';
 import { Request, Response } from 'express';
-import { ValidationError, BadRequestError } from 'tree-house-errors';
+import { BadRequestError } from 'tree-house-errors';
 import { responder } from '../lib/responder';
 import { userSerializer } from '../serializers/user.serializer';
 import { roles } from '../config/roles.config';
