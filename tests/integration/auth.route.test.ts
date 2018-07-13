@@ -5,8 +5,9 @@ import * as faker from 'faker';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
 import { clearAll } from '../_helpers/mockdata/data';
-import { createUser, findById, regularUser, setResetPwToken, clearUserData, adminUser } from '../_helpers/mockdata/user.data';
+import { createUser, findById, regularUser, unconfirmedUser, setResetPwToken, clearUserData, adminUser } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
+import { statuses } from '../../src/config/statuses.config';
 import { getUserToken, getValidJwt } from '../_helpers/mockdata/auth.data';
 import * as mailer from '../../src/lib/mailer';
 
@@ -22,7 +23,7 @@ describe('/auth', () => {
   });
 
   afterAll(async () => {
-    await clearAll();
+    // await clearAll();
     jest.clearAllMocks();
   });
 
@@ -34,7 +35,6 @@ describe('/auth', () => {
           email: regularUser.email,
           password: regularUser.password,
         });
-
       expect(status).toEqual(httpStatus.OK);
       Joi.validate(body, loginSchema, (err, value) => {
         if (err) throw err;
@@ -272,7 +272,6 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .get(`${prefix}/forgot-password/verify`)
         .query(`token=${token}`);
-
       expect(status).toEqual(httpStatus.OK);
       expect(body).toEqual({});
     });
@@ -297,7 +296,7 @@ describe('/auth', () => {
     let newUser;
 
     beforeAll(async () => {
-      const userData = Object.assign({}, regularUser, { email: 'confirmPw@test.com' });
+      const userData = Object.assign({}, unconfirmedUser, { email: 'confirmPw@test.com' });
       newUser = await createUser(userData);
     });
 
@@ -306,12 +305,10 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .put(`${prefix}/forgot-password/confirm?token=${token}`)
         .send({ password: 'newPassword123' });
-
       expect(status).toEqual(httpStatus.OK);
       expect(body).toEqual({});
-
       const updatedUser = await findById(newUser.id);
-      expect(updatedUser.registrationCompleted).toEqual(true);
+      expect(updatedUser.status).toEqual(statuses.REGISTERD.code);
 
       // Try to login with changed password
       const { body: body2, status: status2 } = await request(app)

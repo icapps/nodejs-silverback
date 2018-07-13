@@ -40,7 +40,6 @@ describe('/meta', () => {
       const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
       const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
       languageCodes = [code1, code2, code3, code4];
-
       countryCodeType = await createCodeType({ code: 'CNTRY', name: 'Country' });
       createCode(countryCodeType.id, { name: 'Belgium', code: 'BE' });
       createCode(countryCodeType.id, { name: 'Germany', code: 'DE' });

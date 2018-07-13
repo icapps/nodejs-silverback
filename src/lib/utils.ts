@@ -3,6 +3,7 @@ import { UnauthorizedError } from 'tree-house-errors';
 import { Role, roles } from '../config/roles.config';
 import { User } from '../models/user.model';
 import { errors } from '../config/errors.config';
+import { statuses } from '../config/statuses.config';
 
 /**
  * Check whether a user has the correct role level or higher
@@ -28,4 +29,15 @@ export function extractJwt(req: Request) {
   // Get accessToken out of header
   if (headers.split(' ')[0] !== 'Bearer') throw new UnauthorizedError(errors.MISSING_HEADERS);
   return headers.split(' ')[1];
+}
+
+/**
+ * check if user has the right status for the operation
+ */
+export function checkStatus(user) {
+  // user needs a status
+  if (!user || !user.status) throw new UnauthorizedError();
+  if (user.status === statuses.COMPLETE_REGISTRATON.code) throw new UnauthorizedError(errors.USER_UNCONFIRMED);
+  if (user.status === statuses.BLOCKED.code) throw new UnauthorizedError(errors.USER_BLOCKED);
+  return user.status;
 }

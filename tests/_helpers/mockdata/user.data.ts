@@ -3,6 +3,7 @@ import { generateRandomHash } from 'tree-house-authentication';
 import { User, UserCreate } from '../../../src/models/user.model';
 import { roles } from '../../../src/config/roles.config';
 import { tableNames } from '../../../src/constants';
+import { statuses } from '../../../src/config/statuses.config';
 import { db } from '../../../src/lib/db';
 import * as userRepository from '../../../src/repositories/user.repository';
 
@@ -13,6 +14,7 @@ export const validUser: UserCreate = {
   password: 'developer',
   hasAccess: true,
   role: roles.ADMIN.code,
+  status: statuses.REGISTERD.code,
 };
 
 export const adminUser: UserCreate = {
@@ -22,6 +24,7 @@ export const adminUser: UserCreate = {
   password: 'developer',
   role: roles.ADMIN.code,
   hasAccess: true,
+  status: statuses.REGISTERD.code,
 };
 
 export const regularUser: UserCreate = {
@@ -31,6 +34,36 @@ export const regularUser: UserCreate = {
   password: 'developer',
   role: roles.USER.code,
   hasAccess: true,
+  status: statuses.REGISTERD.code,
+};
+
+export const unconfirmedUser: UserCreate = {
+  email: 'unconfirmedUser@users.com',
+  firstName: 'Regular',
+  lastName: 'User',
+  password: 'developer',
+  role: roles.USER.code,
+  hasAccess: true,
+};
+
+export const nostateUser: UserCreate = {
+  email: 'nostate@users.com',
+  firstName: 'Regular',
+  lastName: 'User',
+  password: 'developer',
+  role: roles.USER.code,
+  hasAccess: true,
+  status: '',
+};
+
+export const blockedstateUser: UserCreate = {
+  email: 'blocked@users.com',
+  firstName: 'Regular',
+  lastName: 'User',
+  password: 'developer',
+  role: roles.USER.code,
+  hasAccess: true,
+  status: statuses.BLOCKED.code,
 };
 
 export const validUsers: UserCreate[] = [

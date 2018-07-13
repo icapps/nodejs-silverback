@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 import { NotFoundError, BadRequestError } from 'tree-house-errors';
 import { getHashedPassword } from 'tree-house-authentication';
 import { User, UserCreate, UserUpdate, PartialUserUpdate } from '../models/user.model';
+import { statuses  } from '../config/statuses.config';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
 import { getInitialPwChangeContent } from '../templates/initial-pw.mail.template';
@@ -94,7 +95,7 @@ export async function partialUpdate(userId: string, values: PartialUserUpdate): 
 export async function updatePassword(userId: string, password: string): Promise<{}> {
   try {
     const hashedPw = await getHashedPassword(password, settings.saltCount);
-    return await partialUpdate(userId, { password: hashedPw, registrationCompleted: true });
+    return await partialUpdate(userId, { password: hashedPw, status: statuses.REGISTERD.code });
   } catch (error) {
     logger.error(`An error occured updating a user's password: ${error}`);
     throw error;

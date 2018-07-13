@@ -13,6 +13,7 @@ import { roles } from '../../src/config/roles.config';
 import { errors } from '../../src/config/errors.config';
 import { findRoleByCode } from '../../src/lib/utils';
 import * as mailer from '../../src/lib/mailer';
+import { statuses  } from '../../src/config/statuses.config';
 
 describe('/users', () => {
   const prefix = `/api/${process.env.API_VERSION}`;
@@ -276,7 +277,7 @@ describe('/users', () => {
       });
       const createdUser = await findById(body.data.id);
       expect(createdUser.resetPwToken).toEqual(expect.any(String));
-      expect(createdUser.registrationCompleted).toEqual(false);
+      expect(createdUser.status).toEqual(statuses.COMPLETE_REGISTRATON.code);
     });
 
 
@@ -519,7 +520,7 @@ describe('/users', () => {
         });
       expect(status).toEqual(httpStatus.OK);
       const updatedUser = await findById(user.id);
-      expect(updatedUser.registrationCompleted).toEqual(true);
+      expect(updatedUser.status).toEqual(statuses.REGISTERD.code);
 
       const { status: status2 } = await request(app)
         .post(`${prefix}/auth/login`)

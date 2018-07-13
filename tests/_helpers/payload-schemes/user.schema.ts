@@ -16,7 +16,6 @@ export const userSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   hasAccess: Joi.boolean().required(),
-  registrationCompleted: Joi.boolean().required(),
   role: userRoleSchema,
   createdAt: Joi.date().iso().raw().required(),
   updatedAt: Joi.date().iso().raw().required(),

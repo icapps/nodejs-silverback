@@ -4,12 +4,13 @@ import { settings } from '../config/app.config';
 import { logger } from '../lib/logger';
 import { Filters } from '../models/filters.model';
 import { User, UserUpdate, UserCreate, PartialUserUpdate } from '../models/user.model';
+import { statuses } from '../config/statuses.config';
 import { findRoleByCode } from '../lib/utils';
 import { applyPagination, applySorting, applySearch } from '../lib/filter';
 import { tableNames, defaultFilters } from '../constants';
 
 const defaultReturnValues = ['id', 'email', 'password', 'firstName', 'lastName',
-  'hasAccess', 'registrationCompleted', 'role', 'refreshToken', 'resetPwToken', 'createdAt', 'updatedAt'];
+  'hasAccess', 'role', 'status', 'refreshToken', 'resetPwToken', 'createdAt', 'updatedAt'];
 
 /**
  * Create new user
@@ -45,7 +46,7 @@ export async function update(userId: string, values: UserUpdate | PartialUserUpd
  */
 export async function updatePassword(userId: string, password: string): Promise<User> {
   const hashedPw = await getHashedPassword(password, settings.saltCount);
-  return update(userId, { password: hashedPw, resetPwToken: null, registrationCompleted: true });
+  return update(userId, { password: hashedPw, resetPwToken: null, status: statuses.REGISTERD.code });
 }
 
 /**
@@ -66,7 +67,7 @@ export async function remove(userId: string): Promise<{ affectedRows: number }> 
 export async function findAll(options: Filters = {}): Promise<{ data: User[], totalCount: number }> {
   const allOptions = Object.assign({}, defaultFilters, options);
   const searchFields = ['id', 'email', 'firstName', 'lastName'];
-  const sortFields = ['email', 'firstName', 'lastName', 'role', 'hasAccess', 'registrationCompleted'];
+  const sortFields = ['email', 'firstName', 'lastName', 'role', 'hasAccess'];
 
   const query = selectAndCount(db, defaultReturnValues)
     .from(tableNames.USERS);
@@ -102,7 +103,6 @@ export async function findByEmail(email: string): Promise<User | undefined> {
     .select(defaultReturnValues)
     .whereRaw('LOWER(email)=LOWER(?)', [email])
     .first();
-
   logger.debug(`Get user by email: ${query.toString()}`);
   const data = await query;
   return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
