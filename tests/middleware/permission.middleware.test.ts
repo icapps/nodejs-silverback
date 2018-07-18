@@ -1,25 +1,31 @@
-import * as httpMocks from 'node-mocks-http';
-import * as request from 'supertest';
 import * as faker from 'faker';
-import { hasPermission } from '../../src/middleware/permission.middleware';
-import { roles } from '../../src/config/roles.config';
-import { app } from '../../src/app';
-import { clearAll } from '../_helpers/mockdata/data';
-import { getUserToken, getAdminToken, getValidJwt, getUnconfirmedUserToken, getBlockedStateUserToken } from '../_helpers/mockdata/auth.data';
-import { regularUser, adminUser } from '../_helpers/mockdata/user.data';
+import * as httpMocks from 'node-mocks-http';
 import { errors } from '../../src/config/errors.config';
+import { roles } from '../../src/config/roles.config';
+import { hasPermission } from '../../src/middleware/permission.middleware';
+import { getBlockedStateUserToken, getUnconfirmedUserToken, getUserTokens, getValidJwt } from '../_helpers/mockdata/auth.data';
+import { clearAll } from '../_helpers/mockdata/data';
+import { adminUser, createUsers, regularUser } from '../_helpers/mockdata/user.data';
 
 describe('hasPermission middleware', () => {
   const prefix = `/api/${process.env.API_VERSION}`;
-  let userToken;
-  let adminToken;
+  const users = { regular: null, admin: null };
+  const tokens = { regular: null, admin: null };
   let unconfirmedToken;
   let blockedToken;
 
   beforeAll(async () => {
     await clearAll(); // Full db clear
-    userToken = await getUserToken(); // Also creates user
-    adminToken = await getAdminToken(); // Also creates user
+
+    // Create a regular and admin user
+    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'registered');
+    const sorted = createdUsers.sort((a, b) => a.role.code.localeCompare(b.role.code));
+    [users.admin, users.regular] = sorted;
+
+    // All user type tokens
+    const createdTokens = await getUserTokens([users.regular, users.admin]);
+    [tokens.regular, tokens.admin] = createdTokens;
+
     unconfirmedToken = await getUnconfirmedUserToken(); // Also creates user
     blockedToken = await getBlockedStateUserToken(); // Also creates user
   });
@@ -29,7 +35,7 @@ describe('hasPermission middleware', () => {
   });
 
   it('Should succesfully set current user on session request when authenticated', async () => {
-    const request = httpMocks.createRequest({ headers: { Authorization: `Bearer ${userToken}` } });
+    const request = httpMocks.createRequest({ headers: { Authorization: `Bearer ${tokens.regular}` } });
     const response = httpMocks.createResponse();
 
     expect.assertions(1);
@@ -39,7 +45,7 @@ describe('hasPermission middleware', () => {
   });
 
   it('Should succesfully set current user on session request when authenticated with role', async () => {
-    const request = httpMocks.createRequest({ headers: { Authorization: `Bearer ${adminToken}` } });
+    const request = httpMocks.createRequest({ headers: { Authorization: `Bearer ${tokens.admin}` } });
     const response = httpMocks.createResponse();
 
     expect.assertions(1);
@@ -49,7 +55,7 @@ describe('hasPermission middleware', () => {
   });
 
   it('Should throw an error when user does not have the correct role', async () => {
-    const request = httpMocks.createRequest({ headers: { Authorization: `Bearer ${userToken}` } });
+    const request = httpMocks.createRequest({ headers: { Authorization: `Bearer ${tokens.regular}` } });
     const response = httpMocks.createResponse();
 
     expect.assertions(2);

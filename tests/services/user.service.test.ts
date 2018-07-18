@@ -1,8 +1,7 @@
 import * as mailer from '../../src/lib/mailer';
-import { clearAll } from '../_helpers/mockdata/data';
-import { findById, regularUser, createUserStatuses } from '../_helpers/mockdata/user.data';
 import { create } from '../../src/services/user.service';
-import { logger } from '../../src/lib/logger';
+import { clearAll } from '../_helpers/mockdata/data';
+import { createUserStatuses, findById, regularUser } from '../_helpers/mockdata/user.data';
 
 describe('userService', () => {
   const prefix = `/api/${process.env.API_VERSION}`;

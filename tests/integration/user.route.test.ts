@@ -1,31 +1,45 @@
-import * as request from 'supertest';
+import * as faker from 'faker';
 import * as httpStatus from 'http-status';
 import * as Joi from 'joi';
-import * as faker from 'faker';
 import * as _ from 'lodash';
+import * as request from 'supertest';
 import { app } from '../../src/app';
+import { errors } from '../../src/config/errors.config';
+import { roles } from '../../src/config/roles.config';
+import * as mailer from '../../src/lib/mailer';
+import { findRoleByCode } from '../../src/lib/utils';
+import { getUserTokens, getValidJwt } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
 import {
-  validUsers, validUser, adminUser, regularUser, createUsers, clearUserData, createUser, findById,
+  adminUser,
+  clearUserData,
+  createUser,
+  createUsers,
+  findById,
+  regularUser,
   removeUser,
+  validUser,
+  validUsers,
 } from '../_helpers/mockdata/user.data';
-import { usersSchema, userSchema, createUserSchema, userByIdSchema } from '../_helpers/payload-schemes/user.schema';
 import { rolesSchema } from '../_helpers/payload-schemes/role.schema';
-import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
-import { roles } from '../../src/config/roles.config';
-import { errors } from '../../src/config/errors.config';
-import { findRoleByCode } from '../../src/lib/utils';
-import * as mailer from '../../src/lib/mailer';
+import { createUserSchema, userByIdSchema, usersSchema } from '../_helpers/payload-schemes/user.schema';
 
 describe('/users', () => {
   const prefix = `/api/${process.env.API_VERSION}`;
-  let userToken;
-  let adminToken;
+  const users = { regular: null, admin: null };
+  const tokens = { regular: null, admin: null };
 
   beforeAll(async () => {
     await clearAll(); // Full db clear
-    userToken = await getUserToken(); // Also creates user
-    adminToken = await getAdminToken(); // Also creates user
+
+    // Create a regular and admin user
+    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'registered');
+    const sorted = createdUsers.sort((a, b) => a.role.code.localeCompare(b.role.code));
+    [users.admin, users.regular] = sorted;
+
+    // All user type tokens
+    const createdTokens = await getUserTokens([users.regular, users.admin]);
+    [tokens.regular, tokens.admin] = createdTokens;
   });
 
   afterAll(async () => {
@@ -48,7 +62,7 @@ describe('/users', () => {
     it('Should return all users with default pagination', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.data).toHaveLength(5);
@@ -67,7 +81,7 @@ describe('/users', () => {
     it('Should return all users within provided pagination', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .query('limit=1')
         .query('offset=2');
 
@@ -83,7 +97,7 @@ describe('/users', () => {
     it('Should return users in ascending order for email', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .query('sortField=email')
         .query('sortOrder=asc');
 
@@ -104,7 +118,7 @@ describe('/users', () => {
     it('Should return users in descending order for email', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .query('sortField=email')
         .query('sortOrder=desc');
 
@@ -135,7 +149,7 @@ describe('/users', () => {
 
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .query('sortField=status')
         .query('sortOrder=asc');
 
@@ -158,7 +172,7 @@ describe('/users', () => {
     it('Should return all users when invalid sorting field is provided', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .query('sortField=invalidField')
         .query('sortOrder=desc');
 
@@ -179,7 +193,7 @@ describe('/users', () => {
     it('Should return all users matching `willem` in email', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .query('search=willem');
 
       expect(status).toEqual(httpStatus.OK);
@@ -198,7 +212,7 @@ describe('/users', () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
         .set('Accept-Language', 'nl')
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
@@ -220,7 +234,7 @@ describe('/users', () => {
     it('Should succesfully return user via id', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.data).toMatchObject({
@@ -240,21 +254,21 @@ describe('/users', () => {
     it('Should throw an error when user id is not a valid guid', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users/unknownId`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it('Should throw an error when user does not exist', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users/${faker.random.uuid()}`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
@@ -270,7 +284,7 @@ describe('/users', () => {
     it('Should succesfully create a new user', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown.com',
           firstName: 'Test',
@@ -293,7 +307,7 @@ describe('/users', () => {
 
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .query('changePassword=true')
         .send({
           email: 'test@changePw.com',
@@ -318,7 +332,7 @@ describe('/users', () => {
     it('Should throw an error when trying to create a user without changing pw and providing pw', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -334,7 +348,7 @@ describe('/users', () => {
     it('Should throw an error when trying to create a duplicate user', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -347,7 +361,7 @@ describe('/users', () => {
 
       const { body: body2, status: status2 } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -362,7 +376,7 @@ describe('/users', () => {
     it('Should throw an error when status is not found', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'random@unknown.com',
           firstName: 'Test',
@@ -380,7 +394,7 @@ describe('/users', () => {
     it('Should throw a validation error when password does not have the minimum length', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@noPw124.com',
           firstName: 'Test',
@@ -398,7 +412,7 @@ describe('/users', () => {
     it('Should throw a validation error when not all fields are provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown.com',
           firstName: 'Test',
@@ -415,7 +429,7 @@ describe('/users', () => {
     it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
-        .set('Authorization', `Bearer ${userToken}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
         .send({
           email: 'test@unknown.com',
           firstName: 'Test',
@@ -445,7 +459,7 @@ describe('/users', () => {
     it('Should succesfully update an existing user', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -475,7 +489,7 @@ describe('/users', () => {
     it('Should throw an error when user id is not a valid guid', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/unknownId`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -489,7 +503,7 @@ describe('/users', () => {
     it('Should throw an error when user does not exist', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${faker.random.uuid()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -503,7 +517,7 @@ describe('/users', () => {
     it('Should throw an error when not all fields are provided', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -519,7 +533,7 @@ describe('/users', () => {
     it('Should throw an error when trying to manually update registrationCompleted status', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -538,7 +552,7 @@ describe('/users', () => {
     it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${userToken}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -567,7 +581,7 @@ describe('/users', () => {
     it('Should succesfully update an existing user password', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}/password`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           password: 'myNewPw',
         });
@@ -587,7 +601,7 @@ describe('/users', () => {
     it('Should throw an error when user id is not a valid guid', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/unknownId/password`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           password: 'myNewPw',
         });
@@ -597,7 +611,7 @@ describe('/users', () => {
     it('Should throw an error when user does not exist', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${faker.random.uuid()}/password`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           password: 'myNewPw',
         });
@@ -607,7 +621,7 @@ describe('/users', () => {
     it('Should throw an error when not all fields are provided', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}/password`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({});
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -618,7 +632,7 @@ describe('/users', () => {
     it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}/password`)
-        .set('Authorization', `Bearer ${userToken}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
         .send({
           password: 'myNewPw',
         });
@@ -643,7 +657,7 @@ describe('/users', () => {
     it('Should succesfully update the property of an existing user', async () => {
       const { body, status } = await request(app)
         .patch(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
         });
@@ -669,7 +683,7 @@ describe('/users', () => {
     it('Should throw an error when an invalid property is provided', async () => {
       const { body, status } = await request(app)
         .patch(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           unknownStuff: 'test@unknown2.com',
         });
@@ -682,7 +696,7 @@ describe('/users', () => {
     it('Should throw an error when user id is not a valid guid', async () => {
       const { body, status } = await request(app)
         .patch(`${prefix}/users/unknownId`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
         });
@@ -692,7 +706,7 @@ describe('/users', () => {
     it('Should throw an error when user does not exist', async () => {
       const { body, status } = await request(app)
         .patch(`${prefix}/users/${faker.random.uuid()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
         });
@@ -702,7 +716,7 @@ describe('/users', () => {
     it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .patch(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${userToken}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
         .send({
           email: 'test@unknown2.com',
         });
@@ -727,7 +741,7 @@ describe('/users', () => {
     it('Should succesfully delete an existing user', async () => {
       const { body, status } = await request(app)
         .delete(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.NO_CONTENT);
       expect(body).toEqual({});
@@ -752,7 +766,7 @@ describe('/users', () => {
     it('Should throw an error when user does not exist', async () => {
       const { body, status } = await request(app)
         .delete(`${prefix}/users/${faker.random.uuid()}`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
@@ -760,7 +774,7 @@ describe('/users', () => {
     it('Should throw an error when user id is not a valid guid', async () => {
       const { body, status } = await request(app)
         .delete(`${prefix}/users/unknownId`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
@@ -768,7 +782,7 @@ describe('/users', () => {
     it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/${user.id}`)
-        .set('Authorization', `Bearer ${userToken}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
         .send({
           email: 'test@unknown2.com',
           firstName: 'Test',
@@ -788,7 +802,7 @@ describe('/users', () => {
     it('Should succesfully return all roles', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users/roles`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.data).toHaveLength(numberOfRoles);
@@ -807,7 +821,7 @@ describe('/users', () => {
     it('Should return error when user does not have admin rights', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/users/roles`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);

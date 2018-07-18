@@ -1,26 +1,32 @@
-import * as request from 'supertest';
-import * as Joi from 'joi';
-import * as httpStatus from 'http-status';
 import * as faker from 'faker';
+import * as httpStatus from 'http-status';
+import * as Joi from 'joi';
 import { sortBy } from 'lodash';
-
+import * as request from 'supertest';
 import { app } from '../../src/app';
-import { clearAll } from '../_helpers/mockdata/data';
-import { validUsers, createUsers } from '../_helpers/mockdata/user.data';
-import { createCodeType, createCode, clearCodeTypesData, clearCodesData } from '../_helpers/mockdata/meta.data';
-import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
-import { codeTypesSchema, codesSchema, codeSchema, createCodeSchema, codeByIdSchema } from '../_helpers/payload-schemes/meta.schema';
 import { errors } from '../../src/config/errors.config';
+import { getUserTokens } from '../_helpers/mockdata/auth.data';
+import { clearAll } from '../_helpers/mockdata/data';
+import { clearCodeTypesData, createCode, createCodeType } from '../_helpers/mockdata/meta.data';
+import { adminUser, createUsers, regularUser } from '../_helpers/mockdata/user.data';
+import { codeByIdSchema, codesSchema, createCodeSchema } from '../_helpers/payload-schemes/meta.schema';
 
 describe('/meta', () => {
   const prefix = `/api/${process.env.API_VERSION}`;
-  let userToken;
-  let adminToken;
+  const users = { regular: null, admin: null };
+  const tokens = { regular: null, admin: null };
 
   beforeAll(async () => {
     await clearAll(); // Full db clear
-    userToken = await getUserToken(); // Also creates user
-    adminToken = await getAdminToken(); // Also creates user
+
+    // Create a regular and admin user
+    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'registered');
+    const sorted = createdUsers.sort((a, b) => a.role.code.localeCompare(b.role.code));
+    [users.admin, users.regular] = sorted;
+
+    // All user type tokens
+    const createdTokens = await getUserTokens([users.regular, users.admin]);
+    [tokens.regular, tokens.admin] = createdTokens;
   });
 
   afterAll(async () => {
@@ -54,7 +60,7 @@ describe('/meta', () => {
     it('Should return language codes where with default pagination as a regular user', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.meta).toMatchObject({
@@ -72,7 +78,7 @@ describe('/meta', () => {
     it('Should return language codes where with default pagination as an admin user', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.meta).toMatchObject({
@@ -90,7 +96,7 @@ describe('/meta', () => {
     it('Should return all country codes with provided pagination', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${countryCodeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${userToken}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
         .query('limit=1')
         .query('offset=2');
 
@@ -110,7 +116,7 @@ describe('/meta', () => {
     it('Should return codes in ascending order for code', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${userToken}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
         .query('sortField=code')
         .query('sortOrder=asc');
 
@@ -132,7 +138,7 @@ describe('/meta', () => {
     it('Should return all codes matching `English` in code', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${userToken}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
         .query('search=English');
 
       expect(status).toEqual(httpStatus.OK);
@@ -150,7 +156,7 @@ describe('/meta', () => {
     it('Should throw an error when code type is not found', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/unknownType`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
@@ -177,7 +183,7 @@ describe('/meta', () => {
     it('Should return all language codes with default pagination', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}/all`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.meta).toMatchObject({
@@ -195,7 +201,7 @@ describe('/meta', () => {
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codesByType/${codeType.code.toLowerCase()}/all`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
@@ -223,7 +229,7 @@ describe('/meta', () => {
     it('Should return a code via id', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${languageCodes[0].id}`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.meta).toMatchObject({
@@ -238,14 +244,14 @@ describe('/meta', () => {
     it('Should throw an error when code id is not a valid guid', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/unknownId`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it('Should throw an error when code does not exist', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/meta/codes/${faker.random.uuid()}`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
   });
@@ -265,7 +271,7 @@ describe('/meta', () => {
     it('Should succesfully create a new code', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           code: 'NL',
           name: 'Nederlands',
@@ -284,14 +290,14 @@ describe('/meta', () => {
     it('Should throw an error when trying to create a duplicate code', async () => {
       const { status } = await request(app)
         .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({ code: 'FE', name: 'Nederlands' });
 
       expect(status).toEqual(httpStatus.CREATED);
 
       const { body, status: status2 } = await request(app)
         .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({ code: 'FE', name: 'Another NL' });
 
       expect(status2).toEqual(httpStatus.BAD_REQUEST);
@@ -302,7 +308,7 @@ describe('/meta', () => {
     it('Should throw an error when code type is not found', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/unknownType`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           code: 'NL',
           name: 'Nederlands',
@@ -314,7 +320,7 @@ describe('/meta', () => {
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${codeType.code.toLowerCase()}`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
@@ -338,14 +344,14 @@ describe('/meta', () => {
     it('Should validate that there is at least 1 field to update', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
     it('Should not accept code changes', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           code: 'NL',
         });
@@ -355,7 +361,7 @@ describe('/meta', () => {
     it('Should succesfully update an name', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           name: 'newname',
         });
@@ -366,7 +372,7 @@ describe('/meta', () => {
     it('Should succesfully update an description', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           description: 'newdescription',
         });
@@ -377,7 +383,7 @@ describe('/meta', () => {
     it('Should succesfully update an deprecated state', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           deprecated: true,
         });
@@ -388,7 +394,7 @@ describe('/meta', () => {
     it('Should succesfully update all values', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           name: 'newname2',
           description: 'newdescription2',
@@ -418,7 +424,7 @@ describe('/meta', () => {
     it('Should succesfully deprecate an existing code', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${code.id}/deprecate`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.OK);
     });
@@ -426,7 +432,7 @@ describe('/meta', () => {
     it('Should throw an error when code is not a valid guid', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/unknownType/deprecate`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
@@ -434,7 +440,7 @@ describe('/meta', () => {
     it('Should throw an error when code is not found', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${faker.random.uuid()}/deprecate`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
@@ -442,7 +448,7 @@ describe('/meta', () => {
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${code.id}/deprecate`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
@@ -466,7 +472,7 @@ describe('/meta', () => {
     it('Should succesfully deprecate an existing code', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${code.id}/undeprecate`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.OK);
     });
@@ -474,7 +480,7 @@ describe('/meta', () => {
     it('Should throw an error when code is not a valid guid', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/unknownType/undeprecate`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
@@ -482,7 +488,7 @@ describe('/meta', () => {
     it('Should throw an error when code is not found', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${faker.random.uuid()}/undeprecate`)
-        .set('Authorization', `Bearer ${adminToken}`);
+        .set('Authorization', `Bearer ${tokens.admin}`);
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
@@ -490,7 +496,7 @@ describe('/meta', () => {
     it('Should throw an error without admin permission', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/meta/codes/${code.id}/undeprecate`)
-        .set('Authorization', `Bearer ${userToken}`);
+        .set('Authorization', `Bearer ${tokens.regular}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);

@@ -1,11 +1,10 @@
 import * as uuid from 'uuid';
-import { generateRandomHash } from 'tree-house-authentication';
-import { User, UserCreate } from '../../../src/models/user.model';
 import { roles } from '../../../src/config/roles.config';
 import { tableNames } from '../../../src/constants';
 import { db } from '../../../src/lib/db';
-import * as userRepository from '../../../src/repositories/user.repository';
+import { UserCreate } from '../../../src/models/user.model';
 import * as metaRepository from '../../../src/repositories/meta.repository';
+import * as userRepository from '../../../src/repositories/user.repository';
 
 // Constants
 const userStatuses = {};
