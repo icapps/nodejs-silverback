@@ -1,19 +1,19 @@
 export const roles = <Roles>{
   USER: {
     code: 'USER',
-    name: 'user',
+    name: 'User',
     description: 'roles:user', // i18n key
     level: 0,
   },
   ADMIN: {
     code: 'ADMIN',
-    name: 'admin',
+    name: 'Admin',
     description: 'roles:admin', // i18n key
     level: 10,
   },
   SUPERUSER: {
     code: 'SUPER_USER',
-    name: 'superuser',
+    name: 'Superuser',
     description: 'roles:superuser', // i18n key
     level: 999,
   },

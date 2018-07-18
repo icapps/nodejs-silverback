@@ -91,7 +91,17 @@ describe('/auth', () => {
           email: regularUser.email,
           password: 'invalidPw',
         });
-
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
+      expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
+    });
+    it('Should throw error when invalid user is provided', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          email: 'fakeuser@icapps.com',
+          password: 'invalidPw',
+        });
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
@@ -104,6 +114,8 @@ describe('/auth', () => {
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
+      expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
 
     it('Should throw error when user has no access', async () => {
@@ -112,9 +124,8 @@ describe('/auth', () => {
         .post(`${prefix}/auth/login`)
         .send({
           email: 'newuser@gmail.com',
-          password: noAccessUser.password,
+          password: 'developer',
         });
-
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
       expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
       expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
@@ -182,7 +193,6 @@ describe('/auth', () => {
       expect(loggedInUser.refreshToken).not.toEqual(body.data.refreshToken);
       expect(loggedInUser.refreshToken).toEqual(body2.data.refreshToken);
     });
-
 
     it('Should throw an error when trying to refresh without valid access token', async () => {
       const invalidToken = await getValidJwt(faker.random.uuid());
@@ -272,6 +282,8 @@ describe('/auth', () => {
         .get(`${prefix}/forgot-password/verify`)
         .query('token=unknownToken');
       expect(status).toEqual(httpStatus.NOT_FOUND);
+      expect(body.errors[0].code).toEqual(errors.LINK_EXPIRED.code);
+      expect(body.errors[0].detail).toEqual(errors.LINK_EXPIRED.message);
     });
 
     it('Should throw an error when no token is provided', async () => {
