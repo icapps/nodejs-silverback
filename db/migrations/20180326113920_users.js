@@ -9,7 +9,9 @@ exports.up = async (knex) => {
     table.text('last_name').notNullable();
     table.text('email').notNullable();
     table.text('role').notNullable();
-    table.boolean('registration_completed').defaultTo(false);
+
+    // Status of the account
+    table.uuid('status').notNullable().references('codes.id');
 
     // Nullable
     table.text('password').nullable();

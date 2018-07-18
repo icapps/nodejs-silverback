@@ -11,10 +11,13 @@ export function applyPagination(query: knex.QueryBuilder, filters: Filters): voi
 
 /**
  * Apply basic sorting to a query (field must be available for sorting)
+ * query can be 'any' due to outdated knex typings file (no support for clearOrder)
  */
-export function applySorting(query: knex.QueryBuilder, filters: Filters, availableFields: string[] = []): void {
+export function applySorting(query: knex.QueryBuilder | any, filters: Filters, availableFields: string[] = [], defaultSort?: DefaultSorting): void {
+  if (defaultSort) query.orderBy(defaultSort.field, defaultSort.order === 'desc' ? 'desc' : 'asc');
   if (filters.sortOrder && filters.sortField) {
     if (availableFields.includes(filters.sortField)) {
+      query.clearOrder();
       query.orderBy(filters.sortField, filters.sortOrder === 'desc' ? 'desc' : 'asc');
     }
   }
@@ -31,4 +34,10 @@ export function applySearch(query: knex.QueryBuilder, filters: Filters, availabl
         : query.orWhereRaw('??::text ilike ?', [field, `%${filters.search}%`]);
     });
   }
+}
+
+// Interfaces
+export interface DefaultSorting {
+  field: string;
+  order: string;
 }

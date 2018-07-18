@@ -10,7 +10,7 @@ import { User } from '../models/user.model';
 import { Role } from '../config/roles.config';
 import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
-import { hasRole } from '../lib/utils';
+import { hasRole, checkStatus } from '../lib/utils';
 
 /**
  * Generate a new jwt token and refresh token for a user
@@ -33,16 +33,15 @@ export async function login(payload: AuthCredentials, role?: Role) {
     const user = await userRepository.findByEmail(email);
     if (!user) throw new AuthenticationError(errors.USER_INVALID_CREDENTIALS);
 
+    // Match password
     const passwordMatch = await comparePassword(password, user.password);
     if (!passwordMatch) throw new AuthenticationError(errors.USER_INVALID_CREDENTIALS);
 
+    // Check if user has access
+    checkStatus(user);
+
     // Must have a specific role to login here
     if (role && !hasRole(user, role)) throw new UnauthorizedError(errors.NO_PERMISSION);
-
-    // Check if still has access
-    if (!user.hasAccess) throw new UnauthorizedError(errors.USER_INACTIVE);
-
-    // Match password
 
     // Generate JWT and refresh token
     return await generateTokens(user.id);

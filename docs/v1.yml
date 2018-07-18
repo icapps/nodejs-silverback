@@ -663,8 +663,8 @@ definitions:
           type: string
         email:
           type: string
-        hasAccess:
-          type: boolean
+        status:
+          $ref: "#/definitions/Status"
         role:
           $ref: "#/definitions/UserRole"
         createdAt:
@@ -707,9 +707,9 @@ definitions:
         - "email"
         - "firstName"
         - "lastName"
-        - "hasAccess"
         - "role"
         - "password"
+        - "status"
       properties:
         email:
           type: string
@@ -719,8 +719,9 @@ definitions:
           type: string
         password:
           type: string
-        hasAccess:
-          type: boolean
+        status:
+          type: string
+          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
         role:
           type: string
           enum: ["USER", "ADMIN"]
@@ -731,7 +732,7 @@ definitions:
         - "firstName"
         - "lastName"
         - "role"
-        - "hasAccess"
+        - "status"
       properties:
         email:
           type: string
@@ -739,8 +740,9 @@ definitions:
           type: string
         lastName:
           type: string
-        hasAccess:
-          type: boolean
+        status:
+          type: string
+          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
         role:
           type: string
           enum: ["USER", "ADMIN"]
@@ -753,8 +755,9 @@ definitions:
           type: string
         lastName:
           type: string
-        hasAccess:
-          type: boolean
+        status:
+          type: string
+          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
         role:
           type: string
           enum: ["USER", "ADMIN"]
@@ -821,6 +824,15 @@ definitions:
           type: array
           items:
             $ref: "#/definitions/UserRole"
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
     Code:
       type: object
       properties:

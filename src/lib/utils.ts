@@ -29,3 +29,11 @@ export function extractJwt(req: Request) {
   if (headers.split(' ')[0] !== 'Bearer') throw new UnauthorizedError(errors.MISSING_HEADERS);
   return headers.split(' ')[1];
 }
+
+/**
+ * check if user has the right status for the operation
+ */
+export function checkStatus(user: User): void {
+  if (user.status.code === 'COMPLETE_REGISTRATION') throw new UnauthorizedError(errors.USER_UNCONFIRMED);
+  if (user.status.code === 'BLOCKED') throw new UnauthorizedError(errors.USER_BLOCKED);
+}

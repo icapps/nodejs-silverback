@@ -12,8 +12,8 @@ export async function createCode(codeTypeId: string, values: CodeCreate) {
   return metaRepository.createCode(codeTypeId, values);
 }
 
-export function clearCodeTypesData() {
-  return db(tableNames.CODETYPES).del();
+export function clearCodeTypesData(codeType: string) {
+  return db(tableNames.CODETYPES).del().where('code', codeType);
 }
 
 export function clearCodesData() {
