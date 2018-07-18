@@ -10,14 +10,11 @@ before_script:
   - psql -U postgres silverback_test -c 'create extension if not exists "uuid-ossp";'
 
 node_js:
+  - "node"
   - "8"
   - "10"
 
 sudo: false
-
-cache:
-  directories:
-    - "node_modules"
 
 script:
   - npm run lint

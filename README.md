@@ -12,8 +12,6 @@ NodeJS boilerplate project
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-You can clone this repository using the [Ollie CLI tool](https://github.com/icapps/ollie).
-
 ### Prerequisites
 
 Make sure you have [Node.js](http://nodejs.org/) and [Docker](https://docs.docker.com/install/) (preferably) installed.

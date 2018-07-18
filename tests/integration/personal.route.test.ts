@@ -57,8 +57,8 @@ describe('/me', () => {
           email: 'test@unknown12.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          hasAccess: false,
           role: roles.ADMIN.code,
+          status: 'REGISTERED',
         });
 
       expect(status).toEqual(httpStatus.OK);
@@ -66,6 +66,23 @@ describe('/me', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
+    });
+
+    it('Should throw an error when user status does not exist', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/me`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          email: 'test@unknown12.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          role: roles.ADMIN.code,
+          status: 'NON_EXISTING_STATUS',
+        });
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+      expect(body.errors[0].code).toEqual(errors.STATUS_NOT_FOUND.code);
+      expect(body.errors[0].detail).toEqual(errors.STATUS_NOT_FOUND.message);
     });
 
     it('Should throw an error when user does not exist', async () => {
