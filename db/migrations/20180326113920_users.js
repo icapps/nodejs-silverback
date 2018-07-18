@@ -15,7 +15,6 @@ exports.up = async (knex) => {
 
     // Nullable
     table.text('password').nullable();
-    table.boolean('has_access').nullable();
     table.text('reset_pw_token').nullable();
     table.text('refresh_token').nullable();
 
