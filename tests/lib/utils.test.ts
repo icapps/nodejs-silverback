@@ -2,8 +2,8 @@ import * as httpMocks from 'node-mocks-http';
 import { UnauthorizedError } from 'tree-house-errors';
 import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
-import { User } from '../../src/models/user.model';
 import * as utils from '../../src/lib/utils';
+import { User } from '../../src/models/user.model';
 
 describe('lib/utils', () => {
   describe('hasRole', () => {

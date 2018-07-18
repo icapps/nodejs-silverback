@@ -1,24 +1,26 @@
-import * as request from 'supertest';
+import * as faker from 'faker';
 import * as httpStatus from 'http-status';
 import * as Joi from 'joi';
-import * as faker from 'faker';
+import * as request from 'supertest';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
-import { clearAll } from '../_helpers/mockdata/data';
-import { createUser, findById, regularUser, unconfirmedUser, setResetPwToken, clearUserData, adminUser } from '../_helpers/mockdata/user.data';
-import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
-import { getUserToken, getValidJwt } from '../_helpers/mockdata/auth.data';
 import * as mailer from '../../src/lib/mailer';
+import { getValidJwt } from '../_helpers/mockdata/auth.data';
+import { clearAll } from '../_helpers/mockdata/data';
+import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers } from '../_helpers/mockdata/user.data';
+import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 
 describe('/auth', () => {
   const prefix = `/api/${process.env.API_VERSION}`;
-  let user;
-  let userAdmin;
+  const users = { regular: null, admin: null };
 
   beforeAll(async () => {
     await clearAll();
-    user = await createUser(regularUser, 'registered');
-    userAdmin = await createUser(adminUser, 'registered');
+
+    // Create a regular and admin user
+    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'registered');
+    const sorted = createdUsers.sort((a, b) => a.role.code.localeCompare(b.role.code));
+    [users.admin, users.regular] = sorted;
   });
 
   afterAll(async () => {
@@ -41,7 +43,7 @@ describe('/auth', () => {
         if (!value) throw new Error('no value to check schema');
       });
 
-      const loggedInUser = await findById(user.id);
+      const loggedInUser = await findById(users.regular.id);
       expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
@@ -59,7 +61,7 @@ describe('/auth', () => {
         if (!value) throw new Error('no value to check schema');
       });
 
-      const loggedInUser = await findById(user.id);
+      const loggedInUser = await findById(users.regular.id);
       expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
@@ -163,7 +165,7 @@ describe('/auth', () => {
         if (!value) throw new Error('no value to check schema');
       });
 
-      const loggedInUser = await findById(userAdmin.id);
+      const loggedInUser = await findById(users.admin.id);
       expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
@@ -204,7 +206,7 @@ describe('/auth', () => {
         if (!value) throw new Error('no value to check schema');
       });
 
-      const loggedInUser = await findById(user.id);
+      const loggedInUser = await findById(users.regular.id);
       expect(loggedInUser.refreshToken).not.toEqual(body.data.refreshToken);
       expect(loggedInUser.refreshToken).toEqual(body2.data.refreshToken);
     });
@@ -237,10 +239,9 @@ describe('/auth', () => {
 
       expect(status2).toEqual(httpStatus.OK);
 
-      const loggedInUser = await findById(user.id);
+      const loggedInUser = await findById(users.regular.id);
       expect(loggedInUser.refreshToken).toEqual(null);
     });
-
 
     it('Should throw an error when user was not found', async () => {
       const invalidToken = await getValidJwt(faker.random.uuid());
@@ -340,7 +341,7 @@ describe('/auth', () => {
     });
 
     it('Should throw an error when the token is invalid', async () => {
-      const token = await setResetPwToken(user.id);
+      const token = await setResetPwToken(users.regular.id);
       const { body, status } = await request(app)
         .put(`${prefix}/forgot-password/confirm?token=invalidToken`)
         .send({ password: 'newPassword123' });
@@ -349,7 +350,7 @@ describe('/auth', () => {
     });
 
     it('Should throw an error when no password is provided', async () => {
-      const token = await setResetPwToken(user.id);
+      const token = await setResetPwToken(users.regular.id);
       const { body, status } = await request(app)
         .put(`${prefix}/forgot-password/confirm?token=${token}`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);

@@ -1,6 +1,5 @@
 import { getRedisClient } from '../../../src/lib/memory-store';
 
-
 /**
  * Clear Redis memory store
  */
