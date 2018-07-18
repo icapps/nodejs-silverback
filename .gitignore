@@ -24,7 +24,7 @@ node_modules
 
 # NPM
 .npm
-package-lock.json
+yarn.lock
 
 # Yarn
 .yarnclean
@@ -35,3 +35,6 @@ yarn-error.log
 
 # Database data
 data
+
+# Translations
+locales/

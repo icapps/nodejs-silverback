@@ -3,7 +3,7 @@ import * as Joi from 'joi';
 export const authSchema = {
   login: {
     body: Joi.object({
-      username: Joi.string().required(),
+      email: Joi.string().email().required(),
       password: Joi.string().required(),
       deviceId: Joi.string(),
     }),

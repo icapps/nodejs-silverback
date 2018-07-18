@@ -1,5 +1,17 @@
 const dotenvSafe = require('dotenv');
 dotenvSafe.config(); // No dotenv-safe otherwise tests will fail due to settings at runtime
+const toCamelCase = require('camelcase-keys');
+const _ = require('lodash');
+
+const nestFlatlist = flatList => {
+  const nestedObject = {};
+  _.forEach(flatList, (value, key) => _.set(nestedObject, key, value));
+  return nestedObject;
+}
+
+function snakeCase(str) {
+  return str.replace(/([A-Z])/g, $1 => "_" + $1.toLowerCase());
+}
 
 const defaultConfig = {
   client: 'pg',
@@ -15,6 +27,19 @@ const defaultConfig = {
   },
   seeds: {
     directory: `${__dirname}/db/seeds`,
+  },
+
+  // camelCase keys response from query
+  postProcessResponse: (result, queryContext) => {
+    if (!result || typeof (result) === 'number' || typeof result === 'string') return result;
+    if (Array.isArray(result)) return result.map(row => toCamelCase(nestFlatlist(row)));
+    return toCamelCase(nestFlatlist(result));
+  },
+
+  // snake_case keys in query
+  wrapIdentifier: (value, origImpl, queryContext) => {
+    if (value === '*' || value === 'COUNT(*) OVER()') return value;
+    return origImpl(snakeCase(value));
   },
 };
 

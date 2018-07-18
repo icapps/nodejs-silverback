@@ -6,8 +6,8 @@ import { CodeType, CodeTypeCreate } from '../models/code-type.model';
 import { applyPagination, applySearch, applySorting } from '../lib/filter';
 import { Filters } from '../models/filters.model';
 
-const defaultCodeReturnValues = ['id', 'code', 'name', 'description', 'codeTypeId'];
-const defaultCodeTypeReturnValues = ['id', 'code', 'name', 'description'];
+const defaultCodeReturnValues = ['id', 'code', 'name', 'description', 'codeTypeId', 'deprecated', 'createdAt', 'updatedAt'];
+const defaultCodeTypeReturnValues = ['id', 'code', 'name', 'description', 'createdAt', 'updatedAt'];
 
 /**
  * Create a new codeType
@@ -19,7 +19,6 @@ export async function createCodeType(values: CodeTypeCreate): Promise<CodeType> 
   logger.debug(`Create new codeType: ${query.toString()}`);
   return (await query)[0];
 }
-
 
 /**
  * Create a new code
@@ -33,7 +32,6 @@ export async function createCode(codeTypeId: string, values: CodeCreate): Promis
   return (await query)[0];
 }
 
-
 /**
  * Update an existing code
  */
@@ -46,11 +44,10 @@ export async function updateCode(codeId: string, values: CodeUpdate | PartialCod
   return (await query)[0];
 }
 
-
 /**
  * Find a code type via its code
  */
-export async function findCodeTypeByCode(code: string): Promise<{ id: string }> {
+export async function findCodeTypeByCode(code: string): Promise<Code> {
   const query = selectAndCount(db, defaultCodeTypeReturnValues)
     .from(tableNames.CODETYPES)
     .where('code', code.toUpperCase())
@@ -60,6 +57,19 @@ export async function findCodeTypeByCode(code: string): Promise<{ id: string }> 
   return await query;
 }
 
+/**
+ * Return whether a code is unique
+ */
+export async function isUniqueCode(code: string, codeTypeId: string): Promise<boolean> {
+  const query = db(tableNames.CODES)
+    .select(defaultCodeReturnValues)
+    .where('code', code.toUpperCase())
+    .andWhere('codeTypeId', codeTypeId)
+    .first();
+
+  logger.debug(`Get code by code and codeTypeId: ${query.toString()}`);
+  return !(await query); // If no result -> code is unique
+}
 
 /**
  * Return all codes for a specific code type
@@ -71,11 +81,29 @@ export async function findAllCodes(codeTypeId: string, options: Filters): Promis
     .from(tableNames.CODES)
     .where('codeTypeId', codeTypeId);
 
+  // Hide deprecated codes unless otherwise requested
+  if (!allOptions.showDeprecated) {
+    query.where('deprecated', false);
+  }
+
   applyPagination(query, allOptions);
   applySearch(query, allOptions, ['id', 'code', 'name']);
-  applySorting(query, allOptions, ['code', 'name']);
+  applySorting(query, allOptions, ['code', 'name', 'deprecated']);
   logger.debug(`Get all codes: ${query.toString()}`);
 
   const data = await query;
   return { data, totalCount: parseTotalCount(data) };
+}
+
+/**
+ * Get a code by id
+ */
+export async function findById(id: string): Promise<Code> {
+  const query = db(tableNames.CODES)
+    .select(defaultCodeReturnValues)
+    .where('id', id)
+    .first();
+
+  logger.debug(`Get code by id: ${query.toString()}`);
+  return await query;
 }

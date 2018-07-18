@@ -1,7 +1,8 @@
 import * as httpStatus from 'http-status';
 import { Response } from 'express';
-import { parseErrors } from 'tree-house-errors';
+import { parseErrors, I18nOptions } from 'tree-house-errors';
 import { ErrorSerializer } from 'jsonade';
+import { envs, errorTranslations } from '../constants';
 import { logger } from '../lib/logger';
 
 /**
@@ -17,9 +18,16 @@ export const responder: { success: Function, error: Function } = {
     logger.debug('Response: ', serializer.serialize(payload, { totalCount }));
     return res.status(status).json(serializer.serialize(payload, { totalCount }));
   },
-  error: (res: Response, errors: any) => {
+  error: (req: Request, res: Response, errors: any) => {
     logger.debug('Error:', errors);
-    const parsedError = parseErrors(errors);
+
+    const i18nOptions: I18nOptions = {
+      language: req.headers ? (req.headers['accept-language'] || 'en') : 'en',
+      path: errorTranslations,
+    };
+    const parsedError = parseErrors(errors, i18nOptions);
+
+    if (process.env.NODE_ENV === envs.PRODUCTION) Object.assign(parsedError, { meta: undefined }); // Do not send stacktrace in production
     const serializerError = ErrorSerializer.serialize([parsedError]);
 
     logger.error('Error response: ', serializerError);

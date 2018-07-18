@@ -1,4 +1,7 @@
 import * as Joi from 'joi';
+import { roles } from '../config/roles.config';
+
+const availableRoles = Object.keys(roles).reduce((array, current) => [...array, roles[current].code], []); // Collection to array
 
 export const userSchema = {
   findAllUsers: {
@@ -23,9 +26,12 @@ export const userSchema = {
       email: Joi.string().email().required(),
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
-      hasAccess: Joi.boolean().required(),
-      role: Joi.string().required(),
-      password: Joi.string().required(),
+      role: Joi.string().required().valid(availableRoles),
+      status: Joi.string().required(),
+      password: Joi.string().min(6).when('query.changePassword', {
+        is: Joi.valid(true),
+        then: Joi.required(),
+      }),
     }),
   },
   update: {
@@ -36,8 +42,16 @@ export const userSchema = {
       email: Joi.string().email().required(),
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
-      hasAccess: Joi.boolean().required(),
-      role: Joi.string().required(),
+      status: Joi.string().required(),
+      role: Joi.string().required().valid(availableRoles),
+    }),
+  },
+  updatePassword: {
+    params: {
+      userId: Joi.string().guid(),
+    },
+    body: Joi.object({
+      password: Joi.string().min(6).required(),
     }),
   },
   partialUpdate: {
@@ -48,8 +62,8 @@ export const userSchema = {
       email: Joi.string().email(),
       firstName: Joi.string(),
       lastName: Joi.string(),
-      hasAccess: Joi.boolean(),
-      role: Joi.string(),
+      status: Joi.string(),
+      role: Joi.string().allow(availableRoles),
     }),
   },
   remove: {

@@ -5,8 +5,8 @@ import * as httpStatus from 'http-status';
 import { app } from '../../src/app';
 import { environment } from '../test.config';
 
-describe('/', () => {
-  const prefix = `/api/${process.env.API_VERSION}`;
+describe('/config', () => {
+  const prefix = `/api/${process.env.API_VERSION}/config`;
 
   describe('GET /version', () => {
     it('Should successfully return api version', async () => {
@@ -16,7 +16,7 @@ describe('/', () => {
       expect(status).toEqual(httpStatus.OK);
       expect(body.data).toEqual({
         build: environment.HEROKU_RELEASE_VERSION,
-        version: '1.0.0', // TODO: Dynamic value from package.json
+        version: expect.any(String),
       });
     });
   });

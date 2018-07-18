@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import * as uuid from 'uuid';
 import { AuthCredentials } from '../models/auth.model';
 import { AuthenticationError, UnauthorizedError, NotFoundError } from 'tree-house-errors';
 import { comparePassword, createJwt } from 'tree-house-authentication';
@@ -7,38 +7,41 @@ import { logger } from '../lib/logger';
 import { errors } from '../config/errors.config';
 import { getForgotPwContent } from '../templates/forgot-pw.mail.template';
 import { User } from '../models/user.model';
+import { Role } from '../config/roles.config';
 import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
-
+import { hasRole, checkStatus } from '../lib/utils';
 
 /**
  * Generate a new jwt token and refresh token for a user
  */
 export async function generateTokens(userId: string) {
   const accessToken = await createJwt({ userId }, jwtConfig);
-  const refreshToken = crypto.randomBytes(24).toString('hex'); // TODO: Use tree-house-authentication
+  const refreshToken = uuid.v4();
   await userRepository.update(userId, { refreshToken });
 
   return { accessToken, refreshToken };
 }
 
-
 /**
- * Login user with username and password
+ * Login user with email and password
  * Returns accessToken and refreshToken
  */
-export async function login(payload: AuthCredentials) {
-  const { username, password } = payload;
+export async function login(payload: AuthCredentials, role?: Role) {
+  const { email, password } = payload;
   try {
-    const user = await userRepository.findByEmail(username);
-    if (!user) throw new AuthenticationError();
-
-    // Check if still has access
-    if (!user.hasAccess) throw new UnauthorizedError(errors.USER_INACTIVE);
+    const user = await userRepository.findByEmail(email);
+    if (!user) throw new AuthenticationError(errors.USER_INVALID_CREDENTIALS);
 
     // Match password
     const passwordMatch = await comparePassword(password, user.password);
-    if (!passwordMatch) throw new AuthenticationError();
+    if (!passwordMatch) throw new AuthenticationError(errors.USER_INVALID_CREDENTIALS);
+
+    // Check if user has access
+    checkStatus(user);
+
+    // Must have a specific role to login here
+    if (role && !hasRole(user, role)) throw new UnauthorizedError(errors.NO_PERMISSION);
 
     // Generate JWT and refresh token
     return await generateTokens(user.id);
@@ -47,7 +50,6 @@ export async function login(payload: AuthCredentials) {
     throw error;
   }
 }
-
 
 /**
  * Refresh access token via a refresh token
@@ -65,7 +67,6 @@ export async function refresh(userId: string, refreshToken: string) {
   }
 }
 
-
 /**
  * Logout an existing user by removing its refresh token
  */
@@ -78,7 +79,6 @@ export async function logout(userId: string) {
   }
 }
 
-
 /**
  * Start the forgot password flow by generating an email with a reset link
  */
@@ -87,8 +87,7 @@ export async function initForgotPw(email: string) {
     const user = await userRepository.findByEmail(email);
     if (!user) throw new NotFoundError();
 
-    // const token = generateRandomHash('sha256', tokenConfig.secretOrKey);
-    const token = crypto.randomBytes(24).toString('hex'); // TODO: Integrate this in tree-house-authentication to replace generateRandomHash
+    const token = uuid.v4();
     await userRepository.update(user.id, { resetPwToken: token });
 
     // Send email with reset link
@@ -100,20 +99,18 @@ export async function initForgotPw(email: string) {
   }
 }
 
-
 /**
  * Verify if a forgot password reset token is still valid
  */
 export async function verifyForgotPw(token: string): Promise<void> {
   try {
     const user = await userRepository.findByResetToken(token);
-    if (!user || !user.resetPwToken) throw new NotFoundError();
+    if (!user || !user.resetPwToken) throw new NotFoundError(errors.LINK_EXPIRED);
   } catch (error) {
     logger.error(`An error occured trying to verify reset password token: %${error}`);
     throw error;
   }
 }
-
 
 /**
  * Confirm a newly choosen password

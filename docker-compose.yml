@@ -1,5 +1,10 @@
 version: '3.3'
 services:
+  redis:
+    image: redis:latest
+    container_name: redis_silverback
+    ports:
+      - "6379:6379"
   postgres:
     image: sameersbn/postgresql:latest
     container_name: pgsql_silverback

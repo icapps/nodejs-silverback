@@ -32,6 +32,11 @@ export const routes: Router = Router({ mergeParams: true })
     validateSchema(userSchema.update),
     handleAsyncFn(controller.update))
 
+  .put('/:userId/password', (req, res, next) =>
+    hasPermission(req, res, next, roles.ADMIN),
+    validateSchema(userSchema.updatePassword),
+    handleAsyncFn(controller.updatePassword))
+
   .patch('/:userId', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(userSchema.partialUpdate),
@@ -41,4 +46,3 @@ export const routes: Router = Router({ mergeParams: true })
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(userSchema.remove),
     handleAsyncFn(controller.remove));
-

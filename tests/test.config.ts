@@ -1,5 +1,8 @@
+import { envs, errorTranslations } from '../src/constants';
+import { existsSync, mkdirSync } from 'fs';
+
 export const environment = {
-  NODE_ENV: 'test',
+  NODE_ENV: envs.TEST,
   LOG_LEVEL: 'info',
   DATABASE_URL: 'postgres://developer:developer@localhost:5432/silverback_test',
   API_VERSION: 'v1',
@@ -11,6 +14,7 @@ export const environment = {
   MIN_VERSION_IOS: '1.0.0',
   LATEST_VERSION_IOS: '2.0.2',
   MANDRILL_API_KEY: 'myKey',
+  REDISCLOUD_URL: 'redis://0.0.0.0:6379',
 };
 
 Object.keys(environment).forEach((key) => {
@@ -20,5 +24,10 @@ Object.keys(environment).forEach((key) => {
 // Must be after env variables
 import { logger } from '../src/lib/logger';
 
-// Overwrite error console.logs
-logger.error = jest.fn((error) => { });
+// Locales folder
+if (!existsSync(errorTranslations)) {
+  mkdirSync(errorTranslations);
+}
+
+// Overwrite warn/error console.logs
+logger.error = jest.fn(() => {});

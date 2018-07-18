@@ -1,11 +1,13 @@
 import * as httpStatus from 'http-status';
 import { Request, Response } from 'express';
+import { BadRequestError } from 'tree-house-errors';
 import { responder } from '../lib/responder';
 import { userSerializer } from '../serializers/user.serializer';
 import { roles } from '../config/roles.config';
+import { errors } from '../config/errors.config';
 import { roleSerializer } from '../serializers/role.serializer';
+import { AuthRequest } from '../models/request.model';
 import * as userService from '../services/user.service';
-
 
 /**
  * Get a user by id
@@ -18,7 +20,6 @@ export async function findById(req: Request, res: Response): Promise<void> {
     serializer: userSerializer,
   });
 }
-
 
 /**
  * Return all users
@@ -33,12 +34,12 @@ export async function findAll(req: Request, res: Response): Promise<void> {
   });
 }
 
-
 /**
  * Create a new user
  */
 export async function create(req: Request, res: Response): Promise<void> {
   const { changePassword } = req.query;
+
   const result = await userService.create(req.body, changePassword);
   responder.success(res, {
     status: httpStatus.CREATED,
@@ -46,7 +47,6 @@ export async function create(req: Request, res: Response): Promise<void> {
     serializer: userSerializer,
   });
 }
-
 
 /**
  * Update an existing user
@@ -60,7 +60,6 @@ export async function update(req: Request, res: Response): Promise<void> {
   });
 }
 
-
 /**
  * Update a property of an existing user
  */
@@ -73,18 +72,27 @@ export async function partialUpdate(req: Request, res: Response): Promise<void> 
   });
 }
 
+/**
+ * Update a user's password
+ */
+export async function updatePassword(req: Request, res: Response): Promise<void> {
+  const { password } = req.body;
+  await userService.updatePassword(req.params.userId, password);
+  responder.success(res, {
+    status: httpStatus.OK,
+  });
+}
 
 /**
  * Remove an existing user
  */
-export async function remove(req: Request, res: Response): Promise<void> {
+export async function remove(req: AuthRequest, res: Response): Promise<void> {
+  if (req.session.user.id === req.params.userId) throw new BadRequestError(errors.USER_DELETE_OWN);
   await userService.remove(req.params.userId);
   responder.success(res, {
     status: httpStatus.NO_CONTENT,
   });
 }
-
-
 
 /**
  * Return all available user roles

@@ -5,12 +5,16 @@ import * as faker from 'faker';
 import * as _ from 'lodash';
 import { app } from '../../src/app';
 import { clearAll } from '../_helpers/mockdata/data';
-import { validUsers, validUser, adminUser, regularUser, createUsers, clearUserData, createUser, findById } from '../_helpers/mockdata/user.data';
+import {
+  validUsers, validUser, adminUser, regularUser, createUsers, clearUserData, createUser, findById,
+  removeUser,
+} from '../_helpers/mockdata/user.data';
 import { usersSchema, userSchema, createUserSchema, userByIdSchema } from '../_helpers/payload-schemes/user.schema';
 import { rolesSchema } from '../_helpers/payload-schemes/role.schema';
 import { getValidJwt, getAdminToken, getUserToken } from '../_helpers/mockdata/auth.data';
 import { roles } from '../../src/config/roles.config';
 import { errors } from '../../src/config/errors.config';
+import { findRoleByCode } from '../../src/lib/utils';
 import * as mailer from '../../src/lib/mailer';
 
 describe('/users', () => {
@@ -33,7 +37,7 @@ describe('/users', () => {
     let users;
 
     beforeAll(async () => {
-      await createUsers(validUsers); // Creates 3 valid users
+      await createUsers(validUsers, 'registered'); // Creates 3 valid users
       users = [regularUser, adminUser, ...validUsers];
     });
 
@@ -118,6 +122,39 @@ describe('/users', () => {
       });
     });
 
+    it('Should return users in ascending order for status', async () => {
+      // create inactive company
+      const blockedUser = await createUser({
+        email: 'inactive@users.com',
+        firstName: 'In',
+        lastName: 'Active',
+        password: 'developer',
+        role: roles.USER.code,
+        status: '',
+      }, 'blocked');
+
+      const { body, status } = await request(app)
+        .get(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .query('sortField=status')
+        .query('sortOrder=asc');
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.data).toHaveLength(6);
+      expect(body.meta).toMatchObject({
+        type: 'users',
+        count: 6,
+        totalCount: 6,
+      });
+
+      // expect first user status to be BLOCKED
+      expect(body.data[0].status.code).toEqual('BLOCKED');
+      expect(body.data[0].id).toEqual(blockedUser.id);
+
+      // cleanup
+      await removeUser(blockedUser.id);
+    });
+
     it('Should return all users when invalid sorting field is provided', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
@@ -133,8 +170,9 @@ describe('/users', () => {
         totalCount: 5,
       });
 
+      const sorted = _.sortBy(users, 'email').reverse(); // Default sorting order
       body.data.forEach((user, index) => {
-        expect(user.email).toEqual(users[index].email);
+        expect(user.email).toEqual(sorted[index].email);
       });
     });
 
@@ -159,6 +197,7 @@ describe('/users', () => {
     it('Should throw an error when user has no admin rights', async () => {
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
+        .set('Accept-Language', 'nl')
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
@@ -171,7 +210,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser);
+      user = await createUser(validUser, 'registered');
     });
 
     afterAll(async () => {
@@ -189,9 +228,9 @@ describe('/users', () => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        hasAccess: user.hasAccess,
-        role: user.role,
+        role: findRoleByCode(user.role.code),
       });
+
       Joi.validate(body, userByIdSchema, (err, value) => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
@@ -237,7 +276,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          hasAccess: false,
+          status: 'REGISTERED',
           role: roles.ADMIN.code,
         });
 
@@ -261,7 +300,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          hasAccess: false,
+          status: 'COMPLETE_REGISTRATION',
           role: roles.ADMIN.code,
         });
 
@@ -271,9 +310,25 @@ describe('/users', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
-
       const createdUser = await findById(body.data.id);
       expect(createdUser.resetPwToken).toEqual(expect.any(String));
+      expect(createdUser.status.code).toEqual('COMPLETE_REGISTRATION');
+    });
+
+    it('Should throw an error when trying to create a user without changing pw and providing pw', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          status: 'REGISTERED',
+          role: roles.ADMIN.code,
+        });
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
     });
 
     it('Should throw an error when trying to create a duplicate user', async () => {
@@ -285,7 +340,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          hasAccess: false,
+          status: 'REGISTERED',
           role: roles.ADMIN.code,
         });
       expect(status).toEqual(httpStatus.CREATED);
@@ -298,10 +353,46 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          hasAccess: false,
+          status: 'REGISTERED',
           role: roles.ADMIN.code,
         });
       expect(status2).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when status is not found', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'random@unknown.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          password: 'developer',
+          status: 'INVALID',
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+      expect(body.errors[0].code).toEqual(errors.STATUS_NOT_FOUND.code);
+      expect(body.errors[0].title).toEqual(errors.STATUS_NOT_FOUND.message);
+    });
+
+    it('Should throw a validation error when password does not have the minimum length', async () => {
+      const { body, status } = await request(app)
+        .post(`${prefix}/users`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@noPw124.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          password: '1',
+          status: 'REGISTERED',
+          role: roles.ADMIN.code,
+        });
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
     });
 
     it('Should throw a validation error when not all fields are provided', async () => {
@@ -313,6 +404,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
+          status: 'REGISTERED',
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -329,7 +421,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          hasAccess: false,
+          status: 'REGISTERED',
           role: roles.ADMIN.code,
         });
 
@@ -343,7 +435,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser);
+      user = await createUser(validUser, 'registered');
     });
 
     afterAll(async () => {
@@ -358,8 +450,8 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          hasAccess: false,
           role: roles.ADMIN.code,
+          status: 'REGISTERED',
         });
 
       expect(status).toEqual(httpStatus.OK);
@@ -376,8 +468,7 @@ describe('/users', () => {
         firstName: 'Test',
         lastName: 'Unknown',
         password: expect.any(String),
-        hasAccess: false,
-        role: roles.ADMIN.code,
+        role: findRoleByCode(roles.ADMIN.code),
       });
     });
 
@@ -389,8 +480,8 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          hasAccess: false,
           role: roles.ADMIN.code,
+          status: 'REGISTERED',
         });
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
@@ -403,8 +494,8 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          hasAccess: false,
           role: roles.ADMIN.code,
+          status: 'REGISTERED',
         });
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
@@ -417,11 +508,31 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
+          status: 'REGISTERED',
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
       expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
       expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
+    it('Should throw an error when trying to manually update registrationCompleted status', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          email: 'test@unknown2.com',
+          firstName: 'Test',
+          lastName: 'Unknown',
+          role: roles.ADMIN.code,
+          registrationCompleted: true,
+          status: 'REGISTERED',
+        });
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+      expect(body.errors[0].detail[0].messages[0]).toMatch(/"registrationCompleted" is not allowed/);
     });
 
     it('Should throw an error when user has no admin rights', async () => {
@@ -432,8 +543,84 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          hasAccess: false,
           role: roles.ADMIN.code,
+          status: 'REGISTERED',
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
+    });
+  });
+
+  describe('PUT /:userId/password', () => {
+    let user;
+
+    beforeAll(async () => {
+      user = await createUser(validUser, 'registered');
+    });
+
+    afterAll(async () => {
+      await clearUserData(); // Clear user db (except users for tokens)
+    });
+
+    it('Should succesfully update an existing user password', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}/password`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          password: 'myNewPw',
+        });
+      expect(status).toEqual(httpStatus.OK);
+      const updatedUser = await findById(user.id);
+      expect(updatedUser.status.code).toEqual('REGISTERED');
+
+      const { status: status2 } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          email: user.email,
+          password: 'myNewPw',
+        });
+      expect(status2).toEqual(httpStatus.OK);
+    });
+
+    it('Should throw an error when user id is not a valid guid', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/unknownId/password`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          password: 'myNewPw',
+        });
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when user does not exist', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${faker.random.uuid()}/password`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          password: 'myNewPw',
+        });
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error when not all fields are provided', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}/password`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({});
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
+    it('Should throw an error when user has no admin rights', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/users/${user.id}/password`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          password: 'myNewPw',
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
@@ -446,7 +633,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser);
+      user = await createUser(validUser, 'registered');
     });
 
     afterAll(async () => {
@@ -475,7 +662,6 @@ describe('/users', () => {
         firstName: user.firstName,
         lastName: user.lastName,
         password: expect.any(String),
-        hasAccess: user.hasAccess,
         role: user.role,
       });
     });
@@ -531,7 +717,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser);
+      user = await createUser(validUser, 'registered');
     });
 
     afterAll(async () => {
@@ -548,6 +734,19 @@ describe('/users', () => {
 
       const removed = await findById(user.id);
       expect(removed).toBeUndefined();
+    });
+
+    it('Should throw an error when trying to delete your own user', async () => {
+      const newUser = await createUser(Object.assign({}, validUser, { email: 'notnotexisting@hotmail.com' }), 'registered');
+      const validJwt = await getValidJwt(newUser.id);
+
+      const { body, status } = await request(app)
+        .delete(`${prefix}/users/${newUser.id}`)
+        .set('Authorization', `Bearer ${validJwt}`);
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.USER_DELETE_OWN.code);
+      expect(body.errors[0].title).toEqual(errors.USER_DELETE_OWN.message);
     });
 
     it('Should throw an error when user does not exist', async () => {
@@ -574,7 +773,6 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          hasAccess: false,
           role: roles.ADMIN.code,
         });
 
@@ -617,4 +815,3 @@ describe('/users', () => {
     });
   });
 });
-
