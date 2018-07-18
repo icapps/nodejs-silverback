@@ -1,7 +1,7 @@
 {
-  "name": "OLLIE_PROJECT_NAME",
+  "name": "nodejs-silverback",
   "version": "1.0.0",
-  "description": "NodeJS project",
+  "description": "NodeJS Silverback boilerplate project",
   "main": "./build/server.js",
   "scripts": {
     "build": "npm run clean && tsc",

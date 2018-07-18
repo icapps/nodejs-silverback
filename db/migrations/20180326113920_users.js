@@ -10,8 +10,8 @@ exports.up = async (knex) => {
     table.text('email').notNullable();
     table.text('role').notNullable();
 
-    // Status of the account 'COMPLETE_REGISTRATON', 'BLOCKED', 'REGISTERD'
-    table.text('status').notNullable().defaultTo('COMPLETE_REGISTRATON')
+    // Status of the account
+    table.uuid('status').notNullable().references('codes.id');
 
     // Nullable
     table.text('password').nullable();

@@ -7,8 +7,8 @@ export const userSerializer = new Serializer('users', {
     'email',
     'firstName',
     'lastName',
-    'hasAccess',
     'role',
+    'status',
     'createdAt',
     'updatedAt',
   ],
@@ -18,6 +18,13 @@ export const userSerializer = new Serializer('users', {
       'code',
       'description',
       'level',
+    ],
+  },
+  status: {
+    attributes: [
+      'name',
+      'code',
+      'description',
     ],
   },
 });

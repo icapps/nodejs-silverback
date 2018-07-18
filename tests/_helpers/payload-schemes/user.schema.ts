@@ -10,13 +10,19 @@ export const userRoleSchema = Joi.object({
   level: Joi.number().required(),
 });
 
+export const userStatusSchema = Joi.object({
+  name: Joi.string().required(),
+  code: Joi.string().required(),
+  description: Joi.any(),
+});
+
 export const userSchema = Joi.object({
   id: Joi.string().guid().required(),
   email: Joi.string().required(),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  hasAccess: Joi.boolean().required(),
   role: userRoleSchema,
+  status: userStatusSchema,
   createdAt: Joi.date().iso().raw().required(),
   updatedAt: Joi.date().iso().raw().required(),
 });

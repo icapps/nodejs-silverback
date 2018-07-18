@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { authenticateJwt } from 'tree-house-authentication';
 import { UnauthorizedError, NotFoundError } from 'tree-house-errors';
-import { hasRole, extractJwt } from '../lib/utils';
+import { hasRole, extractJwt, checkStatus } from '../lib/utils';
 import { logger } from '../lib/logger';
 import { jwtConfig } from '../config/auth.config';
 import { Role } from '../config/roles.config';
@@ -21,6 +21,9 @@ export async function hasPermission(req: Request, _res: Response, next: NextFunc
     // Find user
     const user = await userRepository.findById(decodedToken.userId);
     if (!user) throw new NotFoundError(errors.USER_NOT_FOUND);
+
+    // Check if user status still ok
+    checkStatus(user);
 
     // Check if user has proper permission
     if (role && !hasRole(user, role)) {

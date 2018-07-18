@@ -33,17 +33,15 @@ export async function login(payload: AuthCredentials, role?: Role) {
     const user = await userRepository.findByEmail(email);
     if (!user) throw new AuthenticationError(errors.USER_INVALID_CREDENTIALS);
 
+    // Match password
     const passwordMatch = await comparePassword(password, user.password);
     if (!passwordMatch) throw new AuthenticationError(errors.USER_INVALID_CREDENTIALS);
-    await checkStatus(user);
+
+    // Check if user has access
+    checkStatus(user);
 
     // Must have a specific role to login here
     if (role && !hasRole(user, role)) throw new UnauthorizedError(errors.NO_PERMISSION);
-
-    // Check if still has access
-    if (!user.hasAccess) throw new UnauthorizedError(errors.USER_INACTIVE);
-
-    // Match password
 
     // Generate JWT and refresh token
     return await generateTokens(user.id);

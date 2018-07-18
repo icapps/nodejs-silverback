@@ -3,7 +3,6 @@ import * as crypto from 'crypto';
 import { NotFoundError, BadRequestError } from 'tree-house-errors';
 import { getHashedPassword } from 'tree-house-authentication';
 import { User, UserCreate, UserUpdate, PartialUserUpdate } from '../models/user.model';
-import { statuses  } from '../config/statuses.config';
 import { Filters } from '../models/filters.model';
 import { logger } from '../lib/logger';
 import { getInitialPwChangeContent } from '../templates/initial-pw.mail.template';
@@ -41,11 +40,16 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
     const user = await userRepository.findByEmail(values.email);
     if (user) throw new BadRequestError(errors.USER_DUPLICATE);
 
+    const userStatus = await userRepository.findUserStatus(values.status);
+    if (!userStatus) throw new NotFoundError(errors.STATUS_NOT_FOUND);
+
+    const valuesWithStatusId = Object.assign({}, values, { status: userStatus.id });
+
     // User must set own password after creation
     if (changePassword === true) {
       const token = uuid.v4();
       const randomPassword = await getHashedPassword(crypto.randomBytes(24).toString('hex'), settings.saltCount);
-      const created = await userRepository.create(Object.assign({}, values, { resetPwToken: token, password: randomPassword }));
+      const created = await userRepository.create(Object.assign({}, valuesWithStatusId, { resetPwToken: token, password: randomPassword }));
 
       // Send mail asynchronous, no need to wait
       const content = getInitialPwChangeContent({ token, email: values.email, firstName: created.firstName });
@@ -54,7 +58,7 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
       return created;
     }
 
-    return await userRepository.create(values);
+    return await userRepository.create(valuesWithStatusId);
   } catch (error) {
     logger.error(`An error occured creating a user: ${error}`);
     throw error;
@@ -66,7 +70,12 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
  */
 export async function update(userId: string, values: UserUpdate): Promise<User> {
   try {
-    const result = await userRepository.update(userId, values);
+    const userStatus = await userRepository.findUserStatus(values.status);
+    if (!userStatus) throw new NotFoundError(errors.STATUS_NOT_FOUND);
+
+    const valuesWithStatusId = Object.assign({}, values, { status: userStatus.id });
+
+    const result = await userRepository.update(userId, valuesWithStatusId);
     if (!result) throw new NotFoundError();
     return result;
   } catch (error) {
@@ -95,7 +104,9 @@ export async function partialUpdate(userId: string, values: PartialUserUpdate): 
 export async function updatePassword(userId: string, password: string): Promise<{}> {
   try {
     const hashedPw = await getHashedPassword(password, settings.saltCount);
-    return await partialUpdate(userId, { password: hashedPw, status: statuses.REGISTERD.code });
+    const userStatus = await userRepository.findUserStatus('REGISTERED');
+
+    return await partialUpdate(userId, { password: hashedPw, status: userStatus.id });
   } catch (error) {
     logger.error(`An error occured updating a user's password: ${error}`);
     throw error;

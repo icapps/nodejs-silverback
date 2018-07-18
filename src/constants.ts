@@ -15,6 +15,10 @@ export const tableNames = {
   CODETYPES: 'code_types',
 };
 
+export const viewNames = {
+  USER_STATUSES: 'user_statuses_view',
+};
+
 export const defaultFilters: Filters = {
   limit: 50,
   offset: 0,

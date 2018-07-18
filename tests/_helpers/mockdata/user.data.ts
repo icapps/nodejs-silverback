@@ -3,18 +3,20 @@ import { generateRandomHash } from 'tree-house-authentication';
 import { User, UserCreate } from '../../../src/models/user.model';
 import { roles } from '../../../src/config/roles.config';
 import { tableNames } from '../../../src/constants';
-import { statuses } from '../../../src/config/statuses.config';
 import { db } from '../../../src/lib/db';
 import * as userRepository from '../../../src/repositories/user.repository';
+import * as metaRepository from '../../../src/repositories/meta.repository';
+
+// Constants
+const userStatuses = {};
 
 export const validUser: UserCreate = {
   email: 'willem.wortel@icapps.com',
   firstName: 'Willem',
   lastName: 'Horsten',
   password: 'developer',
-  hasAccess: true,
   role: roles.ADMIN.code,
-  status: statuses.REGISTERD.code,
+  status: '',
 };
 
 export const adminUser: UserCreate = {
@@ -23,8 +25,7 @@ export const adminUser: UserCreate = {
   lastName: 'User',
   password: 'developer',
   role: roles.ADMIN.code,
-  hasAccess: true,
-  status: statuses.REGISTERD.code,
+  status: '',
 };
 
 export const regularUser: UserCreate = {
@@ -33,8 +34,7 @@ export const regularUser: UserCreate = {
   lastName: 'User',
   password: 'developer',
   role: roles.USER.code,
-  hasAccess: true,
-  status: statuses.REGISTERD.code,
+  status: '',
 };
 
 export const unconfirmedUser: UserCreate = {
@@ -43,7 +43,6 @@ export const unconfirmedUser: UserCreate = {
   lastName: 'User',
   password: 'developer',
   role: roles.USER.code,
-  hasAccess: true,
 };
 
 export const nostateUser: UserCreate = {
@@ -52,7 +51,6 @@ export const nostateUser: UserCreate = {
   lastName: 'User',
   password: 'developer',
   role: roles.USER.code,
-  hasAccess: true,
   status: '',
 };
 
@@ -62,8 +60,7 @@ export const blockedstateUser: UserCreate = {
   lastName: 'User',
   password: 'developer',
   role: roles.USER.code,
-  hasAccess: true,
-  status: statuses.BLOCKED.code,
+  status: '',
 };
 
 export const validUsers: UserCreate[] = [
@@ -72,7 +69,6 @@ export const validUsers: UserCreate[] = [
     firstName: 'Willem',
     lastName: 'Horsten',
     password: 'developer',
-    hasAccess: true,
     role: roles.ADMIN.code,
   },
   {
@@ -80,7 +76,6 @@ export const validUsers: UserCreate[] = [
     firstName: 'Brent',
     lastName: 'Van Geertruy',
     password: 'developer',
-    hasAccess: true,
     role: roles.USER.code,
   },
   {
@@ -88,20 +83,37 @@ export const validUsers: UserCreate[] = [
     firstName: 'Jelle',
     lastName: 'Mannaerts',
     password: 'developer',
-    hasAccess: false,
     role: roles.ADMIN.code,
   },
 ];
 
-export async function createUsers(users: UserCreate[]) {
-  for (const userValues of users) {
-    await userRepository.create(userValues);
+/**
+ * Create user status codes (only once)
+ */
+export async function createUserStatuses() {
+  const existingCodeType = await metaRepository.findCodeTypeByCode('USER_STATUSES');
+  if (!existingCodeType) {
+    const codeType = await metaRepository.createCodeType({ code: 'USER_STATUSES', name: 'User Statuses' });
+    userStatuses['complete_registration'] = await metaRepository.createCode(codeType.id, {
+      code: 'COMPLETE_REGISTRATON', name: 'Must complete registration',
+    });
+    userStatuses['registered'] = await metaRepository.createCode(codeType.id, { code: 'REGISTERED', name: 'Registered account' });
+    userStatuses['blocked'] = await metaRepository.createCode(codeType.id, { code: 'BLOCKED', name: 'Blocked account' });
   }
-  return await userRepository.findAll();
+  return userStatuses;
 }
 
-export function createUser(values: UserCreate) {
-  return userRepository.create(values);
+export async function createUser(values: UserCreate, status: 'complete_registration' | 'registered' | 'blocked') {
+  await createUserStatuses(); // Create required user statuses (active/inactive)
+  const allValues = Object.assign({}, values, { status: userStatuses[status].id });
+  return userRepository.create(allValues);
+}
+
+export async function createUsers(users: UserCreate[], status: 'complete_registration' | 'registered' | 'blocked') {
+  for (const userValues of users) {
+    await createUser(userValues, status);
+  }
+  return await userRepository.findAll();
 }
 
 export function findById(id: string) {
@@ -112,6 +124,10 @@ export async function setResetPwToken(userId: string) {
   const token = uuid.v4();
   await userRepository.update(userId, { resetPwToken: token });
   return token;
+}
+
+export async function removeUser(userId: string): Promise<{ affectedRows: number }> {
+  return await userRepository.remove(userId);
 }
 
 /**

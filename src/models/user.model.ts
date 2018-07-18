@@ -4,8 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   password: string;
-  hasAccess: boolean;
-  status: string;
+  status: UserStatus;
   role: UserRole;
   refreshToken?: string;
   resetPwToken?: string;
@@ -18,7 +17,6 @@ export interface UserCreate {
   firstName: string;
   lastName: string;
   password?: string;
-  hasAccess: boolean;
   status?: string;
   role: string; // Code of role
   resetPwToken?: string;
@@ -28,15 +26,14 @@ export interface UserUpdate {
   email: string;
   firstName: string;
   lastName: string;
-  hasAccess: boolean;
   role: string; // Code of role
+  status?: string; // code of status
 }
 
 export interface PartialUserUpdate {
   email?: string;
   firstName?: string;
   lastName?: string;
-  hasAccess?: boolean;
   status?: string;
   role?: string; // Code of role
   password?: string;
@@ -49,4 +46,10 @@ export interface UserRole {
   code: string;
   description?: string;
   level: number;
+}
+
+export interface UserStatus {
+  name: string;
+  code: string;
+  description?: string;
 }

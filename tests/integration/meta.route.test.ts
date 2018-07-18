@@ -40,6 +40,7 @@ describe('/meta', () => {
       const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
       const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
       languageCodes = [code1, code2, code3, code4];
+
       countryCodeType = await createCodeType({ code: 'CNTRY', name: 'Country' });
       createCode(countryCodeType.id, { name: 'Belgium', code: 'BE' });
       createCode(countryCodeType.id, { name: 'Germany', code: 'DE' });
@@ -47,7 +48,7 @@ describe('/meta', () => {
     });
 
     afterAll(async () => {
-      await clearCodeTypesData();
+      await clearCodeTypesData('LAN');
     });
 
     it('Should return language codes where with default pagination as a regular user', async () => {
@@ -67,7 +68,6 @@ describe('/meta', () => {
         if (!value) throw new Error('no value to check schema');
       });
     });
-
 
     it('Should return language codes where with default pagination as an admin user', async () => {
       const { body, status } = await request(app)
@@ -171,7 +171,7 @@ describe('/meta', () => {
     });
 
     afterAll(async () => {
-      await clearCodeTypesData();
+      await clearCodeTypesData('LAN');
     });
 
     it('Should return all language codes with default pagination', async () => {
@@ -217,7 +217,7 @@ describe('/meta', () => {
     });
 
     afterAll(async () => {
-      await clearCodeTypesData();
+      await clearCodeTypesData('LAN');
     });
 
     it('Should return a code via id', async () => {
@@ -259,8 +259,7 @@ describe('/meta', () => {
     });
 
     afterAll(async () => {
-      await clearCodeTypesData();
-      await clearCodesData();
+      await clearCodeTypesData('LAN');
     });
 
     it('Should succesfully create a new code', async () => {
@@ -333,8 +332,7 @@ describe('/meta', () => {
     });
 
     afterAll(async () => {
-      await clearCodeTypesData();
-      await clearCodesData();
+      await clearCodeTypesData('LAN');
     });
 
     it('Should validate that there is at least 1 field to update', async () => {
@@ -351,7 +349,7 @@ describe('/meta', () => {
         .send({
           code: 'NL',
         });
-      expect(body.errors[0].code).toEqual("INVALID_INPUT");
+      expect(body.errors[0].code).toEqual('INVALID_INPUT');
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
     it('Should succesfully update an name', async () => {
@@ -414,8 +412,7 @@ describe('/meta', () => {
     });
 
     afterAll(async () => {
-      await clearCodeTypesData();
-      await clearCodesData();
+      await clearCodeTypesData('LAN');
     });
 
     it('Should succesfully deprecate an existing code', async () => {
@@ -452,6 +449,7 @@ describe('/meta', () => {
       expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
+
   describe('POST /codes/:codeId/undeprecate', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let code;
@@ -462,8 +460,7 @@ describe('/meta', () => {
     });
 
     afterAll(async () => {
-      await clearCodeTypesData();
-      await clearCodesData();
+      await clearCodeTypesData('LAN');
     });
 
     it('Should succesfully deprecate an existing code', async () => {

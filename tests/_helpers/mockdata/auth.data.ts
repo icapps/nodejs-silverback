@@ -8,26 +8,21 @@ export function getValidJwt(userId: string) {
 }
 
 export async function getAdminToken() {
-  const user = await createUser(adminUser);
+  const user = await createUser(adminUser, 'registered');
   return await getValidJwt(user.id);
 }
 
 export async function getUserToken() {
-  const user = await createUser(regularUser);
+  const user = await createUser(regularUser, 'registered');
   return await getValidJwt(user.id);
 }
 
 export async function getUnconfirmedUserToken() {
-  const user = await createUser(unconfirmedUser);
+  const user = await createUser(unconfirmedUser, 'complete_registration');
   return await getValidJwt(user.id);
 }
 
-export async function getNoStateUserToken() {
-  const user = await createUser(nostateUser);
-  return getValidJwt(user.id);
-}
-
 export async function getBlockedStateUserToken() {
-  const user = await createUser(blockedstateUser);
+  const user = await createUser(blockedstateUser, 'blocked');
   return getValidJwt(user.id);
 }

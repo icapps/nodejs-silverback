@@ -7,7 +7,6 @@ import { errors } from '../../src/config/errors.config';
 import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, findById, regularUser, unconfirmedUser, setResetPwToken, clearUserData, adminUser } from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
-import { statuses } from '../../src/config/statuses.config';
 import { getUserToken, getValidJwt } from '../_helpers/mockdata/auth.data';
 import * as mailer from '../../src/lib/mailer';
 
@@ -18,12 +17,12 @@ describe('/auth', () => {
 
   beforeAll(async () => {
     await clearAll();
-    user = await createUser(regularUser);
-    userAdmin = await createUser(adminUser);
+    user = await createUser(regularUser, 'registered');
+    userAdmin = await createUser(adminUser, 'registered');
   });
 
   afterAll(async () => {
-    // await clearAll();
+    await clearAll();
     jest.clearAllMocks();
   });
 
@@ -35,6 +34,7 @@ describe('/auth', () => {
           email: regularUser.email,
           password: regularUser.password,
         });
+
       expect(status).toEqual(httpStatus.OK);
       Joi.validate(body, loginSchema, (err, value) => {
         if (err) throw err;
@@ -118,17 +118,32 @@ describe('/auth', () => {
       expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
 
-    it('Should throw error when user has no access', async () => {
-      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser@gmail.com', hasAccess: false }));
+    it('Should throw error when user has not yet confirmed his registration', async () => {
+      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser@gmail.com' }), 'complete_registration');
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
-          email: 'newuser@gmail.com',
+          email: noAccessUser.email,
           password: 'developer',
         });
+
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
-      expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
+      expect(body.errors[0].code).toEqual(errors.USER_UNCONFIRMED.code);
+      expect(body.errors[0].title).toEqual(errors.USER_UNCONFIRMED.message);
+    });
+
+    it('Should throw error when user has been blocked', async () => {
+      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser2@gmail.com' }), 'blocked');
+      const { body, status } = await request(app)
+        .post(`${prefix}/auth/login`)
+        .send({
+          email: noAccessUser.email,
+          password: 'developer',
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.USER_BLOCKED.code);
+      expect(body.errors[0].title).toEqual(errors.USER_BLOCKED.message);
     });
 
   });
@@ -263,7 +278,7 @@ describe('/auth', () => {
 
     beforeAll(async () => {
       const userData = Object.assign({}, regularUser, { email: 'verifyPw@test.com' });
-      newUser = await createUser(userData);
+      newUser = await createUser(userData, 'registered');
     });
 
     it('Should succesfully verify existing valid token', async () => {
@@ -272,6 +287,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .get(`${prefix}/forgot-password/verify`)
         .query(`token=${token}`);
+
       expect(status).toEqual(httpStatus.OK);
       expect(body).toEqual({});
     });
@@ -280,6 +296,7 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .get(`${prefix}/forgot-password/verify`)
         .query('token=unknownToken');
+
       expect(status).toEqual(httpStatus.NOT_FOUND);
       expect(body.errors[0].code).toEqual(errors.LINK_EXPIRED.code);
       expect(body.errors[0].detail).toEqual(errors.LINK_EXPIRED.message);
@@ -297,7 +314,7 @@ describe('/auth', () => {
 
     beforeAll(async () => {
       const userData = Object.assign({}, unconfirmedUser, { email: 'confirmPw@test.com' });
-      newUser = await createUser(userData);
+      newUser = await createUser(userData, 'complete_registration');
     });
 
     it('Should succesfully verify existing valid token', async () => {
@@ -305,10 +322,12 @@ describe('/auth', () => {
       const { body, status } = await request(app)
         .put(`${prefix}/forgot-password/confirm?token=${token}`)
         .send({ password: 'newPassword123' });
+
       expect(status).toEqual(httpStatus.OK);
       expect(body).toEqual({});
+
       const updatedUser = await findById(newUser.id);
-      expect(updatedUser.status).toEqual(statuses.REGISTERD.code);
+      expect(updatedUser.status.code).toEqual('REGISTERED');
 
       // Try to login with changed password
       const { body: body2, status: status2 } = await request(app)
