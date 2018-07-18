@@ -34,6 +34,6 @@ export function extractJwt(req: Request) {
  * check if user has the right status for the operation
  */
 export function checkStatus(user: User): void {
-  if (user.status.code === 'COMPLETE_REGISTRATON') throw new UnauthorizedError(errors.USER_UNCONFIRMED);
+  if (user.status.code === 'COMPLETE_REGISTRATION') throw new UnauthorizedError(errors.USER_UNCONFIRMED);
   if (user.status.code === 'BLOCKED') throw new UnauthorizedError(errors.USER_BLOCKED);
 }

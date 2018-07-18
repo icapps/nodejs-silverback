@@ -95,7 +95,7 @@ export async function createUserStatuses() {
   if (!existingCodeType) {
     const codeType = await metaRepository.createCodeType({ code: 'USER_STATUSES', name: 'User Statuses' });
     userStatuses['complete_registration'] = await metaRepository.createCode(codeType.id, {
-      code: 'COMPLETE_REGISTRATON', name: 'Must complete registration',
+      code: 'COMPLETE_REGISTRATION', name: 'Must complete registration',
     });
     userStatuses['registered'] = await metaRepository.createCode(codeType.id, { code: 'REGISTERED', name: 'Registered account' });
     userStatuses['blocked'] = await metaRepository.createCode(codeType.id, { code: 'BLOCKED', name: 'Blocked account' });

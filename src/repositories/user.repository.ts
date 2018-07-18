@@ -98,7 +98,7 @@ export async function findAll(options: Filters = {}): Promise<{ data: User[], to
   applyPagination(query, allOptions);
   applySearch(query, allOptions, searchFields);
 
-  // if sortField is status, replace status with us.code for sorting on status code ACTIVE OR INACTIVE
+  // if sortField is status, replace status with us.code for sorting on status code property
   if (allOptions.sortField === 'status') Object.assign(allOptions, { sortField: `${aliases.STATUSES}.code` });
 
   applySorting(query, allOptions, sortFields, { field: 'email', order: 'desc' });

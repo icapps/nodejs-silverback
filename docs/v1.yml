@@ -721,7 +721,7 @@ definitions:
           type: string
         status:
           type: string
-          enum: ["REGISTERED", "COMPLETE_REGISTRATON", "BLOCKED"]
+          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
         role:
           type: string
           enum: ["USER", "ADMIN"]
@@ -742,7 +742,7 @@ definitions:
           type: string
         status:
           type: string
-          enum: ["REGISTERED", "COMPLETE_REGISTRATON", "BLOCKED"]
+          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
         role:
           type: string
           enum: ["USER", "ADMIN"]
@@ -757,7 +757,7 @@ definitions:
           type: string
         status:
           type: string
-          enum: ["REGISTERED", "COMPLETE_REGISTRATON", "BLOCKED"]
+          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
         role:
           type: string
           enum: ["USER", "ADMIN"]

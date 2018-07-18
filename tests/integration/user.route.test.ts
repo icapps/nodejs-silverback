@@ -300,7 +300,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          status: 'COMPLETE_REGISTRATON',
+          status: 'COMPLETE_REGISTRATION',
           role: roles.ADMIN.code,
         });
 
@@ -312,7 +312,7 @@ describe('/users', () => {
       });
       const createdUser = await findById(body.data.id);
       expect(createdUser.resetPwToken).toEqual(expect.any(String));
-      expect(createdUser.status.code).toEqual('COMPLETE_REGISTRATON');
+      expect(createdUser.status.code).toEqual('COMPLETE_REGISTRATION');
     });
 
     it('Should throw an error when trying to create a user without changing pw and providing pw', async () => {

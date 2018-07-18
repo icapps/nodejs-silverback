@@ -13,7 +13,7 @@ exports.seed = async (knex) => {
 
   const userStatusCode = await knex('code_types').insert([{ code: 'USER_STATUSES', name: 'User statuses', description: 'User Account Statuses' }], ['id'])
   await knex('codes').insert([
-    { code: 'COMPLETE_REGISTRATON', name: 'Must complete registration', code_type_id: userStatusCode[0].id },
+    { code: 'COMPLETE_REGISTRATION', name: 'Must complete registration', code_type_id: userStatusCode[0].id },
     { code: 'REGISTERED', name: 'Registered account', code_type_id: userStatusCode[0].id },
     { code: 'BLOCKED', name: 'Blocked account', code_type_id: userStatusCode[0].id },
   ]);
