@@ -25,7 +25,7 @@ export async function generateAccessToken(userId: string) {
  * Login user with email and password
  * Returns accessToken
  */
-export async function login(payload: AuthCredentials, role?: Role) {
+export async function login(payload: AuthCredentials, authentication: 'jwt' | 'session', role?: Role) {
   const { email, password } = payload;
   try {
     const user = await userRepository.findByEmail(email);
@@ -41,8 +41,8 @@ export async function login(payload: AuthCredentials, role?: Role) {
     // Must have a specific role to login here
     if (role && !hasRole(user, role)) throw new UnauthorizedError(errors.NO_PERMISSION);
 
-    // Generate JWT token
-    return await generateAccessToken(user.id);
+    // Generate JWT token or return user id (depending of authentication method)
+    return authentication === 'jwt' ? await generateAccessToken(user.id) : user.id;
   } catch (error) {
     logger.error(`An error occured trying to login: %${error}`);
     throw error;

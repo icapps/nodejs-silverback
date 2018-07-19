@@ -7,13 +7,27 @@ import { Role } from '../config/roles.config';
 import * as authService from '../services/auth.service';
 
 /**
- * Return all users
+ * Login a user using session authentication
  */
 export async function login(req, res: Response, role?: Role): Promise<void> {
-  const data = await authService.login(req.body, role);
+  const data = await authService.login(req.body, 'session', role);
 
   // Set current session data
   req.session.userId = data;
+
+  // Reset brute force protection and return response
+  req.brute.reset(() => {
+    responder.success(res, {
+      status: httpStatus.OK,
+    });
+  });
+}
+
+/**
+ * Login a user using jwt authentication
+ */
+export async function loginJwt(req: Request, res: Response, role?: Role): Promise<void> {
+  const data = await authService.login(req.body, 'jwt', role);
 
   // Reset brute force protection and return response
   req.brute.reset(() => {
