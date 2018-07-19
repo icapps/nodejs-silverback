@@ -49,6 +49,7 @@ module.exports = {
   test: Object.assign({}, defaultConfig, {
     connection: 'postgres://developer:developer@localhost:5432/silverback_test', // Static test DB
   }),
+  staging: Object.assign({}, defaultConfig),
   development: Object.assign({}, defaultConfig),
   production: Object.assign({}, defaultConfig),
 };
