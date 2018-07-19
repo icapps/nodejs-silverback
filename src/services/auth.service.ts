@@ -11,7 +11,6 @@ import { Role } from '../config/roles.config';
 import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
 import { hasRole, checkStatus } from '../lib/utils';
-import { AuthRequest } from '../models/request.model';
 
 /**
  * Generate a new jwt token for a user
