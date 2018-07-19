@@ -2,8 +2,8 @@ import * as httpMocks from 'node-mocks-http';
 import { UnauthorizedError } from 'tree-house-errors';
 import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
-import { User } from '../../src/models/user.model';
 import * as utils from '../../src/lib/utils';
+import { User } from '../../src/models/user.model';
 
 describe('lib/utils', () => {
   describe('hasRole', () => {
@@ -38,6 +38,18 @@ describe('lib/utils', () => {
       try {
         const mockRequest = httpMocks.createRequest({
           headers: { Authorization: 'JWT ...' },
+        });
+        utils.extractJwt(mockRequest);
+      } catch (err) {
+        expect(err).toEqual(new UnauthorizedError(errors.MISSING_HEADERS));
+      }
+    });
+
+    it('Should throw an error when no headers are present', () => {
+      expect.assertions(1);
+      try {
+        const mockRequest = httpMocks.createRequest({
+          headers: {},
         });
         utils.extractJwt(mockRequest);
       } catch (err) {

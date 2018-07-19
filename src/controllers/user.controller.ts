@@ -87,7 +87,7 @@ export async function updatePassword(req: Request, res: Response): Promise<void>
  * Remove an existing user
  */
 export async function remove(req: AuthRequest, res: Response): Promise<void> {
-  if (req.session.user.id === req.params.userId) throw new BadRequestError(errors.USER_DELETE_OWN);
+  if (req.current.user.id === req.params.userId) throw new BadRequestError(errors.USER_DELETE_OWN);
   await userService.remove(req.params.userId);
   responder.success(res, {
     status: httpStatus.NO_CONTENT,

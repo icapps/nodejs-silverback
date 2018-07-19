@@ -1,8 +1,8 @@
-import * as mailer from '../../src/lib/mailer';
-import { clearAll } from '../_helpers/mockdata/data';
-import { createUser, validUser, findById } from '../_helpers/mockdata/user.data';
-import { initForgotPw } from '../../src/services/auth.service';
 import { logger } from '../../src/lib/logger';
+import * as mailer from '../../src/lib/mailer';
+import { initForgotPw } from '../../src/services/auth.service';
+import { clearAll } from '../_helpers/mockdata/data';
+import { createUser, findById, validUser } from '../_helpers/mockdata/user.data';
 
 describe('authService', () => {
   const prefix = `/api/${process.env.API_VERSION}`;

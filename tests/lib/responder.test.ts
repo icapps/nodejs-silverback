@@ -1,9 +1,9 @@
 import * as httpStatus from 'http-status';
+import { Serializer } from 'jsonade';
 import * as httpMocks from 'node-mocks-http';
 import { BadRequestError, errors } from 'tree-house-errors';
-import { Serializer } from 'jsonade';
-import { responder } from '../../src/lib/responder';
 import { envs } from '../../src/constants';
+import { responder } from '../../src/lib/responder';
 
 describe('lib/responder', () => {
   describe('succes', () => {

@@ -1,7 +1,5 @@
-import * as request from 'supertest';
-import * as Joi from 'joi';
 import * as httpStatus from 'http-status';
-
+import * as request from 'supertest';
 import { app } from '../../src/app';
 import { environment } from '../test.config';
 
@@ -43,7 +41,6 @@ describe('/config', () => {
         latestVersion: environment.LATEST_VERSION_IOS,
       });
     });
-
 
     it('Should throw an error when an invalid os is provided', async () => {
       const { body, status } = await request(app)

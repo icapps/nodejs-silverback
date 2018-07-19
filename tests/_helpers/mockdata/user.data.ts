@@ -1,11 +1,10 @@
 import * as uuid from 'uuid';
-import { generateRandomHash } from 'tree-house-authentication';
-import { User, UserCreate } from '../../../src/models/user.model';
 import { roles } from '../../../src/config/roles.config';
 import { tableNames } from '../../../src/constants';
 import { db } from '../../../src/lib/db';
-import * as userRepository from '../../../src/repositories/user.repository';
+import { UserCreate } from '../../../src/models/user.model';
 import * as metaRepository from '../../../src/repositories/meta.repository';
+import * as userRepository from '../../../src/repositories/user.repository';
 
 // Constants
 const userStatuses = {};
@@ -45,16 +44,7 @@ export const unconfirmedUser: UserCreate = {
   role: roles.USER.code,
 };
 
-export const nostateUser: UserCreate = {
-  email: 'nostate@users.com',
-  firstName: 'Regular',
-  lastName: 'User',
-  password: 'developer',
-  role: roles.USER.code,
-  status: '',
-};
-
-export const blockedstateUser: UserCreate = {
+export const blockedUser: UserCreate = {
   email: 'blocked@users.com',
   firstName: 'Regular',
   lastName: 'User',

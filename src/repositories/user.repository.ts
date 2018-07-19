@@ -24,7 +24,6 @@ const defaultReturnValues = [
   `${aliases.USERS}.status`,
   `${aliases.USERS}.role`,
   `${aliases.USERS}.resetPwToken`,
-  `${aliases.USERS}.refreshToken`,
   `${aliases.USERS}.createdAt`,
   `${aliases.USERS}.updatedAt`,
 ];
@@ -148,20 +147,6 @@ export async function findByResetToken(token: string): Promise<User | undefined>
     .first();
 
   logger.debug(`Get user by reset password token: ${query.toString()}`);
-  return await query;
-}
-
-/**
- * Find a user via their refresh token and user id
- */
-export async function findByRefreshToken(userId: string, token: string): Promise<User | undefined> {
-  const query = db(`${tableNames.USERS} as ${aliases.USERS}`)
-    .select(defaultReturnValues)
-    .where(`${aliases.USERS}.refreshToken`, token)
-    .andWhere(`${aliases.USERS}.id`, userId)
-    .first();
-
-  logger.debug(`Get user by refresh token: ${query.toString()}`);
   return await query;
 }
 

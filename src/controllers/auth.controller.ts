@@ -1,19 +1,33 @@
 import * as httpStatus from 'http-status';
-import { decodeJwt } from 'tree-house-authentication';
 import { Request, Response } from 'express';
 import { responder } from '../lib/responder';
 import { authSerializer } from '../serializers/auth.serializer';
-import { extractJwt } from '../lib/utils';
-import { JwtPayload } from '../middleware/permission.middleware';
-import { AuthRequest, BruteRequest } from '../models/request.model';
+import { AuthRequest } from '../models/request.model';
 import { Role } from '../config/roles.config';
 import * as authService from '../services/auth.service';
 
 /**
- * Return all users
+ * Login a user using session authentication
  */
-export async function login(req: BruteRequest, res: Response, role?: Role): Promise<void> {
-  const data = await authService.login(req.body, role);
+export async function login(req, res: Response, role?: Role): Promise<void> {
+  const data = await authService.login(req.body, 'session', role);
+
+  // Set current session data
+  req.session.userId = data;
+
+  // Reset brute force protection and return response
+  req.brute.reset(() => {
+    responder.success(res, {
+      status: httpStatus.OK,
+    });
+  });
+}
+
+/**
+ * Login a user using jwt authentication
+ */
+export async function loginJwt(req: Request, res: Response, role?: Role): Promise<void> {
+  const data = await authService.login(req.body, 'jwt', role);
 
   // Reset brute force protection and return response
   req.brute.reset(() => {
@@ -26,27 +40,10 @@ export async function login(req: BruteRequest, res: Response, role?: Role): Prom
 }
 
 /**
- * Return a new access token via their refresh token
- */
-export async function refresh(req: Request, res: Response): Promise<void> {
-  const accessToken = extractJwt(req);
-  const { userId } = <JwtPayload>await decodeJwt(accessToken);
-  const { refreshToken } = req.body;
-
-  const data = await authService.refresh(userId, refreshToken);
-  responder.success(res, {
-    status: httpStatus.OK,
-    payload: data,
-    serializer: authSerializer,
-  });
-}
-
-/**
  * Logout a logged in user
  */
 export async function logout(req: AuthRequest, res: Response): Promise<void> {
-  const { user } = req.session;
-  await authService.logout(user.id);
+  await authService.logout(req);
   responder.success(res, {
     status: httpStatus.OK,
   });

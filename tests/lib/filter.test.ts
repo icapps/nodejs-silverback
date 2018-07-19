@@ -1,5 +1,5 @@
 import { db } from '../../src/lib/db';
-import { applyPagination, applySorting, applySearch } from '../../src/lib/filter';
+import { applyPagination, applySearch, applySorting } from '../../src/lib/filter';
 
 describe('lib/filter', () => {
   describe('applyPagination', () => {

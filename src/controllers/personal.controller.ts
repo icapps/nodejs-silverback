@@ -9,7 +9,7 @@ import * as userService from '../services/user.service';
  * Return logged in user's information
  */
 export function findCurrentUser(req: AuthRequest, res: Response): void {
-  const user = req.session.user;
+  const user = req.current.user;
   responder.success(res, {
     status: httpStatus.OK,
     payload: user,
@@ -21,7 +21,7 @@ export function findCurrentUser(req: AuthRequest, res: Response): void {
  * Update current user's information
  */
 export async function updateCurrentUser(req: AuthRequest, res: Response): Promise<void> {
-  const result = await userService.update(req.session.user.id, req.body);
+  const result = await userService.update(req.current.user.id, req.body);
   responder.success(res, {
     status: httpStatus.OK,
     payload: result,

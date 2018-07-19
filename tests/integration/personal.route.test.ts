@@ -1,16 +1,14 @@
-import * as request from 'supertest';
+import * as faker from 'faker';
 import * as httpStatus from 'http-status';
 import * as Joi from 'joi';
-import * as faker from 'faker';
+import * as request from 'supertest';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
-import { clearAll } from '../_helpers/mockdata/data';
-import { createUser, validUser, findById, regularUser, setResetPwToken, clearUserData } from '../_helpers/mockdata/user.data';
-import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
-import { getUserToken, getValidJwt } from '../_helpers/mockdata/auth.data';
-import { userByIdSchema, createUserSchema } from '../_helpers/payload-schemes/user.schema';
 import { roles } from '../../src/config/roles.config';
-import * as mailer from '../../src/lib/mailer';
+import { getUserJwtToken, getValidJwt } from '../_helpers/mockdata/auth.data';
+import { clearAll } from '../_helpers/mockdata/data';
+import { createUser, regularUser } from '../_helpers/mockdata/user.data';
+import { createUserSchema, userByIdSchema } from '../_helpers/payload-schemes/user.schema';
 
 describe('/me', () => {
   const prefix = `/api/${process.env.API_VERSION}`;
@@ -18,7 +16,9 @@ describe('/me', () => {
 
   beforeAll(async () => {
     await clearAll(); // Full db clear
-    userToken = await getUserToken(); // Also creates user
+
+    const user = await createUser(regularUser, 'registered');
+    userToken = await getUserJwtToken(user);
   });
 
   afterAll(async () => {
@@ -93,5 +93,4 @@ describe('/me', () => {
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
   });
-
 });

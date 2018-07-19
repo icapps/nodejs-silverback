@@ -1,7 +1,7 @@
-import { importTranslations } from '../../src/lib/translator';
-import { existsSync, rmdirSync, mkdirSync } from 'fs';
-import * as icappsTranslation from 'tree-house-translations';
+import { existsSync, mkdirSync } from 'fs';
 import * as rimraf from 'rimraf';
+import * as icappsTranslation from 'tree-house-translations';
+import { importTranslations } from '../../src/lib/translator';
 
 describe('importTranslations', () => {
   let icappsTranslationMock;

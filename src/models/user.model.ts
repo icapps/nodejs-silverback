@@ -6,7 +6,6 @@ export interface User {
   password: string;
   status: UserStatus;
   role: UserRole;
-  refreshToken?: string;
   resetPwToken?: string;
   createdAt: string;
   createdBy: string;
@@ -38,7 +37,6 @@ export interface PartialUserUpdate {
   role?: string; // Code of role
   password?: string;
   resetPwToken?: string;
-  refreshToken?: string;
 }
 
 export interface UserRole {
