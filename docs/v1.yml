@@ -41,7 +41,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
         500:
-          description: "500 Interal error"
+          description: "500 Internal error"
           schema:
             $ref: "#/definitions/ErrorResponse"
   /auth/login/jwt:
