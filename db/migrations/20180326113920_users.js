@@ -16,7 +16,6 @@ exports.up = async (knex) => {
     // Nullable
     table.text('password').nullable();
     table.text('reset_pw_token').nullable();
-    table.text('refresh_token').nullable();
 
     // Tracking
     table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
@@ -25,7 +24,6 @@ exports.up = async (knex) => {
     // Unique constraints (generates index automatically due to this constraint)
     table.unique('email');
     table.unique('reset_pw_token');
-    table.unique(['id', 'refresh_token']);
   });
 
   // Triggers

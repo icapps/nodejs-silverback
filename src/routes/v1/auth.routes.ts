@@ -23,10 +23,6 @@ export const routes: Router = Router({ mergeParams: true })
     validateSchema(authSchema.login),
     handleAsyncFn((req: BruteRequest, res) => controller.login(req, res, roles.ADMIN)))
 
-  .post('/auth/refresh',
-    validateSchema(authSchema.refresh),
-    handleAsyncFn(controller.refresh))
-
   .post('/auth/logout', (req, res, next) =>
     hasPermission(req, res, next),
     handleAsyncFn(controller.logout))

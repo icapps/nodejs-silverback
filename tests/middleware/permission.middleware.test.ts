@@ -40,7 +40,7 @@ describe('hasPermission middleware', () => {
 
     expect.assertions(1);
     await hasPermission(request, response, (nxt) => {
-      expect(request.session.user.email).toEqual(regularUser.email);
+      expect(request.current.user.email).toEqual(regularUser.email);
     });
   });
 
@@ -50,7 +50,7 @@ describe('hasPermission middleware', () => {
 
     expect.assertions(1);
     await hasPermission(request, response, (nxt) => {
-      expect(request.session.user.email).toEqual(adminUser.email);
+      expect(request.current.user.email).toEqual(adminUser.email);
     }, roles.ADMIN);
   });
 

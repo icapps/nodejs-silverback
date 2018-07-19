@@ -87,28 +87,6 @@ paths:
           description: "401 Unauthorised"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /auth/refresh:
-    post:
-      tags:
-      - "authentication"
-      summary: "Returns a new jwt token via refresh token"
-      security:
-        - Bearer: []
-      parameters:
-        - name: "refresh request"
-          in: "body"
-          required: true
-          schema:
-            $ref: "#/definitions/PostRefresh"
-      responses:
-        200:
-          description: "Success"
-          schema:
-            $ref: "#/definitions/RefreshResponse"
-        400:
-          description: "401 Unauthorized"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
   /forgot-password/init:
     post:
       tags:
@@ -694,13 +672,6 @@ definitions:
           type: string
         deviceId:
           type: string
-    PostRefresh:
-      type: object
-      required:
-        - "refreshToken"
-      properties:
-        refreshToken:
-          type: string
     PostUser:
       type: object
       required:
@@ -770,20 +741,6 @@ definitions:
           type: object
           properties:
             accessToken:
-              type: string
-            refreshToken:
-              type: string
-    RefreshResponse:
-      type: object
-      properties:
-        meta:
-          type: object
-        data:
-          type: object
-          properties:
-            accessToken:
-              type: string
-            refreshToken:
               type: string
     UserResponse:
       type: object

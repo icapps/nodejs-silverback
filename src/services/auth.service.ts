@@ -11,21 +11,19 @@ import { Role } from '../config/roles.config';
 import * as userRepository from '../repositories/user.repository';
 import * as mailer from '../lib/mailer';
 import { hasRole, checkStatus } from '../lib/utils';
+import { AuthRequest } from '../models/request.model';
 
 /**
- * Generate a new jwt token and refresh token for a user
+ * Generate a new jwt token for a user
  */
-export async function generateTokens(userId: string) {
+export async function generateAccessToken(userId: string) {
   const accessToken = await createJwt({ userId }, jwtConfig);
-  const refreshToken = uuid.v4();
-  await userRepository.update(userId, { refreshToken });
-
-  return { accessToken, refreshToken };
+  return { accessToken };
 }
 
 /**
  * Login user with email and password
- * Returns accessToken and refreshToken
+ * Returns accessToken
  */
 export async function login(payload: AuthCredentials, role?: Role) {
   const { email, password } = payload;
@@ -43,8 +41,8 @@ export async function login(payload: AuthCredentials, role?: Role) {
     // Must have a specific role to login here
     if (role && !hasRole(user, role)) throw new UnauthorizedError(errors.NO_PERMISSION);
 
-    // Generate JWT and refresh token
-    return await generateTokens(user.id);
+    // Generate JWT token
+    return await generateAccessToken(user.id);
   } catch (error) {
     logger.error(`An error occured trying to login: %${error}`);
     throw error;
@@ -52,31 +50,19 @@ export async function login(payload: AuthCredentials, role?: Role) {
 }
 
 /**
- * Refresh access token via a refresh token
+ * Logout an existing user (session)
  */
-export async function refresh(userId: string, refreshToken: string) {
-  try {
-    const user = await userRepository.findByRefreshToken(userId, refreshToken);
-    if (!user) throw new NotFoundError();
-
-    // Generate JWT and refresh token
-    return await generateTokens(user.id);
-  } catch (error) {
-    logger.error(`An error occured trying to refresh token: %${error}`);
-    throw error;
-  }
-}
-
-/**
- * Logout an existing user by removing its refresh token
- */
-export async function logout(userId: string) {
-  try {
-    return await userRepository.update(userId, { refreshToken: null });
-  } catch (error) {
-    logger.error(`An error occured trying to logout: %${error}`);
-    throw error;
-  }
+export async function logout(req) {
+  if (!req.session) throw new UnauthorizedError(); // Trying to logout without session based login
+  return new Promise((resolve, reject) => {
+    req.session.destroy((error) => {
+      if (error) {
+        logger.error(`An error occured trying to logout: %${error}`);
+        return reject(error);
+      }
+      return resolve();
+    });
+  });
 }
 
 /**

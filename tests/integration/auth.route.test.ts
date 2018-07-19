@@ -42,9 +42,6 @@ describe('/auth', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
-
-      const loggedInUser = await findById(users.regular.id);
-      expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
     it('Should succesfully login a user with correct credentials case insensitive', async () => {
@@ -60,9 +57,6 @@ describe('/auth', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
-
-      const loggedInUser = await findById(users.regular.id);
-      expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
     it('Should throw error when no email or password is provided', async () => {
@@ -164,9 +158,6 @@ describe('/auth', () => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
-
-      const loggedInUser = await findById(users.admin.id);
-      expect(loggedInUser.refreshToken).toEqual(body.data.refreshToken);
     });
 
     it('Should throw error when user has no ADMIN role', async () => {
@@ -183,45 +174,6 @@ describe('/auth', () => {
     });
   });
 
-  describe('POST /refresh', () => {
-    it('Should succesfully refresh an expired access token', async () => {
-      const { body, status } = await request(app)
-        .post(`${prefix}/auth/login`)
-        .send({
-          email: regularUser.email,
-          password: regularUser.password,
-        });
-      expect(status).toEqual(httpStatus.OK);
-      const accessToken = body.data.accessToken;
-      const refreshToken = body.data.refreshToken;
-
-      const { body: body2, status: status2 } = await request(app)
-        .post(`${prefix}/auth/refresh`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({ refreshToken });
-
-      expect(status2).toEqual(httpStatus.OK);
-      Joi.validate(body2, loginSchema, (err, value) => {
-        if (err) throw err;
-        if (!value) throw new Error('no value to check schema');
-      });
-
-      const loggedInUser = await findById(users.regular.id);
-      expect(loggedInUser.refreshToken).not.toEqual(body.data.refreshToken);
-      expect(loggedInUser.refreshToken).toEqual(body2.data.refreshToken);
-    });
-
-    it('Should throw an error when trying to refresh without valid access token', async () => {
-      const invalidToken = await getValidJwt(faker.random.uuid());
-      const { status } = await request(app)
-        .post(`${prefix}/auth/refresh`)
-        .set('Authorization', `Bearer ${invalidToken}`)
-        .send({ refreshToken: 'notFoundToken' });
-
-      expect(status).toEqual(httpStatus.NOT_FOUND);
-    });
-  });
-
   describe('POST /logout', () => {
     it('Should succesfully logout an active user', async () => {
       const { body, status } = await request(app)
@@ -233,14 +185,11 @@ describe('/auth', () => {
       expect(status).toEqual(httpStatus.OK);
       const accessToken = body.data.accessToken;
 
-      const { body: body2, status: status2 } = await request(app)
+      const { status: status2 } = await request(app)
         .post(`${prefix}/auth/logout`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(status2).toEqual(httpStatus.OK);
-
-      const loggedInUser = await findById(users.regular.id);
-      expect(loggedInUser.refreshToken).toEqual(null);
     });
 
     it('Should throw an error when user was not found', async () => {
