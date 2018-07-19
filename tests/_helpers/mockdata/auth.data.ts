@@ -2,20 +2,22 @@ import * as request from 'supertest';
 import { createJwt } from 'tree-house-authentication';
 import { jwtConfig } from '../../../src/config/auth.config';
 import { adminUser, blockedUser, createUser, unconfirmedUser } from './user.data';
-import { User } from '../../../src/models/user.model';
+import { User, UserCreate } from '../../../src/models/user.model';
 import { app } from '../../../src/app';
 
 const prefix = `/api/${process.env.API_VERSION}`;
-const tokens = {};
+const sessionTokens = {};
+const jwtTokens = {};
 
 /**
  * Login with username and password
  * Return the cookie that needs to be set
  */
-async function login(username: string, password: string): Promise<string> {
+async function login(email: string, password: string): Promise<string> {
   const { header } = await request(app)
     .post(`${prefix}/auth/login`)
-    .send({ username, password });
+    .send({ email, password });
+
   return header['set-cookie'];
 }
 
@@ -27,12 +29,21 @@ export function getValidJwt(userId: string) {
  * Get a valid user token (cookie)
  * We don't want to login every time again, so store already logged in users
  */
-export async function getUserSessionToken(user: User): Promise<string[]> {
-  if (!(user.email in tokens)) {
+export async function getUserSessionToken(user: UserCreate): Promise<string[]> {
+  if (!(user.email in sessionTokens)) {
     const token = await login(user.email, user.password);
-    tokens[user.email] = token;
+    sessionTokens[user.email] = token;
   }
-  return tokens[user.email];
+  return sessionTokens[user.email];
+}
+
+export async function getUserSessionsTokens(users: UserCreate[]): Promise<string[]> {
+  const sessionTokens = [];
+  for (const userValues of users) {
+    const token = await getUserSessionToken(userValues);
+    sessionTokens.push(token);
+  }
+  return sessionTokens;
 }
 
 /**
@@ -40,20 +51,20 @@ export async function getUserSessionToken(user: User): Promise<string[]> {
  * We don't want to login every time again, so store already logged in users
  */
 export async function getUserJwtToken(user: User): Promise<string[]> {
-  if (!(user.email in tokens)) {
+  if (!(user.email in jwtTokens)) {
     const token = await getValidJwt(user.id);
-    tokens[user.email] = token;
+    jwtTokens[user.email] = token;
   }
-  return tokens[user.email];
+  return jwtTokens[user.email];
 }
 
 export async function getUserJwtTokens(users: User[]): Promise<string[]> {
-  const tokens = [];
+  const jwtTokens = [];
   for (const userValues of users) {
     const token = await getValidJwt(userValues.id);
-    tokens.push(token);
+    jwtTokens.push(token);
   }
-  return tokens;
+  return jwtTokens;
 }
 
 export async function getAdminToken() {

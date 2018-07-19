@@ -53,7 +53,6 @@ export async function login(payload: AuthCredentials, authentication: 'jwt' | 's
  * Logout an existing user (session)
  */
 export async function logout(req) {
-  if (!req.session) throw new UnauthorizedError(); // Trying to logout without session based login
   return new Promise((resolve, reject) => {
     req.session.destroy((error) => {
       if (error) {

@@ -34,7 +34,6 @@ async function verifyHeaders(req) {
   }
 
   if (!userId && error) throw error;
-  if (!userId && !error) throw new UnauthorizedError(errors.MISSING_HEADERS); // Something else went wrong, throw generic headers error
   return userId;
 }
 

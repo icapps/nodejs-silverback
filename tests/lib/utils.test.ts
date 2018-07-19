@@ -44,5 +44,17 @@ describe('lib/utils', () => {
         expect(err).toEqual(new UnauthorizedError(errors.MISSING_HEADERS));
       }
     });
+
+    it('Should throw an error when no headers are present', () => {
+      expect.assertions(1);
+      try {
+        const mockRequest = httpMocks.createRequest({
+          headers: {},
+        });
+        utils.extractJwt(mockRequest);
+      } catch (err) {
+        expect(err).toEqual(new UnauthorizedError(errors.MISSING_HEADERS));
+      }
+    });
   });
 });
