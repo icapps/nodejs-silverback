@@ -11,11 +11,43 @@ securityDefinitions:
     type: apiKey
     in: header
     description: 'Please use the following format: Bearer <ApiKey>'
+  cookieAuth:
+    type: apiKey
+    in: header
+    name: Cookie
 paths:
   /auth/login:
     post:
       tags:
-      - "authentication"
+      - "authentication - Session tokens"
+      summary: "Login a user with email and password in the application(s)"
+      parameters:
+        - name: "authentication request"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostLogin"
+      responses:
+        200:
+          description: >
+            Successfully authenticated.
+            The session ID is returned in the header as `set-cookie`
+        400:
+          description: "400 Bad request"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "500 Interal error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /auth/login/jwt:
+    post:
+      tags:
+      - "authentication - JWT"
       summary: "Login a user with email and password in the application(s)"
       parameters:
         - name: "authentication request"
@@ -40,11 +72,10 @@ paths:
           description: "500 Interal error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-
   /auth/login/admin:
     post:
       tags:
-      - "authentication"
+      - "authentication - Session tokens"
       summary: "Login a user with email and password in the Silverback admin panel"
       description: |-
         permission | scope | effect
@@ -58,9 +89,9 @@ paths:
             $ref: "#/definitions/PostLogin"
       responses:
         200:
-          description: "Success"
-          schema:
-            $ref: "#/definitions/LoginResponse"
+          description: >
+            Successfully authenticated.
+            The session ID is returned in the header as `set-cookie`
         400:
           description: "400 Bad request"
           schema:
@@ -76,10 +107,10 @@ paths:
   /auth/logout:
     post:
       tags:
-      - "authentication"
-      summary: "Logout the current user"
+      - "authentication - Session tokens"
+      summary: "Logout the current"
       security:
-        - Bearer: []
+        - cookieAuth: []
       responses:
         204:
           description: "Success"
@@ -163,6 +194,7 @@ paths:
       summary: "Returns the current user information"
       security:
         - Bearer: []
+        - cookieAuth: []
       responses:
         200:
           description: "logged in user"
@@ -178,6 +210,7 @@ paths:
       summary: "Update the current user information"
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - name: "user values"
           in: "body"
@@ -238,6 +271,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - $ref: "#/parameters/SortOrder"
         - $ref: "#/parameters/SortField"
@@ -263,6 +297,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - name: "user values"
           in: "body"
@@ -299,6 +334,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       responses:
         200:
           description: "Success"
@@ -318,6 +354,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - name: "user values"
           in: "body"
@@ -343,6 +380,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - name: "user values"
           in: "body"
@@ -368,6 +406,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       responses:
         204:
           description: "Success"
@@ -392,6 +431,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - name: "user values"
           in: "body"
@@ -421,6 +461,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       responses:
         200:
           description: "Success"
@@ -441,6 +482,7 @@ paths:
         `USER` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - $ref: "#/parameters/SortOrder"
         - $ref: "#/parameters/SortField"
@@ -472,6 +514,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - $ref: "#/parameters/SortOrder"
         - $ref: "#/parameters/SortField"
@@ -509,6 +552,7 @@ paths:
         `USER` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       responses:
         200:
           description: "Success"
@@ -528,6 +572,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - in: path
           type: "string"
@@ -558,6 +603,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - in: path
           type: "string"
@@ -590,6 +636,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - in: path
           type: "string"
@@ -615,6 +662,7 @@ paths:
         `ADMIN` | `gobal` | **Required** for this endpoint
       security:
         - Bearer: []
+        - cookieAuth: []
       parameters:
         - in: path
           type: "string"
