@@ -4,6 +4,5 @@ export const authSerializer = new Serializer('authentication', {
   keyForAttribute: 'camelCase',
   attributes: [
     'accessToken',
-    'refreshToken',
   ],
 });

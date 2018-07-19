@@ -44,16 +44,7 @@ export const unconfirmedUser: UserCreate = {
   role: roles.USER.code,
 };
 
-export const nostateUser: UserCreate = {
-  email: 'nostate@users.com',
-  firstName: 'Regular',
-  lastName: 'User',
-  password: 'developer',
-  role: roles.USER.code,
-  status: '',
-};
-
-export const blockedstateUser: UserCreate = {
+export const blockedUser: UserCreate = {
   email: 'blocked@users.com',
   firstName: 'Regular',
   lastName: 'User',

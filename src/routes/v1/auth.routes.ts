@@ -9,12 +9,19 @@ import { roles } from '../../config/roles.config';
 import * as controller from '../../controllers/auth.controller';
 
 export const routes: Router = Router({ mergeParams: true })
-  // Application(s)
+  // Application(s) - sessions
   .post('/auth/login',
     setGlobalBruteforce,
     setUserBruteForce,
     validateSchema(authSchema.login),
     handleAsyncFn((req: BruteRequest, res) => controller.login(req, res)))
+
+  // Application(s) - jwt
+  .post('/auth/login/jwt',
+    setGlobalBruteforce,
+    setUserBruteForce,
+    validateSchema(authSchema.login),
+    handleAsyncFn((req: BruteRequest, res) => controller.loginJwt(req, res)))
 
   // Administraion panel
   .post('/auth/login/admin',
@@ -22,10 +29,6 @@ export const routes: Router = Router({ mergeParams: true })
     setUserBruteForce,
     validateSchema(authSchema.login),
     handleAsyncFn((req: BruteRequest, res) => controller.login(req, res, roles.ADMIN)))
-
-  .post('/auth/refresh',
-    validateSchema(authSchema.refresh),
-    handleAsyncFn(controller.refresh))
 
   .post('/auth/logout', (req, res, next) =>
     hasPermission(req, res, next),
