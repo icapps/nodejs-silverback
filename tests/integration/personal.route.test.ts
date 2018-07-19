@@ -5,7 +5,7 @@ import * as request from 'supertest';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
-import { getUserToken, getValidJwt } from '../_helpers/mockdata/auth.data';
+import { getUserJwtToken, getValidJwt } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, regularUser } from '../_helpers/mockdata/user.data';
 import { createUserSchema, userByIdSchema } from '../_helpers/payload-schemes/user.schema';
@@ -18,7 +18,7 @@ describe('/me', () => {
     await clearAll(); // Full db clear
 
     const user = await createUser(regularUser, 'registered');
-    userToken = await getUserToken(user);
+    userToken = await getUserJwtToken(user);
   });
 
   afterAll(async () => {

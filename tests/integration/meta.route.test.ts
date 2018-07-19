@@ -5,7 +5,7 @@ import { sortBy } from 'lodash';
 import * as request from 'supertest';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
-import { getUserTokens } from '../_helpers/mockdata/auth.data';
+import { getUserJwtTokens } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
 import { clearCodeTypesData, createCode, createCodeType } from '../_helpers/mockdata/meta.data';
 import { adminUser, createUsers, regularUser } from '../_helpers/mockdata/user.data';
@@ -25,7 +25,7 @@ describe('/meta', () => {
     [users.admin, users.regular] = sorted;
 
     // All user type tokens
-    const createdTokens = await getUserTokens([users.regular, users.admin]);
+    const createdTokens = await getUserJwtTokens([users.regular, users.admin]);
     [tokens.regular, tokens.admin] = createdTokens;
   });
 

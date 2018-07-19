@@ -8,7 +8,7 @@ import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
 import * as mailer from '../../src/lib/mailer';
 import { findRoleByCode } from '../../src/lib/utils';
-import { getUserTokens, getValidJwt } from '../_helpers/mockdata/auth.data';
+import { getUserJwtTokens, getValidJwt } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
 import {
   adminUser,
@@ -38,7 +38,7 @@ describe('/users', () => {
     [users.admin, users.regular] = sorted;
 
     // All user type tokens
-    const createdTokens = await getUserTokens([users.regular, users.admin]);
+    const createdTokens = await getUserJwtTokens([users.regular, users.admin]);
     [tokens.regular, tokens.admin] = createdTokens;
   });
 

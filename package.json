@@ -24,6 +24,7 @@
   ],
   "dependencies": {
     "camelcase-keys": "~4.2.0",
+    "connect-redis": "~3.3.3",
     "dotenv-safe": "~6.0.0",
     "express": "~4.16.2",
     "http-status": "~1.2.0",

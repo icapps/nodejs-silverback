@@ -6,6 +6,5 @@ export const loginSchema = Joi.object().keys({
   }),
   data: Joi.object({
     accessToken: Joi.string().required(),
-    refreshToken: Joi.string().required(),
   }),
 });
