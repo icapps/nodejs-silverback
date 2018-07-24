@@ -12,6 +12,7 @@ const app: express.Application = express();
 treehouse.setBodyParser(app, '*');
 treehouse.setBasicSecurity(app, '*', {
   cors: {
+    origin: (process.env.ALLOWED_CORS_DOMAINS || '*').split(','),
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH'],
     allowedHeaders: ['Cache-Control', 'Pragma', 'Origin', 'Authorization', 'Content-Type', 'X-Requested-With', 'Set-Cookie'],
     credentials: true,
