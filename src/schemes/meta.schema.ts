@@ -33,6 +33,16 @@ export const metaSchema = {
       codeId: Joi.string().guid(),
     },
     body: Joi.object({
+      name: Joi.string().required(),
+      description: Joi.string().required(),
+      deprecated: Joi.boolean().required(),
+    }),
+  },
+  partialCodeUpdate: {
+    params: {
+      codeId: Joi.string().guid(),
+    },
+    body: Joi.object({
       name: Joi.string(),
       description: Joi.string(),
       deprecated: Joi.boolean(),
