@@ -9,6 +9,8 @@ import * as appConfig from './config/app.config';
 // Create express instance
 const app: express.Application = express();
 
+console.log('Allowed cors', (process.env.ALLOWED_CORS_DOMAINS || '*').split(','));
+
 treehouse.setBodyParser(app, '*');
 treehouse.setBasicSecurity(app, '*', {
   cors: {

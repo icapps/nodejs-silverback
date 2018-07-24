@@ -1,4 +1,5 @@
 import './config/load-env'; // Load our environment variables
+
 import * as treehouse from 'tree-house';
 import { logger, raven } from './lib/logger';
 import { importTranslations } from './lib/translator';
