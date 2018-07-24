@@ -341,26 +341,116 @@ describe('/meta', () => {
       await clearCodeTypesData('LAN');
     });
 
-    it('Should validate that there is at least 1 field to update', async () => {
-      const { body, status } = await request(app)
-        .put(`${prefix}/meta/codes/${code.id}`)
-        .set('Authorization', `Bearer ${tokens.admin}`);
-
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-    it('Should not accept code changes', async () => {
+    it('Should succesfully update an existing code', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
-          code: 'NL',
+          name: 'newname',
+          description: 'newdescription',
+          deprecated: true,
         });
-      expect(body.errors[0].code).toEqual('INVALID_INPUT');
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
+
+      expect(status).toEqual(httpStatus.OK);
+      expect(body.data).toMatchObject({
+        name: 'newname',
+        description: 'newdescription',
+        deprecated: true,
+      });
     });
-    it('Should succesfully update an name', async () => {
+
+    it('Should throw an error when not all fields are provided', async () => {
       const { body, status } = await request(app)
         .put(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
+        .send({
+          name: 'NL',
+          description: 'newdescription',
+        });
+
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when code is not a valid guid', async () => {
+      const { status } = await request(app)
+        .put(`${prefix}/meta/codes/unknownCode`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
+        .send({
+          name: 'newname',
+          description: 'newdescription',
+          deprecated: true,
+        });
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should throw an error when code is not found', async () => {
+      const { status } = await request(app)
+        .put(`${prefix}/meta/codes/${faker.random.uuid()}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
+        .send({
+          name: 'newname',
+          description: 'newdescription',
+          deprecated: true,
+        });
+
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error without admin permission', async () => {
+      const { body, status } = await request(app)
+        .put(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
+        .send({
+          name: 'newname2',
+          description: 'newdescription2',
+          deprecated: false,
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
+    });
+  });
+
+  describe('PATCH /codes/:codeId', () => {
+    const prefix = `/api/${process.env.API_VERSION}`;
+    let code;
+
+    beforeAll(async () => {
+      const codeType = await createCodeType({ code: 'LAN', name: 'Language' });
+      code = await createCode(codeType.id, { name: 'Zalosh', code: 'ZL' });
+    });
+
+    afterAll(async () => {
+      await clearCodeTypesData('LAN');
+    });
+
+    it('Should validate that there is at least 1 field to update', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${tokens.admin}`);
+
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+    });
+
+    it('Should not accept code changes', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
+        .send({
+          code: 'NL',
+        });
+      expect(status).toEqual(httpStatus.BAD_REQUEST);
+      expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
+      expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
+    });
+
+    it('Should succesfully update an name', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/meta/codes/${code.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           name: 'newname',
@@ -371,7 +461,7 @@ describe('/meta', () => {
     });
     it('Should succesfully update an description', async () => {
       const { body, status } = await request(app)
-        .put(`${prefix}/meta/codes/${code.id}`)
+        .patch(`${prefix}/meta/codes/${code.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           description: 'newdescription',
@@ -380,9 +470,10 @@ describe('/meta', () => {
       expect(body.data.description).toEqual('newdescription');
       expect(status).toEqual(httpStatus.OK);
     });
-    it('Should succesfully update an deprecated state', async () => {
+
+    it('Should succesfully update a deprecated state', async () => {
       const { body, status } = await request(app)
-        .put(`${prefix}/meta/codes/${code.id}`)
+        .patch(`${prefix}/meta/codes/${code.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           deprecated: true,
@@ -391,9 +482,10 @@ describe('/meta', () => {
       expect(body.data.deprecated).toEqual(true);
       expect(status).toEqual(httpStatus.OK);
     });
+
     it('Should succesfully update all values', async () => {
       const { body, status } = await request(app)
-        .put(`${prefix}/meta/codes/${code.id}`)
+        .patch(`${prefix}/meta/codes/${code.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           name: 'newname2',
@@ -405,6 +497,21 @@ describe('/meta', () => {
       expect(body.data.description).toEqual('newdescription2');
       expect(body.data.name).toEqual('newname2');
       expect(status).toEqual(httpStatus.OK);
+    });
+
+    it('Should throw an error without admin permission', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/meta/codes/${code.id}`)
+        .set('Authorization', `Bearer ${tokens.regular}`)
+        .send({
+          name: 'newname2',
+          description: 'newdescription2',
+          deprecated: false,
+        });
+
+      expect(status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(body.errors[0].code).toEqual(errors.NO_PERMISSION.code);
+      expect(body.errors[0].title).toEqual(errors.NO_PERMISSION.message);
     });
   });
 
@@ -422,7 +529,7 @@ describe('/meta', () => {
     });
 
     it('Should succesfully deprecate an existing code', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/meta/codes/${code.id}/deprecate`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 
@@ -430,7 +537,7 @@ describe('/meta', () => {
     });
 
     it('Should throw an error when code is not a valid guid', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/meta/codes/unknownType/deprecate`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 
@@ -438,7 +545,7 @@ describe('/meta', () => {
     });
 
     it('Should throw an error when code is not found', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/meta/codes/${faker.random.uuid()}/deprecate`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 
@@ -470,7 +577,7 @@ describe('/meta', () => {
     });
 
     it('Should succesfully deprecate an existing code', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/meta/codes/${code.id}/undeprecate`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 
@@ -478,7 +585,7 @@ describe('/meta', () => {
     });
 
     it('Should throw an error when code is not a valid guid', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/meta/codes/unknownType/undeprecate`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 
@@ -486,7 +593,7 @@ describe('/meta', () => {
     });
 
     it('Should throw an error when code is not found', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/meta/codes/${faker.random.uuid()}/undeprecate`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 

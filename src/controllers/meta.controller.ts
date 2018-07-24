@@ -2,9 +2,9 @@ import * as httpStatus from 'http-status';
 import { Request, Response } from 'express';
 import { responder } from '../lib/responder';
 import { codeSerializer } from '../serializers/meta.serializer';
-import * as metaService from '../services/meta.service';
 import { AuthRequest } from '../models/request.model';
 import { Filters } from '../models/filters.model';
+import * as metaService from '../services/meta.service';
 
 /**
  * Get a code by id
@@ -53,6 +53,18 @@ export async function createCode(req: Request, res: Response): Promise<void> {
  * Update an existing code
  */
 export async function updateCode(req: Request, res: Response): Promise<void> {
+  const result = await metaService.updateCode(req.params.codeId, req.body);
+  responder.success(res, {
+    status: httpStatus.OK,
+    payload: result,
+    serializer: codeSerializer,
+  });
+}
+
+/**
+ * Update an existing code partially
+ */
+export async function partialCodeUpdate(req: Request, res: Response): Promise<void> {
   const result = await metaService.partialCodeUpdate(req.params.codeId, req.body);
   responder.success(res, {
     status: httpStatus.OK,
@@ -60,6 +72,7 @@ export async function updateCode(req: Request, res: Response): Promise<void> {
     serializer: codeSerializer,
   });
 }
+
 /**
  * Deprecate an existing code
  */

@@ -33,6 +33,11 @@ export const routes: Router = Router({ mergeParams: true })
     validateSchema(metaSchema.updateCode, defaultOptions),
     handleAsyncFn(controller.updateCode))
 
+  .patch('/codes/:codeId', (req, res, next) =>
+    hasPermission(req, res, next, roles.ADMIN),
+    validateSchema(metaSchema.partialCodeUpdate, defaultOptions),
+    handleAsyncFn(controller.partialCodeUpdate))
+
   .post('/codes/:codeId/deprecate', (req, res, next) =>
     hasPermission(req, res, next, roles.ADMIN),
     validateSchema(metaSchema.deprecateCode, defaultOptions),
