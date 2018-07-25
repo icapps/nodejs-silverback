@@ -89,6 +89,12 @@ export async function update(userId: string, values: UserUpdate): Promise<User> 
  */
 export async function partialUpdate(userId: string, values: PartialUserUpdate): Promise<User> {
   try {
+    if (values.status) {
+      const userStatus = await userRepository.findUserStatus(values.status);
+      if (!userStatus) throw new NotFoundError(errors.STATUS_NOT_FOUND);
+      Object.assign(values, { status: userStatus.id });
+    }
+
     const result = await userRepository.update(userId, values);
     if (!result) throw new NotFoundError();
     return result;
@@ -104,9 +110,7 @@ export async function partialUpdate(userId: string, values: PartialUserUpdate): 
 export async function updatePassword(userId: string, password: string): Promise<{}> {
   try {
     const hashedPw = await getHashedPassword(password, settings.saltCount);
-    const userStatus = await userRepository.findUserStatus('REGISTERED');
-
-    return await partialUpdate(userId, { password: hashedPw, status: userStatus.id });
+    return await partialUpdate(userId, { password: hashedPw, status: 'REGISTERED' });
   } catch (error) {
     logger.error(`An error occured updating a user's password: ${error}`);
     throw error;
