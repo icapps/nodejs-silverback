@@ -585,6 +585,7 @@ describe('/users', () => {
         .send({
           password: 'myNewPw',
         });
+
       expect(status).toEqual(httpStatus.OK);
       const updatedUser = await findById(user.id);
       expect(updatedUser.status.code).toEqual('REGISTERED');
@@ -680,6 +681,19 @@ describe('/users', () => {
       });
     });
 
+    it('Should succesfully update the status of an existing user', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
+        .send({
+          status: 'BLOCKED',
+        });
+
+      expect(status).toEqual(httpStatus.OK);
+      const updated = await findById(user.id);
+      expect(updated.status.code).toEqual('BLOCKED');
+    });
+
     it('Should throw an error when an invalid property is provided', async () => {
       const { body, status } = await request(app)
         .patch(`${prefix}/users/${user.id}`)
@@ -709,6 +723,16 @@ describe('/users', () => {
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           email: 'test@unknown2.com',
+        });
+      expect(status).toEqual(httpStatus.NOT_FOUND);
+    });
+
+    it('Should throw an error when status does not exist', async () => {
+      const { body, status } = await request(app)
+        .patch(`${prefix}/users/${user.id}`)
+        .set('Authorization', `Bearer ${tokens.admin}`)
+        .send({
+          status: 'unknownStatus',
         });
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
