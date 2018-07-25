@@ -906,14 +906,14 @@ definitions:
       required:
         - "name"
         - "description"
-        - "deprecate"
+        - "deprecated"
       properties:
         name:
           type: string
           description: "Full name"
         description:
           type: string
-        deprecate:
+        deprecated:
           type: boolean
     PatchCode:
       type: object
