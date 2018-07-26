@@ -2,7 +2,7 @@ import { errors as defaults, ErrorType } from 'tree-house-errors';
 
 // tslint:disable:max-line-length
 export const errors = <Error>Object.assign({}, defaults, {
-  CODE_DUPLICATE:             { code: 'CODE_DUPLICATE', message: 'A code with this code already exists' },
+  CODE_DUPLICATE:             { code: 'CODE_DUPLICATE', message: 'An item with this code already exists' },
   INVALID_TOKEN:              { code: 'INVALID_TOKEN', message: 'The supplied token is invalid.' },
   LINK_EXPIRED:               { code: 'LINK_EXPIRED', message: 'Sorry, but this link has expired. You can request another one below.' },
   MISSING_HEADERS:            { code: 'MISSING_HEADERS', message: 'Not all required headers are provided' },
