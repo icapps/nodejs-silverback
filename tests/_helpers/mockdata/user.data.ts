@@ -15,6 +15,7 @@ export const validUser: UserCreate = {
   lastName: 'Horsten',
   password: 'developer',
   role: roles.ADMIN.code,
+  registrationConfirmed: true,
   status: '',
 };
 
@@ -24,6 +25,7 @@ export const adminUser: UserCreate = {
   lastName: 'User',
   password: 'developer',
   role: roles.ADMIN.code,
+  registrationConfirmed: true,
   status: '',
 };
 
@@ -33,6 +35,7 @@ export const regularUser: UserCreate = {
   lastName: 'User',
   password: 'developer',
   role: roles.USER.code,
+  registrationConfirmed: true,
   status: '',
 };
 
@@ -42,14 +45,17 @@ export const unconfirmedUser: UserCreate = {
   lastName: 'User',
   password: 'developer',
   role: roles.USER.code,
+  registrationConfirmed: false,
+  status: '',
 };
 
-export const blockedUser: UserCreate = {
-  email: 'blocked@users.com',
+export const inactiveUser: UserCreate = {
+  email: 'inactive@users.com',
   firstName: 'Regular',
   lastName: 'User',
   password: 'developer',
   role: roles.USER.code,
+  registrationConfirmed: true,
   status: '',
 };
 
@@ -60,6 +66,7 @@ export const validUsers: UserCreate[] = [
     lastName: 'Horsten',
     password: 'developer',
     role: roles.ADMIN.code,
+    registrationConfirmed: true,
   },
   {
     email: 'brent.vangeertruy@icapps.com',
@@ -67,6 +74,7 @@ export const validUsers: UserCreate[] = [
     lastName: 'Van Geertruy',
     password: 'developer',
     role: roles.USER.code,
+    registrationConfirmed: true,
   },
   {
     email: 'jelle.mannaerts@icapps.com',
@@ -74,6 +82,7 @@ export const validUsers: UserCreate[] = [
     lastName: 'Mannaerts',
     password: 'developer',
     role: roles.ADMIN.code,
+    registrationConfirmed: true,
   },
 ];
 
@@ -84,22 +93,19 @@ export async function createUserStatuses() {
   const existingCodeType = await metaRepository.findCodeTypeByCode('USER_STATUSES');
   if (!existingCodeType) {
     const codeType = await metaRepository.createCodeType({ code: 'USER_STATUSES', name: 'User Statuses' });
-    userStatuses['complete_registration'] = await metaRepository.createCode(codeType.id, {
-      code: 'COMPLETE_REGISTRATION', name: 'Must complete registration',
-    });
-    userStatuses['registered'] = await metaRepository.createCode(codeType.id, { code: 'REGISTERED', name: 'Registered account' });
-    userStatuses['blocked'] = await metaRepository.createCode(codeType.id, { code: 'BLOCKED', name: 'Blocked account' });
+    userStatuses['active'] = await metaRepository.createCode(codeType.id, { code: 'ACTIVE', name: 'Active account' });
+    userStatuses['inactive'] = await metaRepository.createCode(codeType.id, { code: 'INACTIVE', name: 'Inactive account' });
   }
   return userStatuses;
 }
 
-export async function createUser(values: UserCreate, status: 'complete_registration' | 'registered' | 'blocked') {
+export async function createUser(values: UserCreate, status: 'active' | 'inactive') {
   await createUserStatuses(); // Create required user statuses (active/inactive)
   const allValues = Object.assign({}, values, { status: userStatuses[status].id });
   return userRepository.create(allValues);
 }
 
-export async function createUsers(users: UserCreate[], status: 'complete_registration' | 'registered' | 'blocked') {
+export async function createUsers(users: UserCreate[], status: 'active' | 'inactive') {
   for (const userValues of users) {
     await createUser(userValues, status);
   }

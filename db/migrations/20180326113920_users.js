@@ -12,6 +12,7 @@ exports.up = async (knex) => {
 
     // Status of the account
     table.uuid('status').notNullable().references('codes.id');
+    table.boolean('registrationConfirmed').notNullable().defaultTo(false);
 
     // Nullable
     table.text('password').nullable();

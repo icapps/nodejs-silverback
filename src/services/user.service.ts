@@ -43,13 +43,17 @@ export async function create(values: UserCreate, changePassword: boolean): Promi
     const userStatus = await userRepository.findUserStatus(values.status);
     if (!userStatus) throw new NotFoundError(errors.STATUS_NOT_FOUND);
 
-    const valuesWithStatusId = Object.assign({}, values, { status: userStatus.id });
+    const valuesWithStatusId = Object.assign({}, values, { status: userStatus.id, registrationConfirmed: true });
 
     // User must set own password after creation
     if (changePassword === true) {
       const token = uuid.v4();
       const randomPassword = await getHashedPassword(crypto.randomBytes(24).toString('hex'), settings.saltCount);
-      const created = await userRepository.create(Object.assign({}, valuesWithStatusId, { resetPwToken: token, password: randomPassword }));
+      const created = await userRepository.create(Object.assign({}, valuesWithStatusId, {
+        resetPwToken: token,
+        password: randomPassword,
+        registrationConfirmed: false, // Needs to confirm by email
+      }));
 
       // Send mail asynchronous, no need to wait
       const content = getInitialPwChangeContent({ token, email: values.email, firstName: created.firstName });
@@ -110,7 +114,7 @@ export async function partialUpdate(userId: string, values: PartialUserUpdate): 
 export async function updatePassword(userId: string, password: string): Promise<{}> {
   try {
     const hashedPw = await getHashedPassword(password, settings.saltCount);
-    return await partialUpdate(userId, { password: hashedPw, status: 'REGISTERED' });
+    return await partialUpdate(userId, { password: hashedPw, status: 'ACTIVE' });
   } catch (error) {
     logger.error(`An error occured updating a user's password: ${error}`);
     throw error;

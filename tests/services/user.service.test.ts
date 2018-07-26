@@ -24,7 +24,7 @@ describe('userService', () => {
     });
 
     it('Should succesfully send an email to set initial password and update reset token', async () => {
-      const user = await create(Object.assign({}, regularUser, { email: 'forgotPw@tester.com', status: 'REGISTERED' }), true);
+      const user = await create(Object.assign({}, regularUser, { email: 'forgotPw@tester.com', status: 'ACTIVE' }), true);
       expect(mailSpy).toHaveBeenCalledTimes(1);
 
       const updated = await findById(user.id);
@@ -32,7 +32,7 @@ describe('userService', () => {
     });
 
     it('Should succesfully create a user without being able to set initial password', async () => {
-      const user = await create(Object.assign({}, regularUser, { email: 'forgotPw@tester12.com', status: 'REGISTERED' }), false);
+      const user = await create(Object.assign({}, regularUser, { email: 'forgotPw@tester12.com', status: 'ACTIVE' }), false);
       expect(mailSpy).toHaveBeenCalledTimes(0);
 
       const updated = await findById(user.id);

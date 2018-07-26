@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { createJwt } from 'tree-house-authentication';
 import { jwtConfig } from '../../../src/config/auth.config';
-import { adminUser, blockedUser, createUser, unconfirmedUser } from './user.data';
+import { adminUser, inactiveUser, createUser, unconfirmedUser } from './user.data';
 import { User, UserCreate } from '../../../src/models/user.model';
 import { app } from '../../../src/app';
 
@@ -68,16 +68,6 @@ export async function getUserJwtTokens(users: User[]): Promise<string[]> {
 }
 
 export async function getAdminToken() {
-  const user = await createUser(adminUser, 'registered');
+  const user = await createUser(adminUser, 'active');
   return await getValidJwt(user.id);
-}
-
-export async function getUnconfirmedUserToken() {
-  const user = await createUser(unconfirmedUser, 'complete_registration');
-  return await getValidJwt(user.id);
-}
-
-export async function getBlockedStateUserToken() {
-  const user = await createUser(blockedUser, 'blocked');
-  return getValidJwt(user.id);
 }

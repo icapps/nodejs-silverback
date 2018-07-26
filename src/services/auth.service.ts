@@ -103,7 +103,8 @@ export async function confirmForgotPw(token: string, password: string): Promise<
   try {
     const user = await userRepository.findByResetToken(token);
     if (!user || !user.resetPwToken) throw new NotFoundError();
-    return userRepository.updatePassword(user.id, password);
+    await userRepository.updatePassword(user.id, password);
+    return await userRepository.update(user.id, { registrationConfirmed: true }); // Always set user to confirmed after reset
   } catch (error) {
     logger.error(`An error occured trying to change password: %${error}`);
     throw error;

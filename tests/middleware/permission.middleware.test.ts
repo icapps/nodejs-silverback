@@ -4,21 +4,21 @@ import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
 import { hasPermission } from '../../src/middleware/permission.middleware';
 import { getUserJwtTokens, getValidJwt, getUserSessionsTokens } from '../_helpers/mockdata/auth.data';
-import { adminUser, createUsers, regularUser, blockedUser, unconfirmedUser, createUser, removeUser } from '../_helpers/mockdata/user.data';
+import { adminUser, createUsers, regularUser, inactiveUser, unconfirmedUser, createUser, removeUser } from '../_helpers/mockdata/user.data';
 import { clearAll } from '../_helpers/mockdata/data';
 
 describe('hasPermission middleware', () => {
-  const users = { regular: null, admin: null, unconfirmed: null, blocked: null };
+  const users = { regular: null, admin: null, unconfirmed: null, inactive: null };
 
   beforeAll(async () => {
     await clearAll(); // Full db clear
 
     // Create all different type of users
-    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'registered');
+    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'active');
     [users.admin, users.regular] = createdUsers.sort((a, b) => a.role.code.localeCompare(b.role.code));
 
-    users.blocked = await createUser(blockedUser, 'blocked');
-    users.unconfirmed = await createUser(unconfirmedUser, 'complete_registration');
+    users.inactive = await createUser(inactiveUser, 'inactive');
+    users.unconfirmed = await createUser(unconfirmedUser, 'active');
   });
 
   afterAll(async () => {
@@ -26,11 +26,11 @@ describe('hasPermission middleware', () => {
   });
 
   describe('Jwt authentication', () => {
-    const tokens = { regular: null, admin: null, unconfirmed: null, blocked: null };
+    const tokens = { regular: null, admin: null, unconfirmed: null, inactive: null };
 
     beforeAll(async () => {
-      const createdTokens = await getUserJwtTokens([users.regular, users.admin, users.unconfirmed, users.blocked]);
-      [tokens.regular, tokens.admin, tokens.unconfirmed, tokens.blocked] = createdTokens;
+      const createdTokens = await getUserJwtTokens([users.regular, users.admin, users.unconfirmed, users.inactive]);
+      [tokens.regular, tokens.admin, tokens.unconfirmed, tokens.inactive] = createdTokens;
     });
 
     it('Should succesfully set current user on session request when authenticated', async () => {
@@ -38,7 +38,7 @@ describe('hasPermission middleware', () => {
       const response = httpMocks.createResponse();
 
       expect.assertions(1);
-      await hasPermission(request, response, (nxt) => {
+      await hasPermission(request, response, (_nxt) => {
         expect(request.current.user.email).toEqual(regularUser.email);
       });
     });
@@ -48,7 +48,7 @@ describe('hasPermission middleware', () => {
       const response = httpMocks.createResponse();
 
       expect.assertions(1);
-      await hasPermission(request, response, (nxt) => {
+      await hasPermission(request, response, (_nxt) => {
         expect(request.current.user.email).toEqual(adminUser.email);
       }, roles.ADMIN);
     });
@@ -108,13 +108,13 @@ describe('hasPermission middleware', () => {
       });
     });
 
-    it('Should throw an error when user is blocked', async () => {
-      const request = httpMocks.createRequest({ headers: { Authorization: `Bearer ${tokens.blocked}` } });
+    it('Should throw an error when user has been set to inactive', async () => {
+      const request = httpMocks.createRequest({ headers: { Authorization: `Bearer ${tokens.inactive}` } });
       const response = httpMocks.createResponse();
 
       await hasPermission(request, response, (nxt) => {
-        expect(nxt.code).toEqual(errors.USER_BLOCKED.code);
-        expect(nxt.message).toEqual(errors.USER_BLOCKED.message);
+        expect(nxt.code).toEqual(errors.USER_INACTIVE.code);
+        expect(nxt.message).toEqual(errors.USER_INACTIVE.message);
       });
     });
   });
@@ -152,7 +152,7 @@ describe('hasPermission middleware', () => {
     });
 
     xit('Should throw an error when user is not found', async () => {
-      const newUser: any = await createUser(Object.assign({}, users.admin, { email: 'notfounduser1234@hotmail.com' }), 'registered');
+      const newUser: any = await createUser(Object.assign({}, users.admin, { email: 'notfounduser1234@hotmail.com' }), 'active');
       await removeUser(newUser.id);
 
       const request = httpMocks.createRequest({ session: { userId: newUser.id } });
@@ -175,13 +175,13 @@ describe('hasPermission middleware', () => {
       });
     });
 
-    it('Should throw an error when user is blocked', async () => {
-      const request = httpMocks.createRequest({ session: { userId: users.blocked.id } });
+    it('Should throw an error when user has been set to inactive', async () => {
+      const request = httpMocks.createRequest({ session: { userId: users.inactive.id } });
       const response = httpMocks.createResponse();
 
       await hasPermission(request, response, (nxt) => {
-        expect(nxt.code).toEqual(errors.USER_BLOCKED.code);
-        expect(nxt.message).toEqual(errors.USER_BLOCKED.message);
+        expect(nxt.code).toEqual(errors.USER_INACTIVE.code);
+        expect(nxt.message).toEqual(errors.USER_INACTIVE.message);
       });
     });
   });

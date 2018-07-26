@@ -17,7 +17,7 @@ describe('/me', () => {
   beforeAll(async () => {
     await clearAll(); // Full db clear
 
-    const user = await createUser(regularUser, 'registered');
+    const user = await createUser(regularUser, 'active');
     userToken = await getUserJwtToken(user);
   });
 
@@ -58,7 +58,7 @@ describe('/me', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           role: roles.ADMIN.code,
-          status: 'REGISTERED',
+          status: 'ACTIVE',
         });
 
       expect(status).toEqual(httpStatus.OK);
