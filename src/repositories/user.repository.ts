@@ -120,7 +120,6 @@ export async function findById(id: string): Promise<User> {
 
   logger.debug(`Get user by id: ${query.toString()}`);
   const data = await query;
-  // console.log('d', data);
   return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 
