@@ -19,7 +19,7 @@ exports.seed = async (knex) => {
   const userStatuses = await knex('codes')
     .select()
     .where('code_type_id', userStatusesCodeType.id)
-    .andWhere('code', 'REGISTERED')
+    .andWhere('code', 'ACTIVE')
 
   for (let i = 0; i < 50; i += 1) {
     const randomRole = Math.floor(Math.random() * roles.length);
@@ -29,6 +29,7 @@ exports.seed = async (knex) => {
       last_name: faker.name.lastName(),
       password: faker.internet.password(),
       status: userStatuses[0].id,
+      registrationConfirmed: true,
       role: roles[randomRole],
     });
   }
@@ -40,6 +41,7 @@ exports.seed = async (knex) => {
     last_name: 'icapps',
     password: hashedPw,
     status: userStatuses[0].id,
+    registrationConfirmed: true,
     role: 'ADMIN',
   });
 
