@@ -28,10 +28,7 @@ export const userSchema = {
       lastName: Joi.string().required(),
       role: Joi.string().required().valid(availableRoles),
       status: Joi.string().required(),
-      password: Joi.string().min(6).when('query.changePassword', {
-        is: Joi.valid(true),
-        then: Joi.required(),
-      }),
+      password: Joi.string().min(6),
     }),
   },
   update: {
