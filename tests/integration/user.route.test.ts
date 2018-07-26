@@ -314,7 +314,6 @@ describe('/users', () => {
           email: 'test@changePw.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          password: 'developer',
           status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
@@ -333,7 +332,7 @@ describe('/users', () => {
       expect(createdUser.status.code).toEqual('ACTIVE');
     });
 
-    it('Should throw an error when trying to create a user without changing pw and providing pw', async () => {
+    it('Should throw an error when trying to create a user without changing pw and not providing pw', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
         .set('Authorization', `Bearer ${tokens.admin}`)
@@ -344,6 +343,7 @@ describe('/users', () => {
           status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
+
       expect(status).toEqual(httpStatus.BAD_REQUEST);
       expect(body.errors[0].code).toEqual(errors.INVALID_INPUT.code);
       expect(body.errors[0].title).toEqual(errors.INVALID_INPUT.message);
