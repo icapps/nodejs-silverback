@@ -24,6 +24,7 @@ const defaultReturnValues = [
   `${aliases.USERS}.status`,
   `${aliases.USERS}.role`,
   `${aliases.USERS}.resetPwToken`,
+  `${aliases.USERS}.registrationConfirmed`,
   `${aliases.USERS}.createdAt`,
   `${aliases.USERS}.updatedAt`,
 ];
@@ -66,7 +67,7 @@ export async function update(userId: string, values: UserUpdate | PartialUserUpd
  */
 export async function updatePassword(userId: string, password: string): Promise<User> {
   const hashedPw = await getHashedPassword(password, settings.saltCount);
-  const userStatus = await findUserStatus('REGISTERED');
+  const userStatus = await findUserStatus('ACTIVE');
   return update(userId, { password: hashedPw, resetPwToken: null, status: userStatus.id });
 }
 
@@ -119,6 +120,7 @@ export async function findById(id: string): Promise<User> {
 
   logger.debug(`Get user by id: ${query.toString()}`);
   const data = await query;
+  // console.log('d', data);
   return data ? Object.assign(data, { role: findRoleByCode(data.role) }) : undefined; // Add full role object
 }
 

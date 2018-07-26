@@ -20,7 +20,7 @@ describe('/meta', () => {
     await clearAll(); // Full db clear
 
     // Create a regular and admin user
-    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'registered');
+    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'active');
     const sorted = createdUsers.sort((a, b) => a.role.code.localeCompare(b.role.code));
     [users.admin, users.regular] = sorted;
 

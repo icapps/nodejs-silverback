@@ -722,6 +722,8 @@ definitions:
           type: string
         status:
           $ref: "#/definitions/Status"
+        registrationConfirmed:
+          type: boolean
         role:
           $ref: "#/definitions/UserRole"
         createdAt:
@@ -771,7 +773,7 @@ definitions:
           type: string
         status:
           type: string
-          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
+          enum: ["ACTIVE", "INACTIVE"]
         role:
           type: string
           enum: ["USER", "ADMIN"]
@@ -792,7 +794,7 @@ definitions:
           type: string
         status:
           type: string
-          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
+          enum: ["ACTIVE", "INACTIVE"]
         role:
           type: string
           enum: ["USER", "ADMIN"]
@@ -807,7 +809,7 @@ definitions:
           type: string
         status:
           type: string
-          enum: ["REGISTERED", "COMPLETE_REGISTRATION", "BLOCKED"]
+          enum: ["ACTIVE", "INACTIVE"]
         role:
           type: string
           enum: ["USER", "ADMIN"]

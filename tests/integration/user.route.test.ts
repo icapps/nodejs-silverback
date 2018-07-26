@@ -33,7 +33,7 @@ describe('/users', () => {
     await clearAll(); // Full db clear
 
     // Create a regular and admin user
-    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'registered');
+    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'active');
     const sorted = createdUsers.sort((a, b) => a.role.code.localeCompare(b.role.code));
     [users.admin, users.regular] = sorted;
 
@@ -51,7 +51,7 @@ describe('/users', () => {
     let users;
 
     beforeAll(async () => {
-      await createUsers(validUsers, 'registered'); // Creates 3 valid users
+      await createUsers(validUsers, 'active'); // Creates 3 valid users
       users = [regularUser, adminUser, ...validUsers];
     });
 
@@ -136,22 +136,23 @@ describe('/users', () => {
       });
     });
 
-    it('Should return users in ascending order for status', async () => {
+    it('Should return users in descending order for status', async () => {
       // create inactive company
-      const blockedUser = await createUser({
+      const inactiveUser = await createUser({
         email: 'inactive@users.com',
         firstName: 'In',
         lastName: 'Active',
         password: 'developer',
         role: roles.USER.code,
         status: '',
-      }, 'blocked');
+        registrationConfirmed: true,
+      }, 'inactive');
 
       const { body, status } = await request(app)
         .get(`${prefix}/users`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .query('sortField=status')
-        .query('sortOrder=asc');
+        .query('sortOrder=desc');
 
       expect(status).toEqual(httpStatus.OK);
       expect(body.data).toHaveLength(6);
@@ -161,12 +162,12 @@ describe('/users', () => {
         totalCount: 6,
       });
 
-      // expect first user status to be BLOCKED
-      expect(body.data[0].status.code).toEqual('BLOCKED');
-      expect(body.data[0].id).toEqual(blockedUser.id);
+      // expect first user status to be INACTIVE
+      expect(body.data[0].status.code).toEqual('INACTIVE');
+      expect(body.data[0].id).toEqual(inactiveUser.id);
 
       // cleanup
-      await removeUser(blockedUser.id);
+      await removeUser(inactiveUser.id);
     });
 
     it('Should return all users when invalid sorting field is provided', async () => {
@@ -224,7 +225,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser, 'registered');
+      user = await createUser(validUser, 'active');
     });
 
     afterAll(async () => {
@@ -290,7 +291,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          status: 'REGISTERED',
+          status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
 
@@ -314,19 +315,22 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          status: 'COMPLETE_REGISTRATION',
+          status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
 
       expect(status).toEqual(httpStatus.CREATED);
       expect(body.data.email).toEqual('test@changePw.com');
+
       Joi.validate(body, createUserSchema, (err, value) => {
         if (err) throw err;
         if (!value) throw new Error('no value to check schema');
       });
+
       const createdUser = await findById(body.data.id);
       expect(createdUser.resetPwToken).toEqual(expect.any(String));
-      expect(createdUser.status.code).toEqual('COMPLETE_REGISTRATION');
+      expect(createdUser.registrationConfirmed).toEqual(false);
+      expect(createdUser.status.code).toEqual('ACTIVE');
     });
 
     it('Should throw an error when trying to create a user without changing pw and providing pw', async () => {
@@ -337,7 +341,7 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          status: 'REGISTERED',
+          status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -354,7 +358,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          status: 'REGISTERED',
+          status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
       expect(status).toEqual(httpStatus.CREATED);
@@ -367,7 +371,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          status: 'REGISTERED',
+          status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
       expect(status2).toEqual(httpStatus.BAD_REQUEST);
@@ -400,7 +404,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: '1',
-          status: 'REGISTERED',
+          status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
 
@@ -418,7 +422,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          status: 'REGISTERED',
+          status: 'ACTIVE',
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -435,7 +439,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           password: 'developer',
-          status: 'REGISTERED',
+          status: 'ACTIVE',
           role: roles.ADMIN.code,
         });
 
@@ -449,7 +453,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser, 'registered');
+      user = await createUser(validUser, 'active');
     });
 
     afterAll(async () => {
@@ -465,7 +469,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           role: roles.ADMIN.code,
-          status: 'REGISTERED',
+          status: 'ACTIVE',
         });
 
       expect(status).toEqual(httpStatus.OK);
@@ -495,7 +499,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           role: roles.ADMIN.code,
-          status: 'REGISTERED',
+          status: 'ACTIVE',
         });
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
@@ -509,7 +513,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           role: roles.ADMIN.code,
-          status: 'REGISTERED',
+          status: 'ACTIVE',
         });
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
@@ -522,7 +526,7 @@ describe('/users', () => {
           email: 'test@unknown2.com',
           firstName: 'Test',
           lastName: 'Unknown',
-          status: 'REGISTERED',
+          status: 'ACTIVE',
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -540,7 +544,7 @@ describe('/users', () => {
           lastName: 'Unknown',
           role: roles.ADMIN.code,
           registrationCompleted: true,
-          status: 'REGISTERED',
+          status: 'ACTIVE',
         });
 
       expect(status).toEqual(httpStatus.BAD_REQUEST);
@@ -558,7 +562,7 @@ describe('/users', () => {
           firstName: 'Test',
           lastName: 'Unknown',
           role: roles.ADMIN.code,
-          status: 'REGISTERED',
+          status: 'ACTIVE',
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
@@ -571,7 +575,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser, 'registered');
+      user = await createUser(validUser, 'active');
     });
 
     afterAll(async () => {
@@ -588,7 +592,7 @@ describe('/users', () => {
 
       expect(status).toEqual(httpStatus.OK);
       const updatedUser = await findById(user.id);
-      expect(updatedUser.status.code).toEqual('REGISTERED');
+      expect(updatedUser.status.code).toEqual('ACTIVE');
 
       const { status: status2 } = await request(app)
         .post(`${prefix}/auth/login`)
@@ -648,7 +652,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser, 'registered');
+      user = await createUser(validUser, 'active');
     });
 
     afterAll(async () => {
@@ -686,12 +690,12 @@ describe('/users', () => {
         .patch(`${prefix}/users/${user.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
-          status: 'BLOCKED',
+          status: 'INACTIVE',
         });
 
       expect(status).toEqual(httpStatus.OK);
       const updated = await findById(user.id);
-      expect(updated.status.code).toEqual('BLOCKED');
+      expect(updated.status.code).toEqual('INACTIVE');
     });
 
     it('Should throw an error when an invalid property is provided', async () => {
@@ -755,7 +759,7 @@ describe('/users', () => {
     let user;
 
     beforeAll(async () => {
-      user = await createUser(validUser, 'registered');
+      user = await createUser(validUser, 'active');
     });
 
     afterAll(async () => {
@@ -775,7 +779,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when trying to delete your own user', async () => {
-      const newUser = await createUser(Object.assign({}, validUser, { email: 'notnotexisting@hotmail.com' }), 'registered');
+      const newUser = await createUser(Object.assign({}, validUser, { email: 'notnotexisting@hotmail.com' }), 'active');
       const validJwt = await getValidJwt(newUser.id);
 
       const { body, status } = await request(app)

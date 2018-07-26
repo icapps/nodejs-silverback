@@ -10,7 +10,7 @@ describe('authService', () => {
 
   beforeAll(async () => {
     await clearAll();
-    user = await createUser(validUser, 'registered');
+    user = await createUser(validUser, 'active');
   });
 
   afterAll(async () => {

@@ -18,7 +18,7 @@ describe('/auth', () => {
     await clearAll();
 
     // Create a regular and admin user
-    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'registered');
+    const { data: createdUsers } = await createUsers([regularUser, adminUser], 'active');
     const sorted = createdUsers.sort((a, b) => a.role.code.localeCompare(b.role.code));
     [users.admin, users.regular] = sorted;
   });
@@ -110,7 +110,7 @@ describe('/auth', () => {
     });
 
     it('Should throw error when user has not yet confirmed his registration', async () => {
-      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser98@gmail.com' }), 'complete_registration');
+      const noAccessUser = await createUser(Object.assign({}, unconfirmedUser, { email: 'newuser98@gmail.com' }), 'active');
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
@@ -123,8 +123,8 @@ describe('/auth', () => {
       expect(body.errors[0].title).toEqual(errors.USER_UNCONFIRMED.message);
     });
 
-    it('Should throw error when user has been blocked', async () => {
-      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser12@gmail.com' }), 'blocked');
+    it('Should throw error when user has been set to inactive', async () => {
+      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser12@gmail.com' }), 'inactive');
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
@@ -133,8 +133,8 @@ describe('/auth', () => {
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.USER_BLOCKED.code);
-      expect(body.errors[0].title).toEqual(errors.USER_BLOCKED.message);
+      expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
+      expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
     });
   });
 
@@ -225,7 +225,7 @@ describe('/auth', () => {
     });
 
     it('Should throw error when user has not yet confirmed his registration', async () => {
-      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser@gmail.com' }), 'complete_registration');
+      const noAccessUser = await createUser(Object.assign({}, unconfirmedUser, { email: 'newuser@gmail.com' }), 'active');
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
         .send({
@@ -238,8 +238,8 @@ describe('/auth', () => {
       expect(body.errors[0].title).toEqual(errors.USER_UNCONFIRMED.message);
     });
 
-    it('Should throw error when user has been blocked', async () => {
-      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser2@gmail.com' }), 'blocked');
+    it('Should throw error when user has been set to inactive', async () => {
+      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser2@gmail.com' }), 'inactive');
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
         .send({
@@ -248,8 +248,8 @@ describe('/auth', () => {
         });
 
       expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.USER_BLOCKED.code);
-      expect(body.errors[0].title).toEqual(errors.USER_BLOCKED.message);
+      expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
+      expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
     });
 
   });
@@ -306,7 +306,7 @@ describe('/auth', () => {
 
     it('Should throw an error when user was not found', async () => {
       const customUser = Object.assign({}, adminUser, { email: 'notfounduser1234@hotmail.com' });
-      const newUser: any = await createUser(customUser, 'registered');
+      const newUser: any = await createUser(customUser, 'active');
       const validToken: any = await getUserSessionToken(customUser);
       await removeUser(newUser.id);
 
@@ -344,7 +344,7 @@ describe('/auth', () => {
 
     beforeAll(async () => {
       const userData = Object.assign({}, regularUser, { email: 'verifyPw@test.com' });
-      newUser = await createUser(userData, 'registered');
+      newUser = await createUser(userData, 'active');
     });
 
     it('Should succesfully verify existing valid token', async () => {
@@ -380,7 +380,7 @@ describe('/auth', () => {
 
     beforeAll(async () => {
       const userData = Object.assign({}, unconfirmedUser, { email: 'confirmPw@test.com' });
-      newUser = await createUser(userData, 'complete_registration');
+      newUser = await createUser(userData, 'active');
     });
 
     it('Should succesfully verify existing valid token', async () => {
@@ -393,7 +393,7 @@ describe('/auth', () => {
       expect(body).toEqual({});
 
       const updatedUser = await findById(newUser.id);
-      expect(updatedUser.status.code).toEqual('REGISTERED');
+      expect(updatedUser.status.code).toEqual('ACTIVE');
 
       // Try to login with changed password
       const { body: body2, status: status2 } = await request(app)
