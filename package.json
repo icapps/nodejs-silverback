@@ -28,9 +28,9 @@
     "dotenv-safe": "~6.0.0",
     "express": "~4.16.2",
     "http-status": "~1.2.0",
-    "joi": "~13.4.0",
+    "joi": "~13.5.2",
     "jsonade": "~1.3.0",
-    "knex": "~0.15.1",
+    "knex": "~0.15.2",
     "lodash": "~4.17.10",
     "mandrill-api": "~1.0.45",
     "pg": "~7.4.3",
@@ -41,7 +41,7 @@
     "tree-house-errors": "~1.2.0",
     "tree-house-translations": "~1.1.0",
     "uuid": "~3.3.2",
-    "winston": "~2.4.2"
+    "winston": "~3.0.0"
   },
   "devDependencies": {
     "@types/cors": "~2.8.4",
@@ -51,10 +51,10 @@
     "@types/faker": "~4.1.2",
     "@types/helmet": "~0.0.38",
     "@types/http-status": "~0.2.30",
-    "@types/jest": "~23.3.0",
+    "@types/jest": "~23.3.1",
     "@types/joi": "~13.4.0",
-    "@types/knex": "~0.14.16",
-    "@types/lodash": "~4.14.112",
+    "@types/knex": "~0.14.19",
+    "@types/lodash": "~4.14.115",
     "@types/mandrill-api": "~1.0.30",
     "@types/raven": "~2.5.1",
     "@types/redis": "~2.8.6",
@@ -64,7 +64,7 @@
     "auditjs": "^2.4.5",
     "coveralls": "^3.0.2",
     "faker": "^4.1.0",
-    "jest": "^23.4.1",
+    "jest": "^23.4.2",
     "node-mocks-http": "^1.7.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.2",
@@ -72,7 +72,7 @@
     "ts-jest": "~23.0.1",
     "tslint": "^5.11.0",
     "tslint-config-airbnb": "^5.9.2",
-    "typescript": "^2.9.2"
+    "typescript": "^3.0.1"
   },
   "engines": {
     "node": ">=8"

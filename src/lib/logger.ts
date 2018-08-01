@@ -3,7 +3,7 @@ import * as Raven from 'raven';
 import config from '../config/logger.config';
 
 // Singleton logger instance
-const instance: winston.LoggerInstance = new winston.Logger(config);
+const instance: winston.Logger = winston.createLogger(config);
 
 export const logger = {
   info: (message: string, ...args: any[]) => instance.info(message, args),
