@@ -21,7 +21,6 @@ Object.keys(environment).forEach((key) => {
   process.env[key] = environment[key];
 });
 
-
 // Must be after env variables
 import { logger } from '../src/lib/logger';
 
