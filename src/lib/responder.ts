@@ -1,9 +1,9 @@
 import * as httpStatus from 'http-status';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { parseErrors, I18nOptions } from 'tree-house-errors';
 import { ErrorSerializer } from 'jsonade';
 import { envs, errorTranslations } from '../constants';
-import { logger } from '../lib/logger';
+import { logger, sentry } from '../lib/logger';
 
 /**
  * ExpressJS responder to send success/error responses
@@ -18,7 +18,7 @@ export const responder: { success: Function, error: Function } = {
     logger.debug('Response: ', serializer.serialize(payload, { totalCount }));
     return res.status(status).json(serializer.serialize(payload, { totalCount }));
   },
-  error: (req: Request, res: Response, errors: any) => {
+  error: (req: Request | any, res: Response, errors: any) => {
     logger.debug('Error:', errors);
 
     const i18nOptions: I18nOptions = {
@@ -26,6 +26,17 @@ export const responder: { success: Function, error: Function } = {
       path: errorTranslations,
     };
     const parsedError = parseErrors(errors, i18nOptions);
+
+    // Log internal server errors to Sentry
+    if (parsedError.status === httpStatus.INTERNAL_SERVER_ERROR) {
+      if (req.current && req.current.user) { // errors thrown here will be associated with logged in user
+        const { id, email, firstName, lastName } = req.current.user;
+        sentry.configureScope((scope) => {
+          scope.setUser({ id, email, name: `${firstName} ${lastName}` });
+        });
+      }
+      sentry.captureException(errors);
+    }
 
     if (process.env.NODE_ENV === envs.PRODUCTION) Object.assign(parsedError, { meta: undefined }); // Do not send stacktrace in production
     const serializerError = ErrorSerializer.serialize([parsedError]);

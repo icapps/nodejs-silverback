@@ -13,6 +13,11 @@ process.on('unhandledRejection', (e) => {
   sentry.captureException(e); // Send to Sentry
 });
 
+process.on('uncaughtException', (e) => {
+  logger.error(`uncaughtException: ${e.stack}`);
+  sentry.captureException(e); // Send to Sentry
+});
+
 treehouse.startServer(app, {
   title: 'Silverback',
   port: parseInt(process.env.PORT || '3000', 10),
