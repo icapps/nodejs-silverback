@@ -23,7 +23,7 @@
     "lint"
   ],
   "dependencies": {
-    "@sentry/node": "^4.5.3",
+    "@sentry/node": "~4.5.3",
     "camelcase-keys": "~4.2.0",
     "connect-redis": "~3.3.3",
     "dotenv-safe": "~6.0.0",

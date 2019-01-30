@@ -6,7 +6,10 @@ import { importTranslations } from './lib/translator';
 import { app } from './app';
 import { errorTranslations } from './constants';
 
-sentry.init({ dsn: process.env.SENTRY_DSN });
+sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+});
 
 process.on('unhandledRejection', (e) => {
   logger.error(`unhandledRejection: ${e.message}`);
