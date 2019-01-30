@@ -21,10 +21,6 @@ Object.keys(environment).forEach((key) => {
   process.env[key] = environment[key];
 });
 
-// Disable Sentry warnings
-import * as raven from 'raven';
-raven.disableConsoleAlerts();
-
 // Must be after env variables
 import { logger } from '../src/lib/logger';
 

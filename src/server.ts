@@ -1,18 +1,24 @@
 import './config/load-env'; // Load our environment variables
 
 import * as treehouse from 'tree-house';
-import { logger, raven } from './lib/logger';
+import { logger, sentry } from './lib/logger';
 import { importTranslations } from './lib/translator';
 import { app } from './app';
 import { errorTranslations } from './constants';
 
-raven.config(process.env.SENTRY_DSN, {
+sentry.init({
+  dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
-}).install();
+});
 
 process.on('unhandledRejection', (e) => {
   logger.error(`unhandledRejection: ${e.message}`);
-  raven.captureException(e); // Send to Raven
+  sentry.captureException(e); // Send to Sentry
+});
+
+process.on('uncaughtException', (e) => {
+  logger.error(`uncaughtException: ${e.stack}`);
+  sentry.captureException(e); // Send to Sentry
 });
 
 treehouse.startServer(app, {
