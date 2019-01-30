@@ -64,7 +64,7 @@
     "auditjs": "^3.0.10",
     "coveralls": "^3.0.2",
     "faker": "^4.1.0",
-    "jest": "^24.0.0",
+    "jest": "^23.0.0",
     "node-mocks-http": "^1.7.3",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.3",

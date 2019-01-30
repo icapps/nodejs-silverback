@@ -1,6 +1,10 @@
 import * as mailer from '../../src/lib/mailer';
 
 describe('lib/mailer', () => {
+  beforeAll(() => {
+    jest.restoreAllMocks(); // Make sure we remove spies from test.config
+  });
+
   const mailMockClient = {
     messages: {
       send: jest.fn(),

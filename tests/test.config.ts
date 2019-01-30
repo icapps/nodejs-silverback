@@ -1,3 +1,4 @@
+import * as mailer from '../src/lib/mailer';
 import { envs, errorTranslations } from '../src/constants';
 import { existsSync, mkdirSync } from 'fs';
 
@@ -29,5 +30,10 @@ if (!existsSync(errorTranslations)) {
   mkdirSync(errorTranslations);
 }
 
-// Overwrite warn/error console.logs
+// Make sure to mock emails via Mandrill by default
+jest.spyOn(mailer, 'send').mockImplementation();
+jest.spyOn(mailer, 'sendTemplate').mockImplementation();
+
+// Overwrite info/error console.logs
 logger.error = jest.fn(() => {});
+logger.info = jest.fn(() => {});
