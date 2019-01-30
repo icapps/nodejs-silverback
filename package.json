@@ -16,8 +16,7 @@
     "db:seed": "node_modules/knex/bin/cli.js seed:run",
     "db:migrate": "node_modules/knex/bin/cli.js migrate:latest",
     "db:reset": "node_modules/knex/bin/cli.js migrate:rollback && npm run db:migrate && npm run db:seed",
-    "heroku-postbuild": "node_modules/typescript/bin/tsc",
-    "audit": "node_modules/auditjs/audit.js"
+    "heroku-postbuild": "node_modules/typescript/bin/tsc"
   },
   "precommit": [
     "lint"
@@ -61,7 +60,6 @@
     "@types/supertest": "^2.0.7",
     "@types/uuid": "~3.4.4",
     "@types/winston": "~2.4.4",
-    "auditjs": "^3.0.10",
     "coveralls": "^3.0.2",
     "faker": "^4.1.0",
     "jest": "^24.0.0",
