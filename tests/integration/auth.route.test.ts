@@ -1,13 +1,13 @@
-import * as faker from 'faker';
 import * as httpStatus from 'http-status';
 import * as Joi from 'joi';
 import * as request from 'supertest';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
 import * as mailer from '../../src/lib/mailer';
-import { getValidJwt, getUserSessionToken } from '../_helpers/mockdata/auth.data';
+import { getUserSessionToken } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
-import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers, removeUser } from '../_helpers/mockdata/user.data';
+import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers, removeUser }
+from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 
 describe('/auth', () => {
@@ -64,7 +64,7 @@ describe('/auth', () => {
     });
 
     it('Should throw error when invalid email is provided', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
           email: 'noValidEmail',
@@ -87,7 +87,7 @@ describe('/auth', () => {
     });
 
     it('Should throw error when invalid user is provided', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
           email: 'fakeuser@icapps.com',
@@ -170,7 +170,7 @@ describe('/auth', () => {
     });
 
     it('Should throw error when no email or password is provided', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
         .send({
           email: regularUser.email,
@@ -180,7 +180,7 @@ describe('/auth', () => {
     });
 
     it('Should throw error when invalid email is provided', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
         .send({
           email: 'noValidEmail',
@@ -202,7 +202,7 @@ describe('/auth', () => {
       expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
     it('Should throw error when invalid user is provided', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
         .send({
           email: 'fakeuser@icapps.com',
@@ -369,7 +369,7 @@ describe('/auth', () => {
     });
 
     it('Should throw an error when no token is provided', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .get(`${prefix}/forgot-password/verify`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
@@ -396,7 +396,7 @@ describe('/auth', () => {
       expect(updatedUser.status.code).toEqual('ACTIVE');
 
       // Try to login with changed password
-      const { body: body2, status: status2 } = await request(app)
+      const { status: status2 } = await request(app)
         .post(`${prefix}/auth/login`)
         .send({
           email: newUser.email,
@@ -406,8 +406,8 @@ describe('/auth', () => {
     });
 
     it('Should throw an error when the token is invalid', async () => {
-      const token = await setResetPwToken(users.regular.id);
-      const { body, status } = await request(app)
+      await setResetPwToken(users.regular.id);
+      const { status } = await request(app)
         .put(`${prefix}/forgot-password/confirm?token=invalidToken`)
         .send({ password: 'newPassword123' });
 
@@ -416,7 +416,7 @@ describe('/auth', () => {
 
     it('Should throw an error when no password is provided', async () => {
       const token = await setResetPwToken(users.regular.id);
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .put(`${prefix}/forgot-password/confirm?token=${token}`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });

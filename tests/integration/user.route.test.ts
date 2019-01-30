@@ -6,7 +6,6 @@ import * as request from 'supertest';
 import { app } from '../../src/app';
 import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
-import * as mailer from '../../src/lib/mailer';
 import { findRoleByCode } from '../../src/lib/utils';
 import { getUserJwtTokens, getValidJwt } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
@@ -253,14 +252,14 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user id is not a valid guid', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .get(`${prefix}/users/unknownId`)
         .set('Authorization', `Bearer ${tokens.admin}`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it('Should throw an error when user does not exist', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .get(`${prefix}/users/${faker.random.uuid()}`)
         .set('Authorization', `Bearer ${tokens.admin}`);
       expect(status).toEqual(httpStatus.NOT_FOUND);
@@ -304,7 +303,6 @@ describe('/users', () => {
     });
 
     it('Should succesfully create a new user who has to change his password', async () => {
-      const mailSpy = jest.spyOn(mailer, 'sendTemplate').mockImplementation(() => Promise.resolve());
 
       const { body, status } = await request(app)
         .post(`${prefix}/users`)
@@ -350,7 +348,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when trying to create a duplicate user', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/users`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -363,7 +361,7 @@ describe('/users', () => {
         });
       expect(status).toEqual(httpStatus.CREATED);
 
-      const { body: body2, status: status2 } = await request(app)
+      const { status: status2 } = await request(app)
         .post(`${prefix}/users`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -491,7 +489,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user id is not a valid guid', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .put(`${prefix}/users/unknownId`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -505,7 +503,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user does not exist', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .put(`${prefix}/users/${faker.random.uuid()}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -583,7 +581,7 @@ describe('/users', () => {
     });
 
     it('Should succesfully update an existing user password', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .put(`${prefix}/users/${user.id}/password`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -604,7 +602,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user id is not a valid guid', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .put(`${prefix}/users/unknownId/password`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -614,7 +612,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user does not exist', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .put(`${prefix}/users/${faker.random.uuid()}/password`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -686,7 +684,7 @@ describe('/users', () => {
     });
 
     it('Should succesfully update the status of an existing user', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .patch(`${prefix}/users/${user.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -712,7 +710,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user id is not a valid guid', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .patch(`${prefix}/users/unknownId`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -722,7 +720,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user does not exist', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .patch(`${prefix}/users/${faker.random.uuid()}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -732,7 +730,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when status does not exist', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .patch(`${prefix}/users/${user.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -792,7 +790,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user does not exist', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .delete(`${prefix}/users/${faker.random.uuid()}`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 
@@ -800,7 +798,7 @@ describe('/users', () => {
     });
 
     it('Should throw an error when user id is not a valid guid', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .delete(`${prefix}/users/unknownId`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 

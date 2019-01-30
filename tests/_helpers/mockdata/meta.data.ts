@@ -1,5 +1,5 @@
-import { Code, CodeCreate } from '../../../src/models/code.model';
-import { CodeType, CodeTypeCreate } from '../../../src/models/code-type.model';
+import { CodeCreate } from '../../../src/models/code.model';
+import { CodeTypeCreate } from '../../../src/models/code-type.model';
 import { tableNames } from '../../../src/constants';
 import { db } from '../../../src/lib/db';
 import * as metaRepository from '../../../src/repositories/meta.repository';

@@ -5,7 +5,6 @@ import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, findById, validUser } from '../_helpers/mockdata/user.data';
 
 describe('authService', () => {
-  const prefix = `/api/${process.env.API_VERSION}`;
   let user;
 
   beforeAll(async () => {

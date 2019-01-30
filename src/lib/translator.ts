@@ -2,7 +2,7 @@ import * as icappsTranslation from 'tree-house-translations';
 import { existsSync, mkdirSync } from 'fs';
 
 const defaultOptions = <any> {
-  destination: process.cwd() + '/locales',
+  destination: `${process.cwd()}/locales`,
   clean: true,
   seperateCategories: false,
   exportType: 'json',

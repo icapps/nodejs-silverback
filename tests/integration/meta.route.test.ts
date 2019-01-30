@@ -12,7 +12,7 @@ import { adminUser, createUsers, regularUser } from '../_helpers/mockdata/user.d
 import { codeByIdSchema, codesSchema, createCodeSchema } from '../_helpers/payload-schemes/meta.schema';
 
 describe('/meta', () => {
-  const prefix = `/api/${process.env.API_VERSION}`;
+
   const users = { regular: null, admin: null };
   const tokens = { regular: null, admin: null };
 
@@ -154,7 +154,7 @@ describe('/meta', () => {
     });
 
     it('Should throw an error when code type is not found', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .get(`${prefix}/meta/codesByType/unknownType`)
         .set('Authorization', `Bearer ${tokens.regular}`);
 
@@ -165,15 +165,14 @@ describe('/meta', () => {
   describe('GET /codesByType/:codeType/all', () => {
     const prefix = `/api/${process.env.API_VERSION}`;
     let codeType;
-    let languageCodes;
 
     beforeAll(async () => {
       codeType = await createCodeType({ code: 'LAN', name: 'Language' });
-      const code1 = await createCode(codeType.id, { name: 'English', code: 'EN', deprecated: true });
-      const code2 = await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
-      const code3 = await createCode(codeType.id, { name: 'French', code: 'FR' });
-      const code4 = await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
-      languageCodes = [code1, code2, code3, code4];
+      await createCode(codeType.id, { name: 'English', code: 'EN', deprecated: true });
+      await createCode(codeType.id, { name: 'Nederlands', code: 'NL' });
+      await createCode(codeType.id, { name: 'French', code: 'FR' });
+      await createCode(codeType.id, { name: 'Weutelen', code: 'WEUTELS' });
+
     });
 
     afterAll(async () => {
@@ -242,14 +241,14 @@ describe('/meta', () => {
       });
     });
     it('Should throw an error when code id is not a valid guid', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .get(`${prefix}/meta/codes/unknownId`)
         .set('Authorization', `Bearer ${tokens.admin}`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it('Should throw an error when code does not exist', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .get(`${prefix}/meta/codes/${faker.random.uuid()}`)
         .set('Authorization', `Bearer ${tokens.admin}`);
       expect(status).toEqual(httpStatus.NOT_FOUND);
@@ -306,7 +305,7 @@ describe('/meta', () => {
     });
 
     it('Should throw an error when code type is not found', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .post(`${prefix}/meta/codes/unknownType`)
         .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
@@ -429,7 +428,7 @@ describe('/meta', () => {
     });
 
     it('Should validate that there is at least 1 field to update', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .patch(`${prefix}/meta/codes/${code.id}`)
         .set('Authorization', `Bearer ${tokens.admin}`);
 

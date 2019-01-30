@@ -3,7 +3,7 @@ import * as path from 'path';
 
 // Read package.json on init
 const root = path.resolve(__dirname, '..', '..');
-const contents: any = fs.readFileSync(root + '/package.json');
+const contents: any = fs.readFileSync(`${root}/package.json`);
 let pjson: PJson = {};
 if (contents) {
   pjson = JSON.parse(contents);

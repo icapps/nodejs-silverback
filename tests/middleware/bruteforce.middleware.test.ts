@@ -25,7 +25,7 @@ describe('bruteforce middleware', () => {
     const numberOfCalls = userBruteConfig.freeRetries + 1;
 
     // Successful calls
-    for (const call of Array(numberOfCalls)) {
+    for (const _call of Array(numberOfCalls)) {
       const { status } = await request(app)
         .post('/test')
         .send({ email: 'test@icapps.com' });
@@ -42,7 +42,7 @@ describe('bruteforce middleware', () => {
     expect(body.errors[0].title).toEqual(errors.TOO_MANY_REQUESTS.message);
 
     // Allow call with other email
-    const { status: status2, body: body2 } = await request(app)
+    const { status: status2 } = await request(app)
       .post('/test')
       .send({ email: 'test2@icapps.com' });
     expect(status2).toEqual(httpStatus.OK);

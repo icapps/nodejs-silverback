@@ -41,7 +41,7 @@ describe('/me', () => {
 
     it('Should throw an error when user does not exist', async () => {
       const token = await getValidJwt(faker.random.uuid());
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .get(`${prefix}/me`)
         .set('Authorization', `Bearer ${token}`);
       expect(status).toEqual(httpStatus.NOT_FOUND);
@@ -87,7 +87,7 @@ describe('/me', () => {
 
     it('Should throw an error when user does not exist', async () => {
       const token = await getValidJwt(faker.random.uuid());
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .put(`${prefix}/me`)
         .set('Authorization', `Bearer ${token}`);
       expect(status).toEqual(httpStatus.NOT_FOUND);
