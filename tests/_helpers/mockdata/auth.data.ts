@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { createJwt } from 'tree-house-authentication';
 import { jwtConfig } from '../../../src/config/auth.config';
-import { adminUser, inactiveUser, createUser, unconfirmedUser } from './user.data';
+import { adminUser, createUser } from './user.data';
 import { User, UserCreate } from '../../../src/models/user.model';
 import { app } from '../../../src/app';
 

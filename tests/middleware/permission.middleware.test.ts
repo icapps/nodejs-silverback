@@ -3,7 +3,7 @@ import * as httpMocks from 'node-mocks-http';
 import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
 import { hasPermission } from '../../src/middleware/permission.middleware';
-import { getUserJwtTokens, getValidJwt, getUserSessionsTokens } from '../_helpers/mockdata/auth.data';
+import { getUserJwtTokens, getValidJwt } from '../_helpers/mockdata/auth.data';
 import { adminUser, createUsers, regularUser, inactiveUser, unconfirmedUser, createUser, removeUser } from '../_helpers/mockdata/user.data';
 import { clearAll } from '../_helpers/mockdata/data';
 
@@ -77,7 +77,7 @@ describe('hasPermission middleware', () => {
     });
 
     it('Should throw an error when invalid jwt token is provided', async () => {
-      const request = httpMocks.createRequest({ headers: { Authorization: `Bearer 1` } });
+      const request = httpMocks.createRequest({ headers: { Authorization: 'Bearer 1' } });
       const response = httpMocks.createResponse();
 
       expect.assertions(2);

@@ -46,12 +46,12 @@ describe('lib/mailer', () => {
         },
       };
 
-      const response = await mailer.send(options, mailMockClient);
+      await mailer.send(options, mailMockClient);
       expect(mailMockClient.messages.send).toHaveBeenCalledTimes(1);
     });
 
     it('Should catch error when mailer returns error', async () => {
-      mailMockClient.messages.send.mockImplementation((options, cb, errorCb) => errorCb(new Error('Invalid recipient')));
+      mailMockClient.messages.send.mockImplementation((_options, _cb, errorCb) => errorCb(new Error('Invalid recipient')));
 
       const options = {
         message: {
@@ -64,7 +64,7 @@ describe('lib/mailer', () => {
 
       expect.assertions(2);
       try {
-        const response = await mailer.send(options, mailMockClient);
+        await mailer.send(options, mailMockClient);
       } catch (err) {
         expect(err).toEqual(new Error('Invalid recipient'));
         expect(mailMockClient.messages.send).toHaveBeenCalledTimes(1);
@@ -74,7 +74,7 @@ describe('lib/mailer', () => {
 
   describe('sendTemplate', () => {
     it('Should succesfully send mail via template', async () => {
-      mailMockClient.messages.sendTemplate.mockImplementation((options, cb, errorCb) => cb('Success'));
+      mailMockClient.messages.sendTemplate.mockImplementation((_options, cb, _errorCb) => cb('Success'));
 
       const options = {
         template_name: 'My template',
@@ -86,12 +86,12 @@ describe('lib/mailer', () => {
         },
       };
 
-      const response = await mailer.sendTemplate(options, mailMockClient);
+      await mailer.sendTemplate(options, mailMockClient);
       expect(mailMockClient.messages.sendTemplate).toHaveBeenCalledTimes(1);
     });
 
     it('Should catch error when mailer returns error', async () => {
-      mailMockClient.messages.sendTemplate.mockImplementation((options, cb, errorCb) => errorCb(new Error('Invalid recipient')));
+      mailMockClient.messages.sendTemplate.mockImplementation((_options, _cb, errorCb) => errorCb(new Error('Invalid recipient')));
 
       const options = {
         template_name: 'My template',
@@ -105,7 +105,7 @@ describe('lib/mailer', () => {
 
       expect.assertions(2);
       try {
-        const response = await mailer.sendTemplate(options, mailMockClient);
+        await mailer.sendTemplate(options, mailMockClient);
       } catch (err) {
         expect(err).toEqual(new Error('Invalid recipient'));
         expect(mailMockClient.messages.sendTemplate).toHaveBeenCalledTimes(1);

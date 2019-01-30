@@ -43,7 +43,7 @@ describe('/config', () => {
     });
 
     it('Should throw an error when an invalid os is provided', async () => {
-      const { body, status } = await request(app)
+      const { status } = await request(app)
         .get(`${prefix}/version/unknown`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
