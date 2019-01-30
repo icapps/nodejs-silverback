@@ -46,15 +46,15 @@ describe('lib/utils', () => {
     });
 
     it('Should throw an error when no headers are present', () => {
-      expect.assertions(1);
+      expect.assertions(2);
       try {
         const mockRequest = httpMocks.createRequest({
           headers: {},
         });
         utils.extractJwt(mockRequest);
       } catch (err) {
-        console.log('extract jwt error:', err);
-        expect(err).toEqual(new UnauthorizedError(errors.MISSING_HEADERS));
+        expect(err).toBeInstanceOf(UnauthorizedError);
+        expect(err.message).toEqual('Not all required headers are provided');
       }
     });
   });
@@ -140,21 +140,5 @@ describe('lib/utils', () => {
         expect(err.message).toEqual('Your account is not confirmed. Please check your inbox for the confirmation link.');
       }
     });
-  });
-
-  describe('extractJwt', () => {
-    it('Should sucessfully return jwt if request is valid', () => {
-
-    });
-
-    it('Should throw an error when there is no Authorization header present', () => {
-      const badRequest: Request = {
-        headers : {},
-      };
-
-      utils.extractJwt(badRequest);
-
-    });
-
   });
 });

@@ -37,15 +37,15 @@ describe('authService', () => {
   });
 
   describe('login', () => {
-    it('Should return a JWT token if the given credentials are correct', async () => {
+    fit('Should return a JWT token if the given credentials are correct', async () => {
       const credentials: AuthCredentials = {
         email: 'willem.wortel@icapps.com',
         password: 'developer',
       };
 
-      const jwtToken =  await login(credentials, 'jwt');
-
-      expect(jwtToken).toHaveProperty('accesToken');
+      const tokenObject =  await login(credentials, 'jwt');
+      console.log(typeof(tokenObject));
+      expect(tokenObject).toHaveProperty('accessToken');
 
     });
 
@@ -63,9 +63,9 @@ describe('authService', () => {
       }
     });
 
-    it('Should throw an error when the username is incorrect but the password is correct', async () => {
+    it('Should throw an error when the user does not exist', async () => {
       const credentials: AuthCredentials = {
-        email: 'willem.appel@icapps.com',
+        email: 'notexisting@icapps.com',
         password: 'developer',
       };
       expect.assertions(2);
@@ -79,7 +79,7 @@ describe('authService', () => {
   });
 
   describe('logout', () => {
-    fit('Should throw an error when it can not destroy the session', async () => {
+    it('Should throw an error when it can not destroy the session', async () => {
       // TODO: check if this is a good test...
       const req = {
         // no session
