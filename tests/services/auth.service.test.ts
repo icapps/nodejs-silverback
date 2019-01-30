@@ -1,6 +1,6 @@
 import { logger } from '../../src/lib/logger';
 import * as mailer from '../../src/lib/mailer';
-import { initForgotPw, login, logout, confirmForgotPw } from '../../src/services/auth.service';
+import { initForgotPw, login, logout } from '../../src/services/auth.service';
 import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, findById, validUser } from '../_helpers/mockdata/user.data';
 import { AuthCredentials } from '../../src/models/auth.model';

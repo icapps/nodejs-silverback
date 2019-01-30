@@ -6,13 +6,8 @@ import { errors } from '../../src/config/errors.config';
 import * as mailer from '../../src/lib/mailer';
 import { getUserSessionToken } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
-<<<<<<< HEAD
-import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers, removeUser }
-from '../_helpers/mockdata/user.data';
-=======
 // tslint:disable-next-line:max-line-length
 import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers, removeUser } from '../_helpers/mockdata/user.data';
->>>>>>> int -> unit tests WIP
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 
 describe('/auth', () => {
@@ -46,42 +41,6 @@ describe('/auth', () => {
       expect(header).toHaveProperty('set-cookie');
     });
 
-<<<<<<< HEAD
-    it('Should succesfully login a user with correct credentials case insensitive', async () => {
-      const { header, status } = await request(app)
-        .post(`${prefix}/auth/login`)
-        .send({
-          email: regularUser.email.toUpperCase(),
-          password: regularUser.password,
-        });
-
-      expect(status).toEqual(httpStatus.OK);
-      expect(header).toHaveProperty('set-cookie');
-    });
-
-    it('Should throw error when no email or password is provided', async () => {
-      const { status } = await request(app)
-        .post(`${prefix}/auth/login`)
-        .send({
-          email: regularUser.email,
-        });
-
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-
-    it('Should throw error when invalid email is provided', async () => {
-      const { status } = await request(app)
-        .post(`${prefix}/auth/login`)
-        .send({
-          email: 'noValidEmail',
-          password: 'prutser123',
-        });
-
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-
-=======
->>>>>>> int -> unit tests WIP
     it('Should throw error when invalid password is provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
@@ -93,60 +52,6 @@ describe('/auth', () => {
       expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
       expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
-<<<<<<< HEAD
-
-    it('Should throw error when invalid user is provided', async () => {
-      const { status } = await request(app)
-        .post(`${prefix}/auth/login`)
-        .send({
-          email: 'fakeuser@icapps.com',
-          password: 'invalidPw',
-        });
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-
-    it('Should throw error when unknown email is provided', async () => {
-      const { body, status } = await request(app)
-        .post(`${prefix}/auth/login`)
-        .send({
-          email: 'unknown@test.com',
-          password: regularUser.password,
-        });
-
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-      expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
-      expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
-    });
-
-    it('Should throw error when user has not yet confirmed his registration', async () => {
-      const noAccessUser = await createUser(Object.assign({}, unconfirmedUser, { email: 'newuser98@gmail.com' }), 'active');
-      const { body, status } = await request(app)
-        .post(`${prefix}/auth/login`)
-        .send({
-          email: noAccessUser.email,
-          password: 'developer',
-        });
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.USER_UNCONFIRMED.code);
-      expect(body.errors[0].title).toEqual(errors.USER_UNCONFIRMED.message);
-    });
-
-    it('Should throw error when user has been set to inactive', async () => {
-      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser12@gmail.com' }), 'inactive');
-      const { body, status } = await request(app)
-        .post(`${prefix}/auth/login`)
-        .send({
-          email: noAccessUser.email,
-          password: 'developer',
-        });
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
-      expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
-    });
-=======
->>>>>>> int -> unit tests WIP
   });
 
   describe('POST /login/jwt', () => {
@@ -165,45 +70,6 @@ describe('/auth', () => {
       });
     });
 
-<<<<<<< HEAD
-    it('Should succesfully login a user with correct credentials case insensitive', async () => {
-      const { body, status } = await request(app)
-        .post(`${prefix}/auth/login/jwt`)
-        .send({
-          email: regularUser.email.toUpperCase(),
-          password: regularUser.password,
-        });
-
-      expect(status).toEqual(httpStatus.OK);
-      Joi.validate(body, loginSchema, (err, value) => {
-        if (err) throw err;
-        if (!value) throw new Error('no value to check schema');
-      });
-    });
-
-    it('Should throw error when no email or password is provided', async () => {
-      const { status } = await request(app)
-        .post(`${prefix}/auth/login/jwt`)
-        .send({
-          email: regularUser.email,
-        });
-
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-
-    it('Should throw error when invalid email is provided', async () => {
-      const { status } = await request(app)
-        .post(`${prefix}/auth/login/jwt`)
-        .send({
-          email: 'noValidEmail',
-          password: 'prutser123',
-        });
-
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-
-=======
->>>>>>> int -> unit tests WIP
     it('Should throw error when invalid password is provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
@@ -215,60 +81,6 @@ describe('/auth', () => {
       expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
       expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
-<<<<<<< HEAD
-    it('Should throw error when invalid user is provided', async () => {
-      const { status } = await request(app)
-        .post(`${prefix}/auth/login/jwt`)
-        .send({
-          email: 'fakeuser@icapps.com',
-          password: 'invalidPw',
-        });
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-
-    it('Should throw error when unknown email is provided', async () => {
-      const { body, status } = await request(app)
-        .post(`${prefix}/auth/login/jwt`)
-        .send({
-          email: 'unknown@test.com',
-          password: regularUser.password,
-        });
-
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-      expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
-      expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
-    });
-
-    it('Should throw error when user has not yet confirmed his registration', async () => {
-      const noAccessUser = await createUser(Object.assign({}, unconfirmedUser, { email: 'newuser@gmail.com' }), 'active');
-      const { body, status } = await request(app)
-        .post(`${prefix}/auth/login/jwt`)
-        .send({
-          email: noAccessUser.email,
-          password: 'developer',
-        });
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.USER_UNCONFIRMED.code);
-      expect(body.errors[0].title).toEqual(errors.USER_UNCONFIRMED.message);
-    });
-
-    it('Should throw error when user has been set to inactive', async () => {
-      const noAccessUser = await createUser(Object.assign({}, regularUser, { email: 'newuser2@gmail.com' }), 'inactive');
-      const { body, status } = await request(app)
-        .post(`${prefix}/auth/login/jwt`)
-        .send({
-          email: noAccessUser.email,
-          password: 'developer',
-        });
-
-      expect(status).toEqual(httpStatus.UNAUTHORIZED);
-      expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
-      expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
-    });
-
-=======
->>>>>>> int -> unit tests WIP
   });
 
   describe('POST /login/admin', () => {
@@ -384,15 +196,6 @@ describe('/auth', () => {
       expect(body.errors[0].code).toEqual(errors.LINK_EXPIRED.code);
       expect(body.errors[0].detail).toEqual(errors.LINK_EXPIRED.message);
     });
-<<<<<<< HEAD
-
-    it('Should throw an error when no token is provided', async () => {
-      const { status } = await request(app)
-        .get(`${prefix}/forgot-password/verify`);
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-=======
->>>>>>> int -> unit tests WIP
   });
 
   describe('PUT /forgot-password/confirm?token=', () => {
@@ -433,15 +236,5 @@ describe('/auth', () => {
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
-<<<<<<< HEAD
-
-    it('Should throw an error when no password is provided', async () => {
-      const token = await setResetPwToken(users.regular.id);
-      const { status } = await request(app)
-        .put(`${prefix}/forgot-password/confirm?token=${token}`);
-      expect(status).toEqual(httpStatus.BAD_REQUEST);
-    });
-=======
->>>>>>> int -> unit tests WIP
   });
 });
