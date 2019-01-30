@@ -35,7 +35,7 @@ describe('lib/mailer', () => {
 
   describe('send', () => {
     it('Should succesfully send mail', async () => {
-      mailMockClient.messages.send.mockImplementation((options, cb, errorCb) => cb('Success'));
+      mailMockClient.messages.send.mockImplementation((_options, cb, _errorCb) => cb('Success'));
 
       const options = {
         message: {
