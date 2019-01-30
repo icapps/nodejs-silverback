@@ -1,8 +1,9 @@
 import { logger } from '../../src/lib/logger';
 import * as mailer from '../../src/lib/mailer';
-import { initForgotPw } from '../../src/services/auth.service';
+import { initForgotPw, login, logout, confirmForgotPw } from '../../src/services/auth.service';
 import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, findById, validUser } from '../_helpers/mockdata/user.data';
+import { AuthCredentials } from '../../src/models/auth.model';
 
 describe('authService', () => {
   let user;
@@ -34,4 +35,71 @@ describe('authService', () => {
       expect(logSpy).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('login', () => {
+    it('Should return a JWT token if the given credentials are correct', async () => {
+      const credentials: AuthCredentials = {
+        email: 'willem.wortel@icapps.com',
+        password: 'developer',
+      };
+
+      const jwtToken =  await login(credentials, 'jwt');
+
+      expect(jwtToken).toHaveProperty('accesToken');
+
+    });
+
+    it('Should throw an error when the username is correct but the password is not', async () => {
+      const credentials: AuthCredentials = {
+        email: 'willem.wortel@icapps.com',
+        password: 'wrongpassword',
+      };
+      expect.assertions(2);
+      try {
+        await login(credentials, 'jwt');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toEqual('Incorrect username or password. Please try again.');
+      }
+    });
+
+    it('Should throw an error when the username is incorrect but the password is correct', async () => {
+      const credentials: AuthCredentials = {
+        email: 'willem.appel@icapps.com',
+        password: 'developer',
+      };
+      expect.assertions(2);
+      try {
+        await login(credentials, 'jwt');
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toEqual('Incorrect username or password. Please try again.');
+      }
+    });
+  });
+
+  describe('logout', () => {
+    fit('Should throw an error when it can not destroy the session', async () => {
+      // TODO: check if this is a good test...
+      const req = {
+        // no session
+      };
+      try {
+        await logout(req);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+    });
+
+    it('Should succesfully destroy the session', () => {
+      // TODO: implement
+    });
+  });
+/*
+  describe('confirmForgotPw', () => {
+    it('Should sucesfully ...', () => {
+
+    })
+  })
+  */
 });

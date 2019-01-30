@@ -53,8 +53,108 @@ describe('lib/utils', () => {
         });
         utils.extractJwt(mockRequest);
       } catch (err) {
+        console.log('extract jwt error:', err);
         expect(err).toEqual(new UnauthorizedError(errors.MISSING_HEADERS));
       }
     });
+  });
+
+  describe('checkStatus', () => {
+    it('Should not throw any error when the user is ACTIVE and registration confirmed', () => {
+      const user: User = {
+        email: 'ben.vanraemdonck@icapps.com',
+        firstName: 'Ben',
+        lastName: 'Van Raemdonck',
+        password: 'secret',
+        role: {
+          name: 'name',
+          code: 'code',
+          level: 1,
+        },
+        status: {
+          code: 'ACTIVE',
+          name: 'status',
+        },
+        registrationConfirmed: true,
+        createdAt: '',
+        createdBy: '',
+      };
+
+      // TODO: check how to test void function
+      utils.checkStatus(user);
+
+    });
+
+    it('Should throw an error when user is INACTIVE', () => {
+      const user: User = {
+        email: 'ben.vanraemdonck@icapps.com',
+        firstName: 'Ben',
+        lastName: 'Van Raemdonck',
+        password: 'secret',
+        role: {
+          name: 'name',
+          code: 'code',
+          level: 1,
+        },
+        status: {
+          code: 'INACTIVE',
+          name: 'status',
+        },
+        registrationConfirmed: true,
+        createdAt: '',
+        createdBy: '',
+      };
+
+      try {
+        utils.checkStatus(user);
+      } catch (err) {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual('Your account is inactive. Please contact your administrator.');
+      }
+    });
+
+    it('Should throw an error when user registration is not confirmed', () => {
+      const user: User = {
+        email: 'ben.vanraemdonck@icapps.com',
+        firstName: 'Ben',
+        lastName: 'Van Raemdonck',
+        password: 'secret',
+        role: {
+          name: 'name',
+          code: 'code',
+          level: 1,
+        },
+        status: {
+          code: 'ACTIVE',
+          name: 'status',
+        },
+        registrationConfirmed: false,
+        createdAt: '',
+        createdBy: '',
+      };
+
+      try {
+        utils.checkStatus(user);
+      } catch (err) {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual('Your account is not confirmed. Please check your inbox for the confirmation link.');
+      }
+    });
+  });
+
+  describe('extractJwt', () => {
+    it('Should sucessfully return jwt if request is valid', () => {
+
+    });
+
+    it('Should throw an error when there is no Authorization header present', () => {
+      const badRequest: Request = {
+        headers : {},
+      };
+
+      utils.extractJwt(badRequest);
+
+    });
+
   });
 });

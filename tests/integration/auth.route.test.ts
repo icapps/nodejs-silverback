@@ -6,8 +6,13 @@ import { errors } from '../../src/config/errors.config';
 import * as mailer from '../../src/lib/mailer';
 import { getUserSessionToken } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
+<<<<<<< HEAD
 import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers, removeUser }
 from '../_helpers/mockdata/user.data';
+=======
+// tslint:disable-next-line:max-line-length
+import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers, removeUser } from '../_helpers/mockdata/user.data';
+>>>>>>> int -> unit tests WIP
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 
 describe('/auth', () => {
@@ -41,6 +46,7 @@ describe('/auth', () => {
       expect(header).toHaveProperty('set-cookie');
     });
 
+<<<<<<< HEAD
     it('Should succesfully login a user with correct credentials case insensitive', async () => {
       const { header, status } = await request(app)
         .post(`${prefix}/auth/login`)
@@ -74,6 +80,8 @@ describe('/auth', () => {
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
+=======
+>>>>>>> int -> unit tests WIP
     it('Should throw error when invalid password is provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login`)
@@ -85,6 +93,7 @@ describe('/auth', () => {
       expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
       expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
+<<<<<<< HEAD
 
     it('Should throw error when invalid user is provided', async () => {
       const { status } = await request(app)
@@ -136,6 +145,8 @@ describe('/auth', () => {
       expect(body.errors[0].code).toEqual(errors.USER_INACTIVE.code);
       expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
     });
+=======
+>>>>>>> int -> unit tests WIP
   });
 
   describe('POST /login/jwt', () => {
@@ -154,6 +165,7 @@ describe('/auth', () => {
       });
     });
 
+<<<<<<< HEAD
     it('Should succesfully login a user with correct credentials case insensitive', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
@@ -190,6 +202,8 @@ describe('/auth', () => {
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
 
+=======
+>>>>>>> int -> unit tests WIP
     it('Should throw error when invalid password is provided', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
@@ -201,6 +215,7 @@ describe('/auth', () => {
       expect(body.errors[0].code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
       expect(body.errors[0].detail).toEqual(errors.USER_INVALID_CREDENTIALS.message);
     });
+<<<<<<< HEAD
     it('Should throw error when invalid user is provided', async () => {
       const { status } = await request(app)
         .post(`${prefix}/auth/login/jwt`)
@@ -252,6 +267,8 @@ describe('/auth', () => {
       expect(body.errors[0].title).toEqual(errors.USER_INACTIVE.message);
     });
 
+=======
+>>>>>>> int -> unit tests WIP
   });
 
   describe('POST /login/admin', () => {
@@ -367,12 +384,15 @@ describe('/auth', () => {
       expect(body.errors[0].code).toEqual(errors.LINK_EXPIRED.code);
       expect(body.errors[0].detail).toEqual(errors.LINK_EXPIRED.message);
     });
+<<<<<<< HEAD
 
     it('Should throw an error when no token is provided', async () => {
       const { status } = await request(app)
         .get(`${prefix}/forgot-password/verify`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
+=======
+>>>>>>> int -> unit tests WIP
   });
 
   describe('PUT /forgot-password/confirm?token=', () => {
@@ -413,6 +433,7 @@ describe('/auth', () => {
 
       expect(status).toEqual(httpStatus.NOT_FOUND);
     });
+<<<<<<< HEAD
 
     it('Should throw an error when no password is provided', async () => {
       const token = await setResetPwToken(users.regular.id);
@@ -420,5 +441,7 @@ describe('/auth', () => {
         .put(`${prefix}/forgot-password/confirm?token=${token}`);
       expect(status).toEqual(httpStatus.BAD_REQUEST);
     });
+=======
+>>>>>>> int -> unit tests WIP
   });
 });
