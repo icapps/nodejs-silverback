@@ -109,6 +109,7 @@ describe('lib/utils', () => {
         utils.checkStatus(user);
       } catch (err) {
         expect(err).toBeInstanceOf(Error);
+        expect(err.code).toEqual('USER_INACTIVE');
         expect(err.message).toEqual('Your account is inactive. Please contact your administrator.');
       }
     });

@@ -1,6 +1,6 @@
-import { logger } from '../../src/lib/logger';
 import * as mailer from '../../src/lib/mailer';
-import { initForgotPw, login, logout } from '../../src/services/auth.service';
+import { logger } from '../../src/lib/logger';
+import { initForgotPw, login } from '../../src/services/auth.service';
 import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, findById, validUser } from '../_helpers/mockdata/user.data';
 import { AuthCredentials } from '../../src/models/auth.model';
@@ -37,7 +37,7 @@ describe('authService', () => {
   });
 
   describe('login', () => {
-    fit('Should return a JWT token if the given credentials are correct', async () => {
+    it('Should return a JWT token if the given credentials are correct', async () => {
       const credentials: AuthCredentials = {
         email: 'willem.wortel@icapps.com',
         password: 'developer',
@@ -77,29 +77,4 @@ describe('authService', () => {
       }
     });
   });
-
-  describe('logout', () => {
-    it('Should throw an error when it can not destroy the session', async () => {
-      // TODO: check if this is a good test...
-      const req = {
-        // no session
-      };
-      try {
-        await logout(req);
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-      }
-    });
-
-    it('Should succesfully destroy the session', () => {
-      // TODO: implement
-    });
-  });
-/*
-  describe('confirmForgotPw', () => {
-    it('Should sucesfully ...', () => {
-
-    })
-  })
-  */
 });

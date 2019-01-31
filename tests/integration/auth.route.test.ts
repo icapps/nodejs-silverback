@@ -6,8 +6,8 @@ import { errors } from '../../src/config/errors.config';
 import * as mailer from '../../src/lib/mailer';
 import { getUserSessionToken } from '../_helpers/mockdata/auth.data';
 import { clearAll } from '../_helpers/mockdata/data';
-// tslint:disable-next-line:max-line-length
-import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers, removeUser } from '../_helpers/mockdata/user.data';
+import { adminUser, createUser, findById, regularUser, setResetPwToken, unconfirmedUser, createUsers, removeUser }
+from '../_helpers/mockdata/user.data';
 import { loginSchema } from '../_helpers/payload-schemes/auth.schema';
 
 describe('/auth', () => {
