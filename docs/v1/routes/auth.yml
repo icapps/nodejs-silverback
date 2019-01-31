@@ -1,0 +1,102 @@
+  /auth/login:
+    post:
+      tags:
+      - "authentication - Session tokens"
+      summary: "Login a user with email and password in the application(s)"
+      parameters:
+        - name: "authentication request"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostLogin"
+      responses:
+        200:
+          description: >
+            Successfully authenticated.
+            The session ID is returned in the header as `set-cookie`
+        400:
+          description: "400 Bad request"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "500 Internal error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /auth/login/jwt:
+    post:
+      tags:
+      - "authentication - JWT"
+      summary: "Login a user with email and password in the application(s)"
+      parameters:
+        - name: "authentication request"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostLogin"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        400:
+          description: "400 Bad request"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "500 Interal error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /auth/login/admin:
+    post:
+      tags:
+      - "authentication - Session tokens"
+      summary: "Login a user with email and password in the Silverback admin panel"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      parameters:
+        - name: "authentication request"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostLogin"
+      responses:
+        200:
+          description: >
+            Successfully authenticated.
+            The session ID is returned in the header as `set-cookie`
+        400:
+          description: "400 Bad request"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: "500 Interal error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /auth/logout:
+    post:
+      tags:
+      - "authentication - Session tokens"
+      summary: "Logout the current"
+      security:
+        - cookieAuth: []
+      responses:
+        204:
+          description: "Success"
+        401:
+          description: "401 Unauthorised"
+          schema:
+            $ref: "#/definitions/ErrorResponse"

@@ -1,0 +1,34 @@
+  /config/version:
+    get:
+      tags:
+      - "version control"
+      summary: "Returns the current build and version number of the deployed api"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/ApiVersionCheckResponse"
+        500:
+          description: "500 Internal Server Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /config/version/{os}:
+    parameters:
+      - in: path
+        type: "string"
+        name: os
+        description: The name of the operating system.
+        required: true
+    get:
+      tags:
+      - "version control"
+      summary: "Returns the current minimum and latest version for application(s)"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/VersionCheckResponse"
+        500:
+          description: "500 Internal Server Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"

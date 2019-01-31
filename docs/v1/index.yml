@@ -1,0 +1,350 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Silverback"
+schemes:
+  - "http"
+  - "https"
+securityDefinitions:
+  Bearer:
+    name: Authorization
+    type: apiKey
+    in: header
+    description: 'Please use the following format: Bearer <ApiKey>'
+  cookieAuth:
+    type: apiKey
+    in: header
+    name: Cookie
+definitions:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        status:
+          $ref: "#/definitions/Status"
+        registrationConfirmed:
+          type: boolean
+        role:
+          $ref: "#/definitions/UserRole"
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    UserRole:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        level:
+          type: number
+    PostLogin:
+      type: object
+      required:
+        - "email"
+        - "password"
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        deviceId:
+          type: string
+    PostUser:
+      type: object
+      required:
+        - "email"
+        - "firstName"
+        - "lastName"
+        - "role"
+        - "password"
+        - "status"
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        password:
+          type: string
+        status:
+          type: string
+          enum: ["ACTIVE", "INACTIVE"]
+        role:
+          type: string
+          enum: ["USER", "ADMIN"]
+    PutUser:
+      type: object
+      required:
+        - "email"
+        - "firstName"
+        - "lastName"
+        - "role"
+        - "status"
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        status:
+          type: string
+          enum: ["ACTIVE", "INACTIVE"]
+        role:
+          type: string
+          enum: ["USER", "ADMIN"]
+    PatchUser:
+      type: object
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        status:
+          type: string
+          enum: ["ACTIVE", "INACTIVE"]
+        role:
+          type: string
+          enum: ["USER", "ADMIN"]
+    LoginResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+    UserResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          $ref: "#/definitions/User"
+    UserListResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: number
+              example: 50
+            totalCount:
+              type: number
+              example: 120
+        data:
+          type: array
+          items:
+            $ref: "#/definitions/User"
+    UserRoleListResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: number
+              example: 50
+            totalCount:
+              type: number
+              example: 120
+        data:
+          type: array
+          items:
+            $ref: "#/definitions/UserRole"
+    Status:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    Code:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        deprecated:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    PostCode:
+      type: object
+      required:
+        - "name"
+        - "code"
+      properties:
+        name:
+          type: string
+          description: "Full name"
+        code:
+          type: string
+          description: "Unique identifier"
+        description:
+          type: string
+    PutCode:
+      type: object
+      required:
+        - "name"
+        - "description"
+        - "deprecated"
+      properties:
+        name:
+          type: string
+          description: "Full name"
+        description:
+          type: string
+        deprecated:
+          type: boolean
+    PatchCode:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Full name"
+        description:
+          type: string
+        deprecate:
+          type: boolean
+    CodeResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          $ref: "#/definitions/Code"
+    CodesListResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: number
+              example: 50
+            totalCount:
+              type: number
+              example: 120
+        data:
+          type: array
+          items:
+            $ref: "#/definitions/Code"
+    VersionCheckResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          type: object
+          properties:
+            minVersion:
+              type: string
+              example: '1.4.0'
+            latestVersion:
+              type: string
+              example: '1.8.0'
+    ApiVersionCheckResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+        data:
+          type: object
+          properties:
+            build:
+              type: string
+              example: 'v51'
+            version:
+              type: string
+              example: '1.0.1'
+    ErrorResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: 'Unique id per error'
+          status:
+            type: number
+            description: 'Http statuscode'
+            example: 400
+          code:
+            type: string
+            description: 'Unique code per error'
+            example: 'NO_VALID_USERNAME'
+          title:
+            type: string
+            description: 'General error message'
+            example: 'No valid email provided'
+          detail:
+            type: string
+            description: 'Extra details (optional)'
+          meta:
+            type: object
+            properties:
+              stack:
+                type: string
+                description: 'Stacktrace (only for development purposes)'
+parameters:
+  SortOrder:
+    in: query
+    type: "string"
+    name: sortOrder
+    enum: [asc, desc]
+    default: asc
+    description: Order of the field to sort by (ascending or descending)
+    required: false
+  SortField:
+    in: query
+    type: "string"
+    name: sortField
+    description: Field to sort the results by
+    required: false
+  Limit:
+    in: query
+    type: "number"
+    name: limit
+    description: Number of items to retrieve
+    required: false
+  Offset:
+    in: query
+    type: "number"
+    name: offset
+    description: Offset for the number of items to retrieve
+    required: false
+  Search:
+    in: query
+    type: "string"
+    name: search
+    description: Search for items matching this string (fuzzy search)
+    required: false

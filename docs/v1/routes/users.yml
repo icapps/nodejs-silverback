@@ -1,0 +1,211 @@
+  /users:
+    get:
+      tags:
+      - "users"
+      summary: "Returns all users"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - $ref: "#/parameters/SortOrder"
+        - $ref: "#/parameters/SortField"
+        - $ref: "#/parameters/Offset"
+        - $ref: "#/parameters/Limit"
+        - $ref: "#/parameters/Search"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      tags:
+      - "users"
+      summary: "Create a new user"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostUser"
+        - name: "changePassword"
+          in: "query"
+          required: false
+          type: "string"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /users/{userId}:
+    parameters:
+      - in: path
+        type: "string"
+        name: userId
+        description: The id of the user
+        required: true
+    get:
+      tags:
+      - "users"
+      summary: "Returns user by id"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "users"
+      summary: "Update an existing user"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PutUser"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    patch:
+      tags:
+      - "users"
+      summary: "Update an existing user's property"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PatchUser"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      tags:
+      - "users"
+      summary: "Delete an existing user"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      responses:
+        204:
+          description: "Success"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /users/{userId}/password:
+    parameters:
+      - in: path
+        type: "string"
+        name: userId
+        description: The id of the user
+        required: true
+    put:
+      tags:
+      - "users"
+      summary: "Update an existing user's password"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "password"
+            properties:
+              password:
+                type: "string"
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /users/roles:
+    get:
+      tags:
+      - "user roles"
+      summary: "Returns all available user roles"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserRoleListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"

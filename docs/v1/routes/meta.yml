@@ -1,0 +1,236 @@
+  /meta/codesByType/{codeType}:
+    get:
+      tags:
+      - "metaOptions"
+      summary: "Returns all codes for a specific code type"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `USER` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - $ref: "#/parameters/SortOrder"
+        - $ref: "#/parameters/SortField"
+        - $ref: "#/parameters/Offset"
+        - $ref: "#/parameters/Limit"
+        - $ref: "#/parameters/Search"
+        - in: path
+          type: "string"
+          name: codeType
+          description: The name of the code type
+          required: true
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodesListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meta/codesByType/{codeType}/all:
+    get:
+      tags:
+      - "metaOptions"
+      summary: "Returns all codes (including deprecated codes) for a specific code type"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - $ref: "#/parameters/SortOrder"
+        - $ref: "#/parameters/SortField"
+        - $ref: "#/parameters/Offset"
+        - $ref: "#/parameters/Limit"
+        - $ref: "#/parameters/Search"
+        - in: path
+          type: "string"
+          name: codeType
+          description: The name of the code type
+          required: true
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodesListResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meta/codes/{codeId}:
+    parameters:
+      - in: path
+        type: "string"
+        name: codeId
+        description: The id of the code
+        required: true
+    get:
+      tags:
+      - "metaOptions"
+      summary: "Returns code by id"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `USER` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodeResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      tags:
+      - "metaOptions"
+      summary: "Create a new code for a specific code type"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - in: path
+          type: "string"
+          name: codeType
+          description: The name of the code type
+          required: true
+        - name: "code values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PostCode"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodeResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    patch:
+      tags:
+      - "metaOptions"
+      summary: "Partially update an existing code"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - in: path
+          type: "string"
+          name: id
+          description: The id of the code
+          required: true
+        - name: "code values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PatchCode"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodeResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "metaOptions"
+      summary: "Update an existing code"
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - in: path
+          type: "string"
+          name: id
+          description: The id of the code
+          required: true
+        - name: "code values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PutCode"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CodeResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meta/codes/{codeId}/deprecate:
+    post:
+      tags:
+      - "metaOptions"
+      summary: "Deprecate an existing code"
+      deprecated: true
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - in: path
+          type: "string"
+          name: codeId
+          description: The id of the code
+          required: true
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meta/codes/{codeId}/undeprecate:
+    post:
+      tags:
+      - "metaOptions"
+      summary: "Undeprecate an existing code"
+      deprecated: true
+      description: |-
+        permission | scope | effect
+        - | - | -
+        `ADMIN` | `gobal` | **Required** for this endpoint
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - in: path
+          type: "string"
+          name: codeId
+          description: The id of the code
+          required: true
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
