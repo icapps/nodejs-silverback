@@ -1,4 +1,5 @@
 import * as httpMocks from 'node-mocks-http';
+import * as httpStatus from 'http-status';
 import { UnauthorizedError } from 'tree-house-errors';
 import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
@@ -107,10 +108,10 @@ describe('lib/utils', () => {
 
       try {
         utils.checkStatus(user);
-      } catch (err) {
-        expect(err).toBeInstanceOf(Error);
-        expect(err.code).toEqual('USER_INACTIVE');
-        expect(err.message).toEqual('Your account is inactive. Please contact your administrator.');
+      } catch (error) {
+        expect(error.status).toEqual(httpStatus.UNAUTHORIZED);
+        expect(error.code).toEqual(errors.USER_INACTIVE.code);
+        expect(error.message).toEqual(errors.USER_INACTIVE.message);
       }
     });
 
@@ -136,9 +137,10 @@ describe('lib/utils', () => {
 
       try {
         utils.checkStatus(user);
-      } catch (err) {
-        expect(err).toBeInstanceOf(Error);
-        expect(err.message).toEqual('Your account is not confirmed. Please check your inbox for the confirmation link.');
+      } catch (error) {
+        expect(error.status).toEqual(httpStatus.UNAUTHORIZED);
+        expect(error.code).toEqual(errors.USER_UNCONFIRMED.code);
+        expect(error.message).toEqual(errors.USER_UNCONFIRMED.message);
       }
     });
   });
