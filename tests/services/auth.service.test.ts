@@ -1,9 +1,11 @@
 import * as mailer from '../../src/lib/mailer';
+import * as httpStatus from 'http-status';
 import { logger } from '../../src/lib/logger';
 import { initForgotPw, login } from '../../src/services/auth.service';
 import { clearAll } from '../_helpers/mockdata/data';
 import { createUser, findById, validUser } from '../_helpers/mockdata/user.data';
 import { AuthCredentials } from '../../src/models/auth.model';
+import { errors } from '../../src/config/errors.config';
 
 describe('authService', () => {
   let user;
@@ -44,7 +46,6 @@ describe('authService', () => {
       };
 
       const tokenObject =  await login(credentials, 'jwt');
-      console.log(typeof(tokenObject));
       expect(tokenObject).toHaveProperty('accessToken');
 
     });
@@ -54,12 +55,13 @@ describe('authService', () => {
         email: 'willem.wortel@icapps.com',
         password: 'wrongpassword',
       };
-      expect.assertions(2);
+      expect.assertions(3);
       try {
         await login(credentials, 'jwt');
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toEqual('Incorrect username or password. Please try again.');
+        expect(error.status).toEqual(httpStatus.BAD_REQUEST);
+        expect(error.code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
+        expect(error.message).toEqual(errors.USER_INVALID_CREDENTIALS.message);
       }
     });
 
@@ -68,12 +70,13 @@ describe('authService', () => {
         email: 'notexisting@icapps.com',
         password: 'developer',
       };
-      expect.assertions(2);
+      expect.assertions(3);
       try {
         await login(credentials, 'jwt');
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toEqual('Incorrect username or password. Please try again.');
+        expect(error.status).toEqual(httpStatus.BAD_REQUEST);
+        expect(error.code).toEqual(errors.USER_INVALID_CREDENTIALS.code);
+        expect(error.message).toEqual(errors.USER_INVALID_CREDENTIALS.message);
       }
     });
   });
