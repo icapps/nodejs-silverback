@@ -1,4 +1,5 @@
 import * as httpMocks from 'node-mocks-http';
+import * as httpStatus from 'http-status';
 import { UnauthorizedError } from 'tree-house-errors';
 import { errors } from '../../src/config/errors.config';
 import { roles } from '../../src/config/roles.config';
@@ -46,14 +47,100 @@ describe('lib/utils', () => {
     });
 
     it('Should throw an error when no headers are present', () => {
-      expect.assertions(1);
+      expect.assertions(2);
       try {
         const mockRequest = httpMocks.createRequest({
           headers: {},
         });
         utils.extractJwt(mockRequest);
       } catch (err) {
-        expect(err).toEqual(new UnauthorizedError(errors.MISSING_HEADERS));
+        expect(err).toBeInstanceOf(UnauthorizedError);
+        expect(err.message).toEqual('Not all required headers are provided');
+      }
+    });
+  });
+
+  describe('checkStatus', () => {
+    it('Should not throw any error when the user is ACTIVE and registration confirmed', () => {
+      const user: User = {
+        email: 'ben.vanraemdonck@icapps.com',
+        firstName: 'Ben',
+        lastName: 'Van Raemdonck',
+        password: 'secret',
+        role: {
+          name: 'name',
+          code: 'code',
+          level: 1,
+        },
+        status: {
+          code: 'ACTIVE',
+          name: 'status',
+        },
+        registrationConfirmed: true,
+        createdAt: '',
+        createdBy: '',
+      };
+
+      // TODO: check how to test void function
+      utils.checkStatus(user);
+
+    });
+
+    it('Should throw an error when user is INACTIVE', () => {
+      const user: User = {
+        email: 'ben.vanraemdonck@icapps.com',
+        firstName: 'Ben',
+        lastName: 'Van Raemdonck',
+        password: 'secret',
+        role: {
+          name: 'name',
+          code: 'code',
+          level: 1,
+        },
+        status: {
+          code: 'INACTIVE',
+          name: 'status',
+        },
+        registrationConfirmed: true,
+        createdAt: '',
+        createdBy: '',
+      };
+
+      try {
+        utils.checkStatus(user);
+      } catch (error) {
+        expect(error.status).toEqual(httpStatus.UNAUTHORIZED);
+        expect(error.code).toEqual(errors.USER_INACTIVE.code);
+        expect(error.message).toEqual(errors.USER_INACTIVE.message);
+      }
+    });
+
+    it('Should throw an error when user registration is not confirmed', () => {
+      const user: User = {
+        email: 'ben.vanraemdonck@icapps.com',
+        firstName: 'Ben',
+        lastName: 'Van Raemdonck',
+        password: 'secret',
+        role: {
+          name: 'name',
+          code: 'code',
+          level: 1,
+        },
+        status: {
+          code: 'ACTIVE',
+          name: 'status',
+        },
+        registrationConfirmed: false,
+        createdAt: '',
+        createdBy: '',
+      };
+
+      try {
+        utils.checkStatus(user);
+      } catch (error) {
+        expect(error.status).toEqual(httpStatus.UNAUTHORIZED);
+        expect(error.code).toEqual(errors.USER_UNCONFIRMED.code);
+        expect(error.message).toEqual(errors.USER_UNCONFIRMED.message);
       }
     });
   });
