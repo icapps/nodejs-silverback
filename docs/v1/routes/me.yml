@@ -1,0 +1,39 @@
+  /me:
+    get:
+      tags:
+      - "current user"
+      summary: "Returns the current user information"
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      responses:
+        200:
+          description: "logged in user"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      tags:
+      - "current user"
+      summary: "Update the current user information"
+      security:
+        - Bearer: []
+        - cookieAuth: []
+      parameters:
+        - name: "user values"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/PutUser"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/UserResponse"
+        400:
+          description: "401 Unauthorized"
+          schema:
+            $ref: "#/definitions/ErrorResponse"

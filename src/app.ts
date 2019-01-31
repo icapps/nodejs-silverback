@@ -31,9 +31,10 @@ for (const x in appConfig.VERSIONS) {
 
   // Set swagger per version
   if (process.env.NODE_ENV !== envs.PRODUCTION) {
-    treehouse.setSwagger(app, `/api${appConfig.VERSIONS[x]}/documentation`, `docs/${appConfig.VERSIONS[x]}.yml`, {
+    treehouse.setSwagger(app, `/api${appConfig.VERSIONS[x]}/documentation`, `docs/${appConfig.VERSIONS[x]}`, {
       host: process.env.SWAGGER_BASE_URL,
       schemes: ['http', 'https'],
+      concatenate: true,
     });
   }
 }
