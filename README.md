@@ -4,7 +4,7 @@ NodeJS boilerplate project
 
 [![Dependencies](https://david-dm.org/icapps/nodejs-silverback.svg)](https://david-dm.org/icapps/nodejs-silverback.svg)
 [![Build Status](https://travis-ci.org/icapps/nodejs-silverback.svg?branch=master)](https://travis-ci.org/icapps/nodejs-silverback)
-[![Coverage Status](https://coveralls.io/repos/github/icapps/nodejs-silverback/badge.svg)](https://coveralls.io/github/icapps/nodejs-silverback)
+[![Coverage Status](https://coveralls.io/repos/github/icapps/nodejs-silverback/badge.svg)](https://coveralls.io/github/icapps/nodejs-silverback) [![Greenkeeper badge](https://badges.greenkeeper.io/icapps/nodejs-silverback.svg)](https://greenkeeper.io/)
 
 ![alt text](http://blog.aafnation.com/wp-content/uploads/2016/12/gorilla.png "Silverback Monkey")
 
