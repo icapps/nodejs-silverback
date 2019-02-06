@@ -1,7 +1,9 @@
 import { errors as defaults, ErrorType } from 'tree-house-errors';
 
+const asType = <T extends { [key: string]: ErrorType }>(arg: T): T  => arg;
+
 // tslint:disable:max-line-length
-export const errors = <Error>Object.assign({}, defaults, {
+export const errors = asType({...defaults, ... {
   CODE_DUPLICATE:             { code: 'CODE_DUPLICATE', message: 'An item with this code already exists' },
   INVALID_TOKEN:              { code: 'INVALID_TOKEN', message: 'The supplied token is invalid.' },
   LINK_EXPIRED:               { code: 'LINK_EXPIRED', message: 'Sorry, but this link has expired. You can request another one below.' },
@@ -15,9 +17,5 @@ export const errors = <Error>Object.assign({}, defaults, {
   USER_INVALID_CREDENTIALS:   { code: 'USER_INVALID_CREDENTIALS', message: 'Incorrect username or password. Please try again.' },
   USER_NOT_FOUND:             { code: 'USER_NOT_FOUND', message: 'User not found' },
   STATUS_NOT_FOUND:           { code: 'STATUS_NOT_FOUND', message: 'Status not found' },
-});
-  // tslint:enable:max-line-length
-
-export interface Error {
-  [key: string]: ErrorType;
-}
+}});
+// tslint:enable:max-line-length
