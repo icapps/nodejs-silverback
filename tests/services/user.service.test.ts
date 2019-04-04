@@ -16,7 +16,7 @@ describe('userService', () => {
   });
 
   describe('create', () => {
-    const mailSpy = jest.spyOn(mailer, 'sendTemplate').mockImplementation(() => Promise.resolve());
+    const mailSpy = jest.spyOn(mailer, 'sendTemplate').mockResolvedValue(null);
 
     afterEach(() => {
       mailSpy.mockClear();

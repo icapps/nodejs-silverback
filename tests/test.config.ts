@@ -35,5 +35,5 @@ jest.spyOn(mailer, 'send').mockImplementation();
 jest.spyOn(mailer, 'sendTemplate').mockImplementation();
 
 // Overwrite info/error console.logs
-logger.error = jest.fn(() => {});
-logger.info = jest.fn(() => {});
+logger.error = <any>jest.fn(() => {});
+logger.info = <any>jest.fn(() => {});

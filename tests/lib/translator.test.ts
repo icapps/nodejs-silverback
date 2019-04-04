@@ -8,7 +8,7 @@ describe('importTranslations', () => {
   const newDestination = './tests/locales';
 
   beforeEach(() => {
-    icappsTranslationMock = jest.spyOn(icappsTranslation, 'import').mockImplementation(() => { });
+    icappsTranslationMock = jest.spyOn(icappsTranslation, 'import').mockResolvedValue(null);
   });
 
   afterEach((done) => {

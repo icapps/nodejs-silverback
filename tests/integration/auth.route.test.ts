@@ -148,7 +148,7 @@ describe('/auth', () => {
   });
 
   describe('POST /forgot-password/init', () => {
-    jest.spyOn(mailer, 'sendTemplate').mockImplementation(() => Promise.resolve());
+    jest.spyOn(mailer, 'sendTemplate').mockResolvedValue(null);
     it('Should succesfully send a forgot password email with unique link', async () => {
       const { body, status } = await request(app)
         .post(`${prefix}/forgot-password/init`)

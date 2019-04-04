@@ -21,7 +21,7 @@ describe('authService', () => {
   });
 
   describe('initForgotPw', () => {
-    const mailSpy = jest.spyOn(mailer, 'sendTemplate').mockImplementation(() => Promise.resolve());
+    const mailSpy = jest.spyOn(mailer, 'sendTemplate').mockResolvedValue(null);
     const logSpy = jest.spyOn(logger, 'error');
 
     it('Should succesfully send a forgot pw email and update reset token', async () => {
