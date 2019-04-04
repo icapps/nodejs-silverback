@@ -16,7 +16,9 @@
     "db:seed": "node_modules/knex/bin/cli.js seed:run",
     "db:migrate": "node_modules/knex/bin/cli.js migrate:latest",
     "db:reset": "node_modules/knex/bin/cli.js migrate:rollback && npm run db:migrate && npm run db:seed",
-    "heroku-postbuild": "node_modules/typescript/bin/tsc"
+    "heroku-postbuild": "node_modules/typescript/bin/tsc",
+    "git:clean": "git branch --merged | egrep -v \"(^\\*|master|staging|develop)\" | xargs git branch -d",
+    "git:clean-remote": "git remote prune origin"
   },
   "precommit": [
     "lint"
