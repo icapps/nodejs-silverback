@@ -54,7 +54,7 @@
     "@types/helmet": "~0.0.43",
     "@types/http-status": "~0.2.30",
     "@types/jest": "^24.0.11",
-    "@types/joi": "~14.3.2",
+    "@types/joi": "14.3.2",
     "@types/knex": "~0.16.1",
     "@types/lodash": "~4.14.123",
     "@types/mandrill-api": "~1.0.30",
