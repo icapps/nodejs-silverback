@@ -65,7 +65,7 @@
     "coveralls": "^3.0.3",
     "faker": "^4.1.0",
     "jest": "^24.7.1",
-    "node-mocks-http": "^1.7.3",
+    "node-mocks-http": "1.7.3",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.3",
     "supertest": "^3.4.2",
