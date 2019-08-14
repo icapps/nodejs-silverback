@@ -67,7 +67,7 @@
     "jest": "^24.7.1",
     "node-mocks-http": "^1.7.3",
     "pre-commit": "^1.2.2",
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.0",
     "supertest": "^3.4.2",
     "ts-jest": "^24.0.1",
     "tslint": "^5.15.0",
