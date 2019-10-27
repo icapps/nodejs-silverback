@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/cors": "~2.8.4",
-    "@types/dotenv-safe": "~5.0.3",
+    "@types/dotenv-safe": "~5.0.4",
     "@types/express": "~4.16.1",
     "@types/express-brute": "~0.0.37",
     "@types/express-session": "~1.15.12",
