@@ -36,7 +36,7 @@
     "lodash": "~4.17.11",
     "mandrill-api": "~1.0.45",
     "pg": "~7.9.0",
-    "redis": "~2.8.0",
+    "redis": "~3.0.1",
     "tree-house": "~3.4.3",
     "tree-house-authentication": "~3.1.2",
     "tree-house-errors": "~1.2.3",
