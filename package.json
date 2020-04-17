@@ -58,7 +58,7 @@
     "@types/knex": "~0.16.1",
     "@types/lodash": "~4.14.123",
     "@types/mandrill-api": "~1.0.30",
-    "@types/redis": "~2.8.12",
+    "@types/redis": "~2.8.18",
     "@types/supertest": "^2.0.7",
     "@types/uuid": "~3.4.4",
     "@types/winston": "~2.4.4",
