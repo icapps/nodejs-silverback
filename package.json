@@ -41,7 +41,7 @@
     "tree-house-authentication": "~3.1.2",
     "tree-house-errors": "~1.2.3",
     "tree-house-translations": "~1.1.4",
-    "uuid": "~3.3.2",
+    "uuid": "~8.0.0",
     "winston": "~3.2.1"
   },
   "devDependencies": {
